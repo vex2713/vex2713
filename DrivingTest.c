@@ -140,8 +140,8 @@ task usercontrol()
 	  // Insert user code here. This is where you use the joystick values to update your motors, etc.
 	  // .....................................................................................
 
-	  UserControlCodePlaceholderForTesting(); // Remove this function call once you have "real" code.
-	  motor[port1] = vexRT[Ch2];							// Remove these as well and replace with your appropriate code
+	  //UserControlCodePlaceholderForTesting(); // Remove this function call once you have "real" code.
+	  motor[port1] = vexRT[Ch3];							// Remove these as well and replace with your appropriate code
 	  motor[port3] = vexRT[Ch2];							// Remove these as well and replace with your appropriate code
 	}
 }
