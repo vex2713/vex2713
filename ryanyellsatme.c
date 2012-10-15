@@ -7,12 +7,12 @@ task main()
 {
 
 
-motor[goawayryan] = -1000 ;
+motor[goawayryan] = -200 ;
 
 
 	wait1Msec(1000) ;
 
-	motor[goawayryan] = 1000 ;
+	motor[goawayryan] = 200 ;
 
 	wait1Msec(3000) ;
 
