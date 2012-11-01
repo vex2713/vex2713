@@ -8,11 +8,11 @@ task main()
   while(true)
   {
 
-		if (SensorValue(potentiometer)< 1000)
+		if (SensorValue(potentiometer)< 3000)
 		{
 			motor[armMotor]=-20 ;
 		}
-		 else if (SensorValue(potentiometer)> 1100)
+		 else if (SensorValue(potentiometer)> 3000)
 		{
 			motor[armMotor]=20 ;
 	  }
