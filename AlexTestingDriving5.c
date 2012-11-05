@@ -151,8 +151,8 @@ task usercontrol()
 				iCh1 = 0;
 			}
 
-			bMotorReflected[port3] = true;
-			bMotorReflected[port2] = false;
+			bMotorReflected[port3] = false;
+			bMotorReflected[port2] = true;
 			bMotorReflected[port9] = false;
 			bMotorReflected[port8] = true;
 			motor[port3] = iCh1;							// Remove these as well and replace with your appropriate code
