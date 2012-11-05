@@ -170,22 +170,22 @@ task usercontrol()
 
 			float fastRatio = ratio + 1;
 
-			if(iCh1 < 0)
-			{
-				iCh29 = iCh29 * fastRatio;
-				iCh28 = iCh28 * ratio;
-				iport2 = iCh28;
-				bMotorReflected[port2] = false;
+			if(iCh1 < -15)
+				{
+					iCh29 = iCh29 * fastRatio;
+					iCh28 = iCh28 * ratio;
+					iport2 = iCh28;
+					bMotorReflected[port2] = false;
 
-			}
-			else
-			{
-				iCh29 = iCh29 * ratio;
-				iCh28 = iCh28 * fastRatio;
-				iport3 = iCh29;
-				bMotorReflected[port3] = true;
+				}
+				else if(iCh1 > 15)
+				{
+					iCh29 = iCh29 * ratio;
+					iCh28 = iCh28 * fastRatio;
+					iport3 = iCh29;
+					bMotorReflected[port3] = true;
 
-			}
+				}
 
 			if(iCh29 > 127)
 				iCh29 = 127;
