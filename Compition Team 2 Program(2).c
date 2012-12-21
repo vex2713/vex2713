@@ -55,8 +55,8 @@ task autonomous()
 
 			if (SensorValue[left] > SensorValue[right]){
 
-				motor[port1] = 127;  //left     //Was 100 on 12/20/12
-				motor[port2] = 127;  //left    // Was 100 on 12/20/12
+				motor[port1] = 100;  //left     //Was 100 on 12/20/12
+				motor[port2] = 100;  //left    // Was 100 on 12/20/12
 				motor[port9] = 127;  //right
 				motor[port10] = 127; //right
 
@@ -65,30 +65,30 @@ task autonomous()
 
 				motor[port1] = 127;  //left
 				motor[port2] = 127;  //left
-				motor[port9] = 127;  //right      //Was 100 on 12/20/12
-				motor[port10] = 127; //right      //Was 100 on 12/20/12
+				motor[port9] = 100;  //right      //Was 100 on 12/20/12
+				motor[port10] = 100; //right      //Was 100 on 12/20/12
 
 			}
 
 			else{
 				motor[port1] = 127;  //left
-			motor[port2] = 127;  //left
-			motor[port9] = 127;  //right
-			motor[port10] = 127; //right
+				motor[port2] = 127;  //left
+				motor[port9] = 127;  //right
+				motor[port10] = 127; //right
+			}
 		}
+		else {
+
+			motor[port1] = 0;
+			motor[port2] = 0;
+			motor[port9] = 0;
+			motor[port10] = 0;
+
+
+
+		}
+
 	}
-	else {
-
-		motor[port1] = 0;
-		motor[port2] = 0;
-		motor[port9] = 0;
-		motor[port10] = 0;
-
-
-
-	}
-
-}
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -102,32 +102,32 @@ task autonomous()
 
 task usercontrol()
 {
-// User control code here, inside the loop
-
-while (true)
-{
-	// This is the main execution loop for the user control program. Each time through the loop
-	// your program should update motor + servo values based on feedback from the joysticks.
-
-	// .....................................................................................
-	// Insert user code here. This is where you use the joystick values to update your motors, etc.
-	// .....................................................................................
-
-
-	bMotorReflected[port1] = false;
-	bMotorReflected[port10] = true;
-	bMotorReflected[port2] = true;
-	bMotorReflected[port9] = false;
+	// User control code here, inside the loop
 
 	while (true)
-
 	{
+		// This is the main execution loop for the user control program. Each time through the loop
+		// your program should update motor + servo values based on feedback from the joysticks.
 
-		motor[port1] = vexRT[Ch3];
-		motor[port2] = vexRT[Ch3];
-		motor[port9] = vexRT[Ch2];
-		motor[port10] = vexRT[Ch2];
+		// .....................................................................................
+		// Insert user code here. This is where you use the joystick values to update your motors, etc.
+		// .....................................................................................
 
+
+		bMotorReflected[port1] = false;
+		bMotorReflected[port10] = true;
+		bMotorReflected[port2] = true;
+		bMotorReflected[port9] = false;
+
+		while (true)
+
+		{
+
+			motor[port1] = vexRT[Ch3];
+			motor[port2] = vexRT[Ch3];
+			motor[port9] = vexRT[Ch2];
+			motor[port10] = vexRT[Ch2];
+
+		}
 	}
-}
 }
