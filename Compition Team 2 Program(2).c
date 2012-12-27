@@ -55,7 +55,7 @@ task autonomous()
 
 			if (SensorValue[left] > SensorValue[right]){
 
-				motor[port1] = 100;  //left     //Was 100 on 12/20/12
+				motor[port1] = 100; //left     //Was 100 on 12/20/12
 				motor[port2] = 100;  //left    // Was 100 on 12/20/12
 				motor[port9] = 127;  //right
 				motor[port10] = 127; //right
@@ -83,6 +83,13 @@ task autonomous()
 			motor[port2] = 0;
 			motor[port9] = 0;
 			motor[port10] = 0;
+
+			//program b
+
+			//diagonal = 1616.66666666...
+			//
+
+
 
 
 
