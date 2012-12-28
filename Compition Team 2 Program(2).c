@@ -136,6 +136,7 @@ task usercontrol()
 			motor[port9] = vexRT[Ch2];
 			motor[port10] = vexRT[Ch2];
 
+			// up and down
 			if (vexRT[Btn8U] == 1)
 
 			{
@@ -159,7 +160,7 @@ task usercontrol()
 			//	motor[port7] = 0;
 			//}
 
-
+			//push out and in
 			 if (vexRT[Btn8L] == 1)
 
 			{
@@ -176,6 +177,7 @@ task usercontrol()
 				motor[port7] = 0;
 			}
 
+			//claw
 			if (vexRT[Btn7U] == 1)
 			{
 				motor[port3] = -127;
