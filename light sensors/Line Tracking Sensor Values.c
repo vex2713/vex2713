@@ -1,4 +1,3 @@
-
 #pragma config(Sensor, in1,    LineTracker1,   sensorLineFollower)
 #pragma config(Sensor, in2,    LineTrack2,     sensorLineFollower)
 #pragma config(Sensor, in3,    potent1,        sensorPotentiometer)
@@ -11,30 +10,6 @@ task main()
   int threshold = 1500;    /* found by taking a reading on both DARK and LIGHT    */
                            /* surfaces, adding them together, then dividing by 2. */
 
-	while((SensorValue[frontIEM] <= 4900)&&(SensorValue[backIEM]<= 4900))
-	{
-
-		motor[frontMotor] = 83;
-		motor[backMotor]  = 63;
-	}
-	while((SensorValue[frontIEM] >= 4900)&&(SensorValue[backIEM] >= 4900))
-	{
-		motor[frontMotor] = 0;
-		motor[backMotor] = 0;
-	}
-	while(SensorValue[Potentiometer] <= 48)
-	{
-		motor[armMotor] = 63;
-		motor[armMotor2] = 63;
-	}
-	while(SensorValue[Potentiometer] >= 48)
-	{
-		motor[armMotor] = 0;
-		motor[armMotor2] = 0;
-	}
-	wait1Msec(1000);
-	motor[thing1top] = -50;
-	motor[thing2bottom] = 50;
   ClearTimer(T1);						// Resets timer T1 to start counting at 0
 
 	while(time1[T1] < 10000)  // Loops code while timer T1 has counted less than 10 seconds
