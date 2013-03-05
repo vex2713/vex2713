@@ -83,7 +83,8 @@ task usercontrol()
 		// Insert user code here. This is where you use the joystick values to update your motors, etc.
 		// .....................................................................................
 
-
+		bMotorReflected[port6] = true;  //motor port 5,6 are the lift motors for the arm.
+		bMotorReflected[port5] = false;
 		bMotorReflected[port1] = false;
 		bMotorReflected[port10] = true;
 		bMotorReflected[port2] = true;
@@ -97,7 +98,17 @@ task usercontrol()
 			motor[port2] = vexRT[Ch3];
 			motor[port9] = vexRT[Ch2];
 			motor[port10] = vexRT[Ch2];
-
+			if(vexRT[Btn5U] ==1){
+				motor[port5] = 100;
+				motor[port6] = 100;
+			}
+			else if(vexRT[Btn5D] == 1){
+				motor[port5] = -100;
+				motor[port6] = -100;
+			}else{
+				motor[port5] = 0;
+				motor[port6] = 0;
+			}
 		}
 	}
 }
