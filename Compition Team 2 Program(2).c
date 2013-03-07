@@ -1,3 +1,4 @@
+#pragma config(Sensor, in1,    autonset,   sensorPotentiometer)
 #pragma config(Sensor, dgtl1,  left,           sensorQuadEncoder)
 #pragma config(Sensor, dgtl3,  right,          sensorQuadEncoder)
 #pragma config(Sensor, dgtl8,  touch,          sensorTouch)
@@ -53,23 +54,26 @@ task autonomous()
 		bMotorReflected[port10] = true;
 		bMotorReflected[port2] = true;
 		bMotorReflected[port7] = false;
-
+		int leftturnspeed = 127;
+		int rightturnspeed = 127;
 		//turning
+		if (SensorValue[autonset] <= 600)
+
 		if (SensorValue[left] > 1900 && SensorValue[left] < 2400) {//2900
 
 
-				motor[port1] = -127; //left
-				motor[port2] = -127;  //left
-				motor[port7] = 127;  //right
-				motor[port10] = 127; //right
-	}
-	else if (SensorValue[left] < 4500) {
+			motor[port1] = -127; //left
+			motor[port2] = -127;  //left
+			motor[port9] = 127;  //right
+			motor[port10] = 127; //right
+		}
+		else if (SensorValue[left] < 4500) {
 
 			if (SensorValue[left] > SensorValue[right]){
 
 				motor[port1] = 85; //left     //Was 100 on 12/20/12
 				motor[port2] = 85;  //left    // Was 100 on 12/20/12
-				motor[port7] = 127;  //right
+				motor[port9] = 127;  //right
 				motor[port10] = 127; //right
 
 			}
@@ -77,7 +81,7 @@ task autonomous()
 
 				motor[port1] = 127;  //left
 				motor[port2] = 127;  //left
-				motor[port7] = 85;  //right      //Was 75 on 1/10/13
+				motor[port9] = 85;  //right      //Was 75 on 1/10/13
 				motor[port10] = 85; //right      //Was 75 on 1/10/13
 
 			}
@@ -85,7 +89,7 @@ task autonomous()
 			else{
 				motor[port1] = 127;  //left
 				motor[port2] = 127;  //left
-				motor[port7] = 127;  //right
+				motor[port9] = 127;  //right
 				motor[port10] = 127; //right
 			}
 		}
@@ -93,7 +97,7 @@ task autonomous()
 
 			motor[port1] = 0;
 			motor[port2] = 0;
-			motor[port7] = 0;
+			motor[port9] = 0;
 			motor[port10] = 0;
 
 
@@ -125,6 +129,12 @@ task usercontrol()
 {
 	// User control code here, inside the loop
 
+
+	bMotorReflected[port1] = false;
+	bMotorReflected[port10] = true;
+	bMotorReflected[port2] = true;
+	bMotorReflected[port9] = false;
+
 	while (true)
 	{
 		// This is the main execution loop for the user control program. Each time through the loop
@@ -135,70 +145,64 @@ task usercontrol()
 		// .....................................................................................
 
 
-		bMotorReflected[port1] = false;
-		bMotorReflected[port10] = true;
-		bMotorReflected[port2] = true;
-		bMotorReflected[port7] = false;
 
-		while (true)
+
+		motor[port1] = vexRT[Ch3];
+		motor[port2] = vexRT[Ch3];
+		motor[port9] = vexRT[Ch2];
+		motor[port10] = vexRT[Ch2];
+
+		// up and down
+		if (vexRT[Btn5U] == 1)
 
 		{
-
-			motor[port1] = vexRT[Ch3];
-			motor[port2] = vexRT[Ch3];
-			motor[port7] = vexRT[Ch2];
-			motor[port10] = vexRT[Ch2];
-
-			// up and down
-			if (vexRT[Btn8U] == 1)
-
-			{
-				motor[port5] = 127;
-				motor[port6] = 127;
-			}
-
-			else if (vexRT[Btn8D] == 1)
-
-			{
-				motor[port5] = -127;
-				motor[port6] = -127;
-			}
-			else
-			{
-				motor[port5] = 0;
-				motor[port6] = 0;
-			}
-			//	if (SensorValue[touch] == 1)
-			//	{
-			//	motor[port7] = 0;
-			//}
-
-			//push out and in
-			if (vexRT[Btn8L] == 1)
-
-			{
-				motor[port7] = 127;
-			}
-
-			else	if (vexRT[Btn8R] == 1)
-
-			{
-				motor[port7] = -127;
-			}
-			else
-			{
-				motor[port7] = 0;
-			}
-
-			//claw
-			if (vexRT[Btn7U] == 1)
-			{
-				motor[port3] = -127;
-			}
-			else
-			{
-				motor[port3] = 127;
-			}
+			motor[port5] = 127;
+			motor[port6] = 127;
 		}
+
+		else if (vexRT[Btn5D] == 1)
+
+		{
+			motor[port5] = -127;
+			motor[port6] = -127;
+		}
+		else
+		{
+			motor[port5] = 0;
+			motor[port6] = 0;
+		}
+		//	if (SensorValue[touch] == 1)
+		//	{
+		//	motor[port7] = 0;
+		//}
+
+		//push out and in
+		if (vexRT[Btn8L] == 1)
+
+		{
+			motor[port9] = 127;
+		}
+
+		else	if (vexRT[Btn8R] == 1)
+
+		{
+			motor[port9] = -127;
+		}
+		else
+		{
+			motor[port9] = 0;
+		}
+
+
+		//claw//
+
+
+		if (vexRT[Btn8U] == 1){
+			motor[servoPort3] = 127;
+		}
+		else if (vexRT[Btn8D] == 1) {
+			motor[servoPort3] = -127;
+		}
+
 	}
 }
