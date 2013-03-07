@@ -56,24 +56,25 @@ task autonomous()
 		bMotorReflected[port7] = false;
 		int leftturnspeed = 127;
 		int rightturnspeed = 127;
+		bool done = false;
 		//turning
-		if (SensorValue[autonset] <= 600)
+		//if (SensorValue[autonset] <= 600)
 
-		if (SensorValue[left] > 1900 && SensorValue[left] < 2400) {//2900
+		if (done == false && SensorValue[left] > 1900 && SensorValue[left] < 2400) {//2900
 
 
 			motor[port1] = -127; //left
 			motor[port2] = -127;  //left
-			motor[port9] = 127;  //right
+			motor[port7] = 127;  //right
 			motor[port10] = 127; //right
 		}
-		else if (SensorValue[left] < 4500) {
+		else if (done == false && SensorValue[left] < 4500) {
 
 			if (SensorValue[left] > SensorValue[right]){
 
 				motor[port1] = 85; //left     //Was 100 on 12/20/12
 				motor[port2] = 85;  //left    // Was 100 on 12/20/12
-				motor[port9] = 127;  //right
+				motor[port7] = 127;  //right
 				motor[port10] = 127; //right
 
 			}
@@ -81,7 +82,7 @@ task autonomous()
 
 				motor[port1] = 127;  //left
 				motor[port2] = 127;  //left
-				motor[port9] = 85;  //right      //Was 75 on 1/10/13
+				motor[port7] = 85;  //right      //Was 75 on 1/10/13
 				motor[port10] = 85; //right      //Was 75 on 1/10/13
 
 			}
@@ -89,19 +90,25 @@ task autonomous()
 			else{
 				motor[port1] = 127;  //left
 				motor[port2] = 127;  //left
-				motor[port9] = 127;  //right
+				motor[port7] = 127;  //right
 				motor[port10] = 127; //right
 			}
 		}
 		else {
 
+			done = true;
+			motor[port1] = -20;
+			motor[port2] = -20;
+			motor[port7] = -20;
+			motor[port10] = -20;
+
+			wait1Msec(2000);
 			motor[port1] = 0;
 			motor[port2] = 0;
-			motor[port9] = 0;
+			motor[port7] = 0;
 			motor[port10] = 0;
 
-
-
+			break;
 			//program b
 
 			//diagonal = 1616.66666666...
@@ -112,6 +119,7 @@ task autonomous()
 
 
 		}
+
 
 	}
 }
