@@ -14,7 +14,7 @@ task main(){
 		bMotorReflected[port10] = true;
 
 		if (SensorValue[yoyo] <= 600)
-	{	motor[port1] = 127;
+	{	motor[port1] = 127;//left
 		motor[port2] = 127;
 		motor[port7] = -127;
 		motor[port10] = -127;
