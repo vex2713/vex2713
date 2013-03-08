@@ -1,3 +1,4 @@
+
 #pragma config(I2C_Usage, I2C1, i2cSensors)
 #pragma config(Sensor, in1,    Potentiometer,  sensorPotentiometer)
 #pragma config(Sensor, I2C_1,  frontIEM,       sensorQuadEncoderOnI2CPort,    , AutoAssign)
@@ -5,10 +6,10 @@
 #pragma config(Sensor, I2C_3,  backIEM,        sensorQuadEncoderOnI2CPort,    , AutoAssign)
 #pragma config(Sensor, I2C_4,  leftIEM,        sensorQuadEncoderOnI2CPort,    , AutoAssign)
 #pragma config(Motor,  port1,           thing1top,     tmotorVex393, openLoop)
-#pragma config(Motor,  port3,           wristmotorr,   tmotorVex393, openLoop)
+#pragma config(Motor,  port3,           wristmotorl,   tmotorVex393, openLoop, reversed)
 #pragma config(Motor,  port4,           armMotor,      tmotorVex393, openLoop)
 #pragma config(Motor,  port5,           armMotor2,     tmotorVex393, openLoop, reversed)
-#pragma config(Motor,  port6,           wristmotorl,   tmotorVex393, openLoop)
+#pragma config(Motor,  port6,           wristmotorr,   tmotorVex393, openLoop)
 #pragma config(Motor,  port7,           frontMotor,    tmotorVex269, openLoop, encoder, encoderPort, I2C_1, 1000)
 #pragma config(Motor,  port8,           backMotor,     tmotorVex269, openLoop, encoder, encoderPort, I2C_3, 1000)
 #pragma config(Motor,  port9,           leftMotor,     tmotorVex269, openLoop, encoder, encoderPort, I2C_2, 1000)
@@ -33,8 +34,7 @@
 
 void pre_auton()
 {
-	// Set bStopTasksBetweenModes to false if you want to keep user created tasks running between
-	// Autonomous and Tele-Op modes. You will need to manage all user created tasks if set to false.
+
 	bStopTasksBetweenModes = true;
 
 	nMotorEncoder[rightMotor] = 0;
@@ -54,45 +54,60 @@ void pre_auton()
 
 task autonomous()
 {
-	motor[thing1top] = -50;
-	wait1Msec(2000);
-	while((SensorValue[I2C_1] <= 69)&&(SensorValue[I2C_3]<= 69))
+	motor[thing1top] = 127;
+	motor[wristmotorr] = -127;
+	motor[wristmotorl] = -127;
+	wait1Msec(1000);
+	motor[thing1top] = 0;
+	motor[wristmotorl] = 0;
+	motor[wristmotorr] = 0;
+	SensorValue[I2C_1] = 0;
+	SensorValue[I2C_2] = 0;
+	SensorValue[I2C_3] = 0;
+	SensorValue[I2C_4] = 0;
+
+
+	while((SensorValue[I2C_2] <= 10) && (SensorValue[I2C_4] <= 10))
 	{
-		motor[frontMotor] = 63;
-		motor[backMotor]  = 63;
-	}
-	while((SensorValue[I2C_1] >= 69)&&(SensorValue[I2C_3] >= 69))
-	{
+		motor[leftMotor] = 63;
+		motor[rightMotor] = 63;
 		motor[frontMotor] = 0;
 		motor[backMotor] = 0;
 	}
-	wait1Msec(500);
-	while(SensorValue[Potentiometer] >= 72)
+	while((SensorValue[I2C_2] >= 10)&&(SensorValue[I2C_4] >= 10))
 	{
-		motor[armMotor] = 100;
-		motor[armMotor2] = 100;
+		motor[leftMotor] = 0;
+		motor[rightMotor] = 0;
+		motor[backMotor] = 0;
+		motor[frontMotor] = 0;
 	}
-	while(SensorValue[Potentiometer] <= 72)
+	wait1Msec(1000);
+	while(SensorValue[Potentiometer] >= 3530)
+	{
+		motor[armMotor] = -100;
+		motor[armMotor2] = -100;
+	}
+	while(SensorValue[Potentiometer] <= 2055)
 	{
 		motor[armMotor] = 0;
 		motor[armMotor2] = 0;
 	}
 	wait1Msec(500);
-	motor[wristmotorl] = 100;
-	motor[wristmotorr] = 100;
-	wait1Msec(1000);
+	motor[wristmotorl] =2; //find value later
+	motor[wristmotorr] = 2;//find value later
 	motor[thing1top] = -100;
 	SensorValue[I2C_1] = 0;
 	SensorValue[I2C_3] = 0;
-	while((SensorValue[I2C_1] <= 69)&&(SensorValue[I2C_3]<= 69))
+	while((SensorValue[I2C_2] <= 10)&&(SensorValue[I2C_4]<= 10))
 	{
-		motor[frontMotor] = -63;
-		motor[backMotor]  = -63;
+		motor[rightMotor] = -63;
+		motor[leftMotor]  = -63;
 	}
-	while((SensorValue[I2C_1] >= 69) && (SensorValue[I2C_3]>= 69))
+
+	while((SensorValue[I2C_2] >= 10) && (SensorValue[I2C_4]>= 10))
 	{
-		motor[frontMotor] = 0;
-		motor[backMotor] = 0;
+		motor[rightMotor] = 0;
+		motor[leftMotor] = 0;
 	}
 }
 
@@ -109,82 +124,81 @@ task usercontrol()
 {
 	while (true)
 	{
-
 		if(vexRT[Btn7U] == 1)
-			if (SensorValue[Potentiometer] >= 72)
 		{
-			{
-				motor[armMotor] = 100;
-				motor[armMotor2] = 100;
-			}
+			motor[armMotor] = -127;
+			motor[armMotor2] = -127;
 		}
 		else if(vexRT[Btn7D] == 1)
-			if(SensorValue[Potentiometer] <= 72)
 		{
-			{
-				motor[armMotor] = -100;
-				motor[armMotor2] = -100;
-			}
+			motor[armMotor] = 127;
+			motor[armMotor2] = 127;
 		}
-		else if(vexRT[Btn5U]==1)
+		else
 		{
-			motor[thing1top] = 100;
+			motor[armMotor] = 0;
+			motor[armMotor2] = 0;
+		}
 
+		if(vexRT[Btn5U]==1)
+		{
+			motor[thing1top] = -127;
 		}
 		else if (vexRT[Btn5D] == 1)
 		{
-			motor[thing1top] = -100;
-
-		}
-		else if (vexRT[Btn7U] == 1)
-		{
-			motor[wristmotorl] = 100;
-			motor[wristmotorr] = 100;
-		}
-		else if (vexRT[Btn7D] == 1)
-		{
-			motor[wristmotorl] = -100;
-			motor[wristmotorr] = -100;
+			motor[thing1top] = 127;
 		}
 		else
 		{
-			motor[armMotor2] = 0;
-			motor[armMotor] = 0;
 			motor[thing1top] = 0;
+		}
+
+		if (vexRT[Btn6U] == 1)
+		{
+			motor[wristmotorl] = -127;
+			motor[wristmotorr] = -127;
+		}
+		else if (vexRT[Btn6D] == 1)
+		{
+			motor[wristmotorl] = 127;
+			motor[wristmotorr] = 127;
+		}
+		else
+		{
 			motor[wristmotorl] = 0;
 			motor[wristmotorr] = 0;
 		}
+
 		if( vexRT[Ch4] == 0)
 		{
-			int iCh1 = vexRT[Ch1];
 			int iCh2 = vexRT[Ch2];
+			int iCh1 = vexRT[Ch1];
 			if(vexRT[Ch1] > -15 && vexRT[Ch1] < 15)
 			{
-
-				iCh1 = 0;
+				iCh1= 0;
 			}
+			bMotorReflected[rightMotor] = false;
+			bMotorReflected[leftMotor] = true;
+			bMotorReflected[frontMotor] = false;
+			bMotorReflected[backMotor] = true;
 
-			bMotorReflected[port10] = true;
-			bMotorReflected[port9] = false;
-			bMotorReflected[port8] = true;
-			bMotorReflected[port7] = false;
-			motor[port10] = iCh1;							// Remove these as well and replace with your appropriate code
-			motor[port9] = iCh1;              // Remove these as well and replace with your appropriate code
-
-			motor[port8] = iCh2;
-			motor[port7] = iCh2;
+			motor[frontMotor] = iCh1;
+			motor[backMotor] = iCh1;
+			motor[rightMotor] = iCh2;
+			motor[leftMotor] = iCh2;
 		}
 		else
 		{
-			bMotorReflected[port10] = false;
-			bMotorReflected[port9] = false;
-			bMotorReflected[port8] = false;
-			bMotorReflected[port7] = false;
-			motor[port10] = vexRT[Ch4];							// Remove these as well and replace with your appropriate code
-			motor[port9] = vexRT[Ch4];              // Remove these as well and replace with your appropriate code
-			motor[port8] = vexRT[Ch4];
-			motor[port7] = vexRT[Ch4];
+			bMotorReflected[rightMotor] = true;
+			bMotorReflected[leftMotor] = true;
+			bMotorReflected[backMotor] = false;
+			bMotorReflected[frontMotor] = false;
+			motor[rightMotor] = vexRT[Ch4];
+			motor[leftMotor] = vexRT[Ch4];
+			motor[backMotor] = vexRT[Ch4];
+			motor[frontMotor] = vexRT[Ch4];
 
 		}
+
 	}
 }

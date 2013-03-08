@@ -119,7 +119,7 @@ task usercontrol()
 		}
 		else if (vexRT[Btn7U] == 1)
 		{
-		motor[wristmotor] = 100;
+			motor[wristmotor] = 100;
 		}
 		else if (vexRT[Btn7D] == 1)
 		{
