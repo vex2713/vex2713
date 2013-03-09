@@ -53,7 +53,7 @@ task autonomous()
 		bMotorReflected[port1] = false;
 		bMotorReflected[port10] = true;
 		bMotorReflected[port2] = true;
-		bMotorReflected[port7] = false;
+		bMotorReflected[port4] = false;
 		int leftturnspeed = 127;
 		int rightturnspeed = 127;
 		bool done = false;
@@ -65,7 +65,7 @@ task autonomous()
 
 			motor[port1] = -127; //left
 			motor[port2] = -127;  //left
-			motor[port7] = 127;  //right
+			motor[port4] = 127;  //right
 			motor[port10] = 127; //right
 		}
 		else if (done == false && SensorValue[left] < 4500) {
@@ -74,7 +74,7 @@ task autonomous()
 
 				motor[port1] = 85; //left     //Was 100 on 12/20/12
 				motor[port2] = 85;  //left    // Was 100 on 12/20/12
-				motor[port7] = 127;  //right
+				motor[port4] = 127;  //right
 				motor[port10] = 127; //right
 
 			}
@@ -82,7 +82,7 @@ task autonomous()
 
 				motor[port1] = 127;  //left
 				motor[port2] = 127;  //left
-				motor[port7] = 85;  //right      //Was 75 on 1/10/13
+				motor[port4] = 85;  //right      //Was 75 on 1/10/13
 				motor[port10] = 85; //right      //Was 75 on 1/10/13
 
 			}
@@ -90,7 +90,7 @@ task autonomous()
 			else{
 				motor[port1] = 127;  //left
 				motor[port2] = 127;  //left
-				motor[port7] = 127;  //right
+				motor[port4] = 127;  //right
 				motor[port10] = 127; //right
 			}
 		}
@@ -99,13 +99,13 @@ task autonomous()
 			done = true;
 			motor[port1] = -20;
 			motor[port2] = -20;
-			motor[port7] = -20;
+			motor[port4] = -20;
 			motor[port10] = -20;
 
 			wait1Msec(2000);
 			motor[port1] = 0;
 			motor[port2] = 0;
-			motor[port7] = 0;
+			motor[port4] = 0;
 			motor[port10] = 0;
 
 			break;
@@ -141,7 +141,7 @@ task usercontrol()
 	bMotorReflected[port1] = false;
 	bMotorReflected[port10] = true;
 	bMotorReflected[port2] = true;
-	bMotorReflected[port9] = false;
+	bMotorReflected[port4] = false;
 
 	while (true)
 	{
@@ -157,7 +157,7 @@ task usercontrol()
 
 		motor[port1] = vexRT[Ch3];
 		motor[port2] = vexRT[Ch3];
-		motor[port9] = vexRT[Ch2];
+		motor[port4] = vexRT[Ch2];
 		motor[port10] = vexRT[Ch2];
 
 		// up and down
@@ -181,24 +181,24 @@ task usercontrol()
 		}
 		//	if (SensorValue[touch] == 1)
 		//	{
-		//	motor[port7] = 0;
+		//	motor[port4] = 0;
 		//}
 
 		//push out and in
 		if (vexRT[Btn8L] == 1)
 
 		{
-			motor[port9] = 127;
+			motor[port4] = 127;
 		}
 
 		else	if (vexRT[Btn8R] == 1)
 
 		{
-			motor[port9] = -127;
+			motor[port4] = -127;
 		}
 		else
 		{
-			motor[port9] = 0;
+			motor[port4] = 0;
 		}
 
 
