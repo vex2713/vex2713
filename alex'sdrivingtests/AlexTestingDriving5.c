@@ -165,6 +165,7 @@ task usercontrol()
 				iCh1 = 0;
 			}
 
+
 			bMotorReflected[port8] = false;
 			bMotorReflected[port10] = true;
 			bMotorReflected[port7] = false;
@@ -180,13 +181,25 @@ task usercontrol()
 			bMotorReflected[port8] = true;
 			bMotorReflected[port10] = true;
 			bMotorReflected[port7] = true;
-			bMotorReflected[port8] = true;
+			bMotorReflected[port9] = true;
 			motor[port8] = vexRT[Ch4];							// Remove these as well and replace with your appropriate code
 			motor[port10] = vexRT[Ch4];              // Remove these as well and replace with your appropriate code
 			motor[port7] = vexRT[Ch4];
 			motor[port9] = vexRT[Ch4];
 
 		}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
