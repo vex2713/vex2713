@@ -10,7 +10,7 @@
 
 task main()
 {
-	int buttonpressed=0;
+	int buttonpressed=SensorValue(stopButton);
 
 	while(true)
 	{
@@ -36,25 +36,41 @@ task main()
 			motor[armMotor] = -127;   	//...lower the arm.
 		}
 
-    motor[frontRightMotor] = 0; //Tells all of the motors to stop, and waits 2 seconds.
+    motor[frontRightMotor] = -10; //Tells all of the motors to go backwards a tiny bit, and waits 0.75 seconds.
+    motor[backRightMotor]  = -10;
+    motor[frontLeftMotor] = -10;
+    motor[backLeftMotor]  = -10;
+    motor[armMotor] = 0;
+    wait1Msec(750);
+
+    motor[frontRightMotor] = 0; //Tells all of the motors to stop, and waits 1 seconds.
     motor[backRightMotor]  = 0;
     motor[frontLeftMotor] = 0;
     motor[backLeftMotor]  = 0;
     motor[armMotor] = 0;
 
-    wait1Msec(2000);
+    wait1Msec(1000);
 
   }
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+
+//+++++++++++++++++++++++++++++++++++++++++++++| Notes |+++++++++++++++++++++++++++++++++++++++++++++++
+
 //Code by Conlan and the VEX team//
 
 //News:
 
-//Added more documentation
-//Neatened up code slightly
-//Added some arm code
-//Imported knowledge to my brain!
+//Improved Button safety
+//Minor Changes
+//Tested (It works!)
+
+//Todo:
+
+//Start working on autonomus
+//Add Encoders
+//Show Conlan the FTP account for website
+
 
 //Note to devs: Every release, delete and add what you have added/changed/removed.
