@@ -14,20 +14,20 @@ task main()
 
 	while(true)
 	{
-	buttonpressed=SensorValue(stopButton);
+		buttonpressed=SensorValue(stopButton);
 
-	while (buttonpressed == 0)
-    {
-    	//Remote control setting
-	    motor[frontRightMotor] = vexRT[Ch2];
-      motor[backRightMotor]  = vexRT[Ch2]; //Left side of the robot is controlled by the left joystick, Y-axis
-      motor[frontLeftMotor] = vexRT[Ch3];
-      motor[backLeftMotor]  = vexRT[Ch3];
+		while (buttonpressed == 0)
+		{
+			//Remote control setting
+			motor[frontRightMotor] = vexRT[Ch2];
+			motor[backRightMotor]  = vexRT[Ch2]; //Left side of the robot is controlled by the left joystick, Y-axis
+			motor[frontLeftMotor] = vexRT[Ch3];
+			motor[backLeftMotor]  = vexRT[Ch3];
 
-      buttonpressed=SensorValue(stopButton);
-    }
+			buttonpressed=SensorValue(stopButton);
+		}
 
-    if(vexRT[Btn5U] == 1)       	//If button 5U is pressed...
+		if(vexRT[Btn5U] == 1)       	//If button 5U is pressed...
 		{
 			motor[armMotor] = 127;    	//...raise the arm.
 		}
@@ -36,22 +36,22 @@ task main()
 			motor[armMotor] = -127;   	//...lower the arm.
 		}
 
-    motor[frontRightMotor] = -10; //Tells all of the motors to go backwards a tiny bit, and waits 0.75 seconds.
-    motor[backRightMotor]  = -10;
-    motor[frontLeftMotor] = -10;
-    motor[backLeftMotor]  = -10;
-    motor[armMotor] = 0;
-    wait1Msec(750);
+		motor[frontRightMotor] = -10; //Tells all of the motors to go backwards a tiny bit, and waits 0.75 seconds.
+		motor[backRightMotor]  = -10;
+		motor[frontLeftMotor] = -10;
+		motor[backLeftMotor]  = -10;
+		motor[armMotor] = 0;
+		wait1Msec(750);
 
-    motor[frontRightMotor] = 0; //Tells all of the motors to stop, and waits 1 seconds.
-    motor[backRightMotor]  = 0;
-    motor[frontLeftMotor] = 0;
-    motor[backLeftMotor]  = 0;
-    motor[armMotor] = 0;
+		motor[frontRightMotor] = 0; //Tells all of the motors to stop, and waits 1 seconds.
+		motor[backRightMotor]  = 0;
+		motor[frontLeftMotor] = 0;
+		motor[backLeftMotor]  = 0;
+		motor[armMotor] = 0;
 
-    wait1Msec(1000);
+		wait1Msec(1000);
 
-  }
+	}
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -62,15 +62,12 @@ task main()
 
 //News:
 
-//Improved Button safety
-//Minor Changes
-//Tested (It works!)
+//Nothing much...
 
 //Todo:
 
 //Start working on autonomus
 //Add Encoders
-//Show Conlan the FTP account for website
 
 
 //Note to devs: Every release, delete and add what you have added/changed/removed.
