@@ -36,6 +36,30 @@ void pre_auton()
 	// Example: clearing encoders, setting servo positions, ...
 }
 
+void stopMotors()
+{
+	motor[frontRightMotor] = 0;
+	motor[frontLeftMotor]  = 0;
+	motor[backRightMotor] = 0;
+	motor[backLeftMotor]  = 0;
+}
+
+void moveForward(float tileDist)
+{
+	//left off here
+	int timeDistanceMS = tileDist * 1000; //Not using encoders, assumes 1 tile per second
+	//Motors at full speed
+	motor[frontRightMotor] = 127;
+	motor[frontLeftMotor]  = 127;
+	motor[backRightMotor] = 127;
+	motor[backLeftMotor]  = 127;
+
+	wait1Msec(timeDistanceMS);
+
+	stopMotors
+}
+
+
 /////////////////////////////////////////////////////////////////////////////////////////
 //
 //                                 Autonomous Task
@@ -51,6 +75,20 @@ task autonomous()
 	motor[leftMotor]  = 127;
 
 	wait1Msec(3000);
+
+	//Steps for starting on the blue tile in the hanging zone
+	//1. Move Forward for ? ft
+	moveForward(1); //TODO Get actual distance
+	//2. Turn 90 degrees to the right
+	//3. Move forward over bump and under barrier
+	moveForward(3); //TODO Get actual distance
+	//4. Stop
+
+	//Steps for starting on the blue tile in the hanging zone
+	//TODO
+
+
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
