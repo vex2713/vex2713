@@ -28,9 +28,9 @@
 
 void pre_auton()
 {
-  // Set bStopTasksBetweenModes to false if you want to keep user created tasks running between
-  // Autonomous and Tele-Op modes. You will need to manage all user created tasks if set to false.
-  bStopTasksBetweenModes = true;
+	// Set bStopTasksBetweenModes to false if you want to keep user created tasks running between
+	// Autonomous and Tele-Op modes. You will need to manage all user created tasks if set to false.
+	bStopTasksBetweenModes = true;
 
 	// All activities that occur before the competition starts
 	// Example: clearing encoders, setting servo positions, ...
@@ -46,7 +46,8 @@ void stopMotors()
 
 void moveForward(float tileDist)
 {
-	//left off here
+	//1 tile = 24in
+	//1 rotation = 240.448 counts
 	int timeDistanceMS = tileDist * 1000; //Not using encoders, assumes 1 tile per second
 	//Motors at full speed
 	motor[frontRightMotor] = 127;
@@ -56,7 +57,7 @@ void moveForward(float tileDist)
 
 	wait1Msec(timeDistanceMS);
 
-	stopMotors
+	//stopMotors
 }
 
 
@@ -71,8 +72,10 @@ void moveForward(float tileDist)
 
 task autonomous()
 {
-	motor[rightMotor] = 127;
-	motor[leftMotor]  = 127;
+	motor[frontRightMotor] = 127;
+	motor[frontLeftMotor]  = 127;
+	motor[backRightMotor] = 127;
+	motor[backLeftMotor]  = 127;
 
 	wait1Msec(3000);
 
@@ -102,42 +105,41 @@ task autonomous()
 
 task usercontrol()
 {
-  int buttonpressed=SensorValue(stopButton);
+	int buttonpressed=SensorValue(stopButton);
 
 	while (true)
 	{
-	  //Remote control setting
-			motor[frontRightMotor] = vexRT[Ch2];
-			motor[backRightMotor]  = vexRT[Ch2]; //Left side of the robot is controlled by the left joystick, Y-axis
-			motor[frontLeftMotor] = vexRT[Ch3];
-			motor[backLeftMotor]  = vexRT[Ch3];
+		//Remote control setting
+		motor[frontRightMotor] = vexRT[Ch2];
+		motor[backRightMotor]  = vexRT[Ch2]; //Left side of the robot is controlled by the left joystick, Y-axis
+		motor[frontLeftMotor] = vexRT[Ch3];
+		motor[backLeftMotor]  = vexRT[Ch3];
 
-			buttonpressed=SensorValue(stopButton);
-		}
-
-		if(vexRT[Btn5U] == 1)       	//If button 5U is pressed...
-		{
-			motor[armMotor] = 127;    	//...raise the arm.
-		}
-		else if(vexRT[Btn5D] == 1)  	//Else, if button 5D is pressed...
-		{
-			motor[armMotor] = -127;   	//...lower the arm.
-		}
-
-		motor[frontRightMotor] = -10; //Tells all of the motors to go backwards a tiny bit, and waits 0.75 seconds.
-		motor[backRightMotor]  = -10;
-		motor[frontLeftMotor] = -10;
-		motor[backLeftMotor]  = -10;
-		motor[armMotor] = 0;
-		wait1Msec(750);
-
-		motor[frontRightMotor] = 0; //Tells all of the motors to stop, and waits 1 seconds.
-		motor[backRightMotor]  = 0;
-		motor[frontLeftMotor] = 0;
-		motor[backLeftMotor]  = 0;
-		motor[armMotor] = 0;
-
-		wait1Msec(1000);
-
+		buttonpressed=SensorValue(stopButton);
 	}
+
+	if(vexRT[Btn5U] == 1)       	//If button 5U is pressed...
+	{
+		motor[armMotor] = 127;    	//...raise the arm.
+	}
+	else if(vexRT[Btn5D] == 1)  	//Else, if button 5D is pressed...
+	{
+		motor[armMotor] = -127;   	//...lower the arm.
+	}
+
+	motor[frontRightMotor] = -10; //Tells all of the motors to go backwards a tiny bit, and waits 0.75 seconds.
+	motor[backRightMotor]  = -10;
+	motor[frontLeftMotor] = -10;
+	motor[backLeftMotor]  = -10;
+	motor[armMotor] = 0;
+	wait1Msec(750);
+
+	motor[frontRightMotor] = 0; //Tells all of the motors to stop, and waits 1 seconds.
+	motor[backRightMotor]  = 0;
+	motor[frontLeftMotor] = 0;
+	motor[backLeftMotor]  = 0;
+	motor[armMotor] = 0;
+
+	wait1Msec(1000);
+
 }
