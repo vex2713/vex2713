@@ -1,4 +1,6 @@
+#pragma config(I2C_Usage, I2C1, i2cSensors)
 #pragma config(Sensor, dgtl1,  stopButton,     sensorTouch)
+#pragma config(Sensor, I2C_1,  leftMotorEncoder, sensorQuadEncoderOnI2CPort,    , AutoAssign)
 #pragma config(Motor,  port2,           frontRightMotor, tmotorServoContinuousRotation, openLoop)
 #pragma config(Motor,  port3,           backRightMotor, tmotorServoContinuousRotation, openLoop)
 #pragma config(Motor,  port4,           frontLeftMotor, tmotorServoContinuousRotation, openLoop, reversed)
@@ -44,20 +46,29 @@ void stopMotors()
 	motor[backLeftMotor]  = 0;
 }
 
-void moveForward(float tileDist)
-{
+void moveForward(float tileDist){
+	//Moves forward X tiles
+
 	//1 tile = 24in
+	//15.7 = 1 Rotation (inches traveled)
+	//24 / 15.7 = 1.528 = Rotation per tile
 	//1 rotation = 240.448 counts
-	int timeDistanceMS = tileDist * 1000; //Not using encoders, assumes 1 tile per second
+	//367.563 = Counts per tile
+	float countGoal = tileDist * 367.563;
+	float currentCount = 0;
 	//Motors at full speed
 	motor[frontRightMotor] = 127;
 	motor[frontLeftMotor]  = 127;
 	motor[backRightMotor] = 127;
 	motor[backLeftMotor]  = 127;
 
-	wait1Msec(timeDistanceMS);
+	nMotorEncoder[leftMotorEncoder] = 0; //Reset encoder count
 
-	//stopMotors
+	while(currentCount < countGoal){
+		currentCount = nMotorEncoder[leftMotorEncoder];
+	}
+
+	stopMotors();
 }
 
 
@@ -72,13 +83,6 @@ void moveForward(float tileDist)
 
 task autonomous()
 {
-	motor[frontRightMotor] = 127;
-	motor[frontLeftMotor]  = 127;
-	motor[backRightMotor] = 127;
-	motor[backLeftMotor]  = 127;
-
-	wait1Msec(3000);
-
 	//Steps for starting on the blue tile in the hanging zone
 	//1. Move Forward for ? ft
 	moveForward(1); //TODO Get actual distance
