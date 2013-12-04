@@ -2,6 +2,8 @@
 #pragma config(Sensor, dgtl1,  altControl,     sensorTouch)
 #pragma config(Sensor, dgtl2,  altControlLED,  sensorLEDtoVCC)
 #pragma config(Sensor, dgtl3,  debugLED,       sensorLEDtoVCC)
+#pragma config(Sensor, dgtl4,  autonomousConfig1, sensorTouch)
+#pragma config(Sensor, dgtl5,  autonomousConfig2, sensorTouch)
 #pragma config(Sensor, I2C_1,  leftMotorEncoder, sensorQuadEncoderOnI2CPort,    , AutoAssign)
 #pragma config(Motor,  port1,           armMotor,      tmotorVex393HighSpeed, openLoop, reversed)
 #pragma config(Motor,  port2,           frontLeft,     tmotorServoContinuousRotation, openLoop, reversed)
@@ -30,7 +32,6 @@
 
 void pre_auton(){
 
-	bool debug = false;
 	nMotorEncoder[backLeft] = 0;
 	bStopTasksBetweenModes = true;
 }
@@ -136,16 +137,54 @@ void turn(float degrees){
 
 task autonomous(){
 
+	word autonomousMode;
 
-	//Steps for starting on the blue tile in the hanging zone
-	//1. Move Forward for ? ft
-	moveForward(1);
-	//2. Turn 90 degrees to the right
-	turn(90);
-	//3. Move forward over bump and under barrier
-	moveForward(3);
-	//4. Stop
-	stopMotors();
+	if(SensorValue(autonomousConfig1)==0 && SensorValue(autonomousConfig2)==0){
+		autonomousMode=1;
+		//Blue Scoring
+	}
+	else if(SensorValue(autonomousConfig1)==0 && SensorValue(autonomousConfig2)==1){
+		autonomousMode=2;
+		//Blue Dead
+	}
+	else if(SensorValue(autonomousConfig1)==1 && SensorValue(autonomousConfig2)==0){
+		autonomousMode=3;
+		//Red Scoring
+	}
+	else if(SensorValue(autonomousConfig1)==1 && SensorValue(autonomousConfig2)==1){
+		autonomousMode=4;
+		//Red Dead
+	}
+
+
+
+
+	if(autonomousMode==1)
+	{
+		//Blue Scoring
+		//Steps for starting on the blue tile in the hanging zone
+		//1. Move Forward for ? ft
+		moveForward(1);
+		//2. Turn 90 degrees to the right
+		turn(90);
+		//3. Move forward over bump and under barrier
+		moveForward(3);
+		//4. Stop
+		stopMotors();
+	}
+	else if(autonomousMode==2)
+	{
+		//Blue Dead
+	}
+	else if(autonomousMode==3)
+	{
+		//Red Scoring
+	}
+	else if(autonomousMode==4)
+	{
+		//Red Dead
+	}
+
 
 	//Steps for starting on the blue tile in the hanging zone
 	//TODO
