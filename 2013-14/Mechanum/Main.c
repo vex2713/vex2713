@@ -5,7 +5,7 @@
 #pragma config(Sensor, dgtl4,  autonomousConfig1, sensorTouch)
 #pragma config(Sensor, dgtl5,  autonomousConfig2, sensorTouch)
 #pragma config(Sensor, I2C_1,  leftMotorEncoder, sensorQuadEncoderOnI2CPort,    , AutoAssign)
-#pragma config(Motor,  port1,           armMotor,      tmotorVex393HighSpeed, openLoop, reversed)
+#pragma config(Motor,  port1,           armMotor,      tmotorVex393HighSpeed, openLoop)
 #pragma config(Motor,  port2,           frontLeft,     tmotorServoContinuousRotation, openLoop, reversed)
 #pragma config(Motor,  port3,           frontRight,    tmotorServoContinuousRotation, openLoop)
 #pragma config(Motor,  port4,           backLeft,      tmotorVex269, openLoop, reversed, encoder, encoderPort, I2C_1, 1000)
@@ -79,11 +79,11 @@ void moveForward(float tileDist)
 void turn(float degrees){
 	/*
 	360 Completely rotate
-	180 turn around
-	90 Turn to the right
-	-270 turn to the right
-	270 turn to the left
-	-90 turn to the left
+	-180 turn around
+	-90 Turn to the right
+	270 turn to the right
+	-270 turn to the left
+	90 turn to the left
 
 	2 * PI * radius = 360 degrees
 	Radius = 9.5
@@ -119,9 +119,8 @@ void turn(float degrees){
 		while(currentCount > countGoal){
 			currentCount = abs(nMotorEncoder[backLeft]);
 		}
+		stopMotors();
 	}
-
-	stopMotors();
 
 
 }
@@ -163,13 +162,23 @@ task autonomous(){
 	{
 		//Blue Scoring
 		//Steps for starting on the blue tile in the hanging zone
-		//1. Move Forward for ? ft
-		moveForward(1);
-		//2. Turn 90 degrees to the right
-		turn(90);
-		//3. Move forward over bump and under barrier
-		moveForward(3);
-		//4. Stop
+		moveForward(3.25);
+		turn(120);
+		stopMotors();
+		moveForward(0.2);
+		moveForward(-2.2);
+		motor[armMotor] = 127; //Extend Arm
+		wait1Msec(3000);
+		stopMotors();
+		motor[armMotor] = 0; //Stop Arm
+		moveForward(0.2); //Move a tad forward
+		wait1Msec(500);
+		moveForward(-0.2); //Move a tad back
+		motor[armMotor] = -127; //Un-Extend Arm
+		wait1Msec(500);
+		stopMotors();
+		motor[armMotor] = 0; //Stop Arm
+		moveForward(4);
 		stopMotors();
 	}
 	else if(autonomousMode==2)
@@ -260,10 +269,10 @@ task usercontrol()
 		}
 		else{
 			//Tank Drive
-			motor[frontLeft]  = vexRT[Ch2];
-			motor[frontRight] = vexRT[Ch3];
-			motor[backLeft]  = vexRT[Ch2];
-			motor[backRight] = vexRT[Ch3];
+			motor[frontLeft]  = vexRT[Ch3];
+			motor[frontRight] = vexRT[Ch2];
+			motor[backLeft]  = vexRT[Ch3];
+			motor[backRight] = vexRT[Ch2];
 		}
 
 		if(vexRT[Btn7U]){
