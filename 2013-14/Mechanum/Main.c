@@ -34,6 +34,7 @@ void pre_auton(){
 
 	nMotorEncoder[backLeft] = 0;
 	bStopTasksBetweenModes = true;
+	writeDebugStreamLine("Pre Autonomus Called");
 }
 
 void stopMotors(){
@@ -41,6 +42,7 @@ void stopMotors(){
 	motor[frontLeft]  = 0;
 	motor[backRight] = 0;
 	motor[backLeft]  = 0;
+	writeDebugStreamLine("Stop Motors Called");
 }
 
 void moveForward(float tileDist)
@@ -57,6 +59,7 @@ void moveForward(float tileDist)
 	float countGoal = tileDist * 367.563;
 	float currentCount = 0;
 	//Motors at full speed
+	writeDebugStreamLine("Move Forward Called");
 
 
 	nMotorEncoder[backLeft] = 0; //Reset encoder count
@@ -72,7 +75,38 @@ void moveForward(float tileDist)
 	}
 
 	stopMotors();
+}
 
+void moveBackward(float tileDist)
+{
+	/*
+	Moves forward X tiles
+
+	1 tile = 24in
+	15.7 = 1 Rotation (inches traveled)
+	24 / 15.7 = 1.528 = Rotation per tile
+	1 rotation = 240.448 counts
+	367.563 = Counts per tile
+	*/
+	float countGoal = tileDist * 367.563;
+	float currentCount = 0;
+	//Motors at full speed
+	writeDebugStreamLine("Move Backward Called");
+
+
+	nMotorEncoder[backLeft] = 0; //Reset encoder count
+	currentCount = abs(nMotorEncoder[backLeft]);
+
+	motor[frontRight] = -127;
+	motor[frontLeft]  = -127;
+	motor[backRight] = -127;
+	motor[backLeft]  = -127;
+
+	while(currentCount < countGoal){
+		currentCount = abs(nMotorEncoder[backLeft]);
+	}
+
+	stopMotors();
 
 }
 
@@ -94,35 +128,32 @@ void turn(float degrees){
 	59.69 / 360 = 0.166
 	Counts per degree = 2.54
 	*/
-	float countGoal = degrees * 2.54;
+	bool turnLeft = false;
+	if(degrees < 0){
+		turnLeft = true;
+	}
+	float countGoal = abs(degrees) * 2.54;
 	float currentCount = 0;
 
 	nMotorEncoder[backLeft] = 0; //Reset encoder count
 	currentCount = abs(nMotorEncoder[backLeft]);
 
-	if(countGoal > 0){
+	if(turnLeft == true){
 		motor[frontLeft]  = 127;
 		motor[frontRight] = -127;
 		motor[backLeft]  = 127;
 		motor[backRight] = -127;
-
-		while(currentCount < countGoal){
-			currentCount = abs(nMotorEncoder[backLeft]);
-		}
 	}
 	else{
 		motor[frontLeft]  = -127;
 		motor[frontRight] = 127;
 		motor[backLeft]  = -127;
 		motor[backRight] = 127;
-
-		while(currentCount > countGoal){
-			currentCount = abs(nMotorEncoder[backLeft]);
-		}
-		stopMotors();
 	}
-
-
+	while(currentCount > countGoal){
+		currentCount = abs(nMotorEncoder[backLeft]);
+	}
+	stopMotors();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -135,46 +166,50 @@ void turn(float degrees){
 /////////////////////////////////////////////////////////////////////////////////////////
 
 task autonomous(){
-
+	writeDebugStreamLine("Autonomous Started");
 	word autonomousMode;
 
 	if(SensorValue(autonomousConfig1)==0 && SensorValue(autonomousConfig2)==0){
 		autonomousMode=1;
 		//Blue Scoring
+		writeDebugStreamLine("Position: Blue Scoring");
 	}
 	else if(SensorValue(autonomousConfig1)==0 && SensorValue(autonomousConfig2)==1){
 		autonomousMode=2;
 		//Blue Dead
+		writeDebugStreamLine("Position: Blue Dead");
 	}
 	else if(SensorValue(autonomousConfig1)==1 && SensorValue(autonomousConfig2)==0){
 		autonomousMode=3;
 		//Red Scoring
+		writeDebugStreamLine("Position: Red Scoring");
 	}
 	else if(SensorValue(autonomousConfig1)==1 && SensorValue(autonomousConfig2)==1){
 		autonomousMode=4;
 		//Red Dead
+		writeDebugStreamLine("Position: Red Dead");
 	}
 
-
-
+	writeDebugStreamLine("Autonomus mode: %d",(autonomousMode));
 
 	if(autonomousMode==1)
 	{
 		//Blue Scoring
-		//Steps for starting on the blue tile in the hanging zone
+		//Steps for starting on the blue tile in the scoring zone
 		moveForward(3.25);
-		turn(120);
+		turn(120); //Left
 		stopMotors();
-		moveForward(0.2);
-		moveForward(-2.2);
+		moveForward(0.4);
+		stopMotors();
+		moveBackward(2.2);
 		motor[armMotor] = 127; //Extend Arm
-		wait1Msec(3000);
+		wait1Msec(1000);
 		stopMotors();
 		motor[armMotor] = 0; //Stop Arm
 		moveForward(0.2); //Move a tad forward
 		wait1Msec(500);
-		moveForward(-0.2); //Move a tad back
-		motor[armMotor] = -127; //Un-Extend Arm
+		moveBackward(0.2); //Move a tad back
+		//motor[armMotor] = -127; //Un-Extend Arm
 		wait1Msec(500);
 		stopMotors();
 		motor[armMotor] = 0; //Stop Arm
@@ -184,19 +219,60 @@ task autonomous(){
 	else if(autonomousMode==2)
 	{
 		//Blue Dead
+		//Steps for starting on the blue tile in the hanging zone
+		moveForward(1.75);
+		turn(-120); //right
+		stopMotors();
+		moveForward(2.25);
+		stopMotors();
+		//motor[armMotor] = -127; //Un-Extend Arm
+		wait1Msec(500);
+		motor[armMotor] = 0; //Stop Arm
+		stopMotors();
+		moveForward(1.5);
+		stopMotors();
 	}
 	else if(autonomousMode==3)
 	{
 		//Red Scoring
+		moveForward(3.25);
+		turn(-120); //Right
+		stopMotors();
+		moveForward(0.4);
+		stopMotors();
+		moveBackward(2.2);
+		motor[armMotor] = 127; //Extend Arm
+		wait1Msec(1000);
+		stopMotors();
+		motor[armMotor] = 0; //Stop Arm
+		moveForward(0.2); //Move a tad forward
+		wait1Msec(500);
+		moveBackward(0.2); //Move a tad back
+		//motor[armMotor] = -127; //Un-Extend Arm
+		wait1Msec(500);
+		stopMotors();
+		motor[armMotor] = 0; //Stop Arm
+		moveForward(4);
+		stopMotors();
 	}
 	else if(autonomousMode==4)
 	{
 		//Red Dead
+		moveForward(1.75);
+		turn(120); //left
+		stopMotors();
+		moveForward(2.25);
+		stopMotors();
+		//motor[armMotor] = -127; //Un-Extend Arm
+		wait1Msec(500);
+		motor[armMotor] = 0; //Stop Arm
+		stopMotors();
+		moveForward(1.5);
+		stopMotors();
 	}
 
 
-	//Steps for starting on the blue tile in the hanging zone
-	//TODO
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -210,6 +286,7 @@ task autonomous(){
 
 task usercontrol()
 {
+	writeDebugStreamLine("User Control Started");
 
 	word strafeLeft=false;
 	word strafeRight=false;
@@ -221,6 +298,7 @@ task usercontrol()
 		//Update buttons
 		altControlUse=SensorValue(altControl);
 		if(altControlUse==1){
+			writeDebugStreamLine("Controls: Alternate");
 			strafeLeft=vexRT[Btn7L];
 			strafeRight=vexRT[Btn7R];
 			rotateLeft=vexRT[Btn8L];
@@ -228,6 +306,7 @@ task usercontrol()
 			SensorValue(altControlLED) = 1;
 		}
 		else{
+			writeDebugStreamLine("Controls: Regular");
 			strafeLeft=vexRT[Btn5U];
 			strafeRight=vexRT[Btn6U];
 			rotateLeft=vexRT[Btn5D];
