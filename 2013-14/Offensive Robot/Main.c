@@ -1,3 +1,4 @@
+#pragma config(Sensor, dgtl1,  autonomousSetting, sensorTouch)
 #pragma config(Motor,  port1,           wheelLeft,     tmotorVex393, openLoop)
 #pragma config(Motor,  port2,           lockingMotor,  tmotorServoStandard, openLoop)
 #pragma config(Motor,  port3,           pullingMotor,  tmotorVex393, openLoop)
@@ -45,10 +46,22 @@ task autonomous()
 {
 	writeDebugStreamLine("Autonomous started");
 	motor[wheelLeft] = 127;
-	motor[wheelRight]  = 127;
+	motor[wheelRight] = 127;
 	wait1Msec(1000);
 	motor[wheelLeft] = 0;
-	motor[wheelRight]  = 0;
+	motor[wheelRight] = 0;
+	wait1Msec(1000);
+	motor[wheelLeft] = -127;
+	motor[wheelRight] = 127;
+	wait1Msec(1000);
+	motor[wheelLeft] = 0;
+	motor[wheelRight] = 0;
+	wait1Msec(1000);
+	motor[wheelLeft] = 127;
+	motor[wheelRight] = 127;
+	wait1Msec(3000);
+	motor[wheelLeft] = 0;
+	motor[wheelRight] = 0;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
