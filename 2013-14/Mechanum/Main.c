@@ -355,10 +355,10 @@ task usercontrol()
 		}
 
 		if(vexRT[Btn7U]){
-			motor[armMotor] = 127;
+			motor[armMotor] = 80;
 		}
 		else if(vexRT[Btn7D]){
-			motor[armMotor] = -127;
+			motor[armMotor] = -80;
 		}
 		else{
 			motor[armMotor] = 0;
