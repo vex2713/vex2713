@@ -99,13 +99,13 @@ void waitforbutton(){
 task autonomous()
 {
 	writeDebugStreamLine("Autonomous started");
-	forward(2);
-	turnRight(2);
-	forward(5);
-	wait1Msec(120);
-	back(5);
-	turnRight(2);
-	forward(1.5);
+	//forward(2);
+	turnRight(0.5);
+	//forward(5);
+	//wait1Msec(120);
+	//back(5);
+	//turnRight(2);
+	//forward(1.5);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
