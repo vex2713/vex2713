@@ -75,6 +75,7 @@ void moveForward(float tileDist)
 	}
 
 	stopMotors();
+	writeDebugStreamLine("Move forward ended");
 }
 
 void moveBackward(float tileDist)
@@ -202,14 +203,14 @@ task autonomous(){
 		moveForward(0.4);
 		stopMotors();
 		moveBackward(2.2);
-		motor[armMotor] = 127; //Extend Arm
+		motor[armMotor] = -127; //Extend Arm
 		wait1Msec(1000);
 		stopMotors();
 		motor[armMotor] = 0; //Stop Arm
 		moveForward(0.2); //Move a tad forward
 		wait1Msec(500);
 		moveBackward(0.2); //Move a tad back
-		//motor[armMotor] = -127; //Un-Extend Arm
+		//motor[armMotor] = 127; //Un-Extend Arm
 		wait1Msec(500);
 		stopMotors();
 		motor[armMotor] = 0; //Stop Arm
