@@ -118,18 +118,19 @@ task usercontrol()
 		motor[backRightMotor]  = vexRT[Ch2]; //Left side of the robot is controlled by the left joystick, Y-axis
 		motor[frontLeftMotor] = vexRT[Ch3];
 		motor[backLeftMotor]  = vexRT[Ch3];
-
+		motor[armMotor] = vexRT[Btn8U];
 		buttonpressed=SensorValue(stopButton);
 	}
 
-	if(vexRT[Btn5U] == 1)       	//If button 5U is pressed...
+	//if(vexRT[Btn5U] == 1)       	//If button 5U is pressed...
 	{
-		motor[armMotor] = 127;    	//...raise the arm.
+		//motor[armMotor] = 127;    	//...raise the arm.
 	}
-	else if(vexRT[Btn5D] == 1)  	//Else, if button 5D is pressed...
+	//else if(vexRT[Btn5D] == 1)  	//Else, if button 5D is pressed...
 	{
-		motor[armMotor] = -127;   	//...lower the arm.
+		//motor[armMotor] = -127;   	//...lower the arm.
 	}
+
 
 	motor[frontRightMotor] = -10; //Tells all of the motors to go backwards a tiny bit, and waits 0.75 seconds.
 	motor[backRightMotor]  = -10;

@@ -1,4 +1,4 @@
-#pragma config(I2C_Usage, I2C1, i2cSensors)
+ #pragma config(I2C_Usage, I2C1, i2cSensors)
 #pragma config(Sensor, dgtl1,  altControl,     sensorTouch)
 #pragma config(Sensor, dgtl2,  altControlLED,  sensorLEDtoVCC)
 #pragma config(Sensor, dgtl3,  debugLED,       sensorLEDtoVCC)
@@ -69,6 +69,38 @@ void moveForward(float tileDist)
 	motor[frontLeft]  = 127;
 	motor[backRight] = 127;
 	motor[backLeft]  = 127;
+
+	while(currentCount < countGoal){
+		currentCount = abs(nMotorEncoder[backLeft]);
+	}
+
+	stopMotors();
+	writeDebugStreamLine("Move forward ended");
+}
+void strafeLeft(float tileDist)
+{
+	/*
+	Moves Left X tiles
+
+	1 tile = 24in
+	15.7 = 1 Rotation (inches traveled)
+	24 / 15.7 = 1.528 = Rotation per tile
+	1 rotation = 240.448 counts
+	367.563 = Counts per tile
+	*/
+	float countGoal = tileDist * 367.563;
+	float currentCount = 0;
+	//Motors at full speed
+	writeDebugStreamLine("Move Forward Called");
+
+
+	nMotorEncoder[backLeft] = 0; //Reset encoder count
+	currentCount = abs(nMotorEncoder[backLeft]);
+
+	motor[frontRight] = 127;
+	motor[frontLeft]  = 127;
+	motor[backRight] = -127;
+	motor[backLeft]  = -127;
 
 	while(currentCount < countGoal){
 		currentCount = abs(nMotorEncoder[backLeft]);
@@ -171,8 +203,8 @@ task autonomous(){
 	word autonomousMode;
 
 	if(SensorValue(autonomousConfig1)==0 && SensorValue(autonomousConfig2)==0){
-		autonomousMode=1;
-		//Blue Scoring
+		autonomousMode=5;
+		//Blue back with 2nd offensive
 		writeDebugStreamLine("Position: Blue Scoring");
 	}
 	else if(SensorValue(autonomousConfig1)==0 && SensorValue(autonomousConfig2)==1){
@@ -271,7 +303,21 @@ task autonomous(){
 		moveForward(1.5);
 		stopMotors();
 	}
-
+else if(autonomousMode==5)
+	{
+		//Blue Dead
+		//for if there is  a second offensive robot
+		strafeLeft(1.75);
+		turn(-120); //right
+		stopMotors();
+		moveForward(2.25);
+		//motor[armMotor] = -127; //Un-Extend Arm
+		wait1Msec(500);
+		motor[armMotor] = 0; //Stop Arm
+		stopMotors();
+		moveForward(1.5);
+		stopMotors();
+	}
 
 
 }
@@ -319,15 +365,15 @@ task usercontrol()
 		//Set motor direction based on button
 		if(strafeLeft==1){
 			//Move straight to the left
-			motor[frontLeft]  = -127;
-			motor[frontRight] = 127;
+			motor[frontLeft]  = -120;
+			motor[frontRight] = 120;
 			motor[backLeft]  = 127;
 			motor[backRight] = -127;
 		}
 		else if(strafeRight==1){
 			//Move straight to the right
-			motor[frontLeft]  = 127;
-			motor[frontRight] = -127;
+			motor[frontLeft]  = 122;
+			motor[frontRight] = -122;
 			motor[backLeft]  = -127;
 			motor[backRight] = 127;
 		}
@@ -344,6 +390,7 @@ task usercontrol()
 			//Rotate Counter-Clockwise
 			motor[frontLeft]  = -127;
 			motor[frontRight] = 127;
+
 			motor[backLeft]  = -127;
 			motor[backRight] = 127;
 		}
