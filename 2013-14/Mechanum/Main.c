@@ -1,9 +1,9 @@
- #pragma config(I2C_Usage, I2C1, i2cSensors)
-#pragma config(Sensor, dgtl1,  altControl,     sensorTouch)
-#pragma config(Sensor, dgtl2,  altControlLED,  sensorLEDtoVCC)
-#pragma config(Sensor, dgtl3,  debugLED,       sensorLEDtoVCC)
-#pragma config(Sensor, dgtl4,  autonomousConfig1, sensorTouch)
-#pragma config(Sensor, dgtl5,  autonomousConfig2, sensorTouch)
+#pragma config(I2C_Usage, I2C1, i2cSensors)
+#pragma config(Sensor, dgtl1,  autonomousConfig1, sensorTouch)
+#pragma config(Sensor, dgtl2,  autonomousConfig2, sensorTouch)
+#pragma config(Sensor, dgtl3,  unPauseAtonomous, sensorTouch)
+#pragma config(Sensor, dgtl4,  altControl,     sensorTouch)
+#pragma config(Sensor, dgtl5,  altControlLED,  sensorLEDtoVCC)
 #pragma config(Sensor, I2C_1,  leftMotorEncoder, sensorQuadEncoderOnI2CPort,    , AutoAssign)
 #pragma config(Motor,  port1,           armMotor,      tmotorVex393HighSpeed, openLoop)
 #pragma config(Motor,  port2,           frontLeft,     tmotorServoContinuousRotation, openLoop, reversed)
@@ -204,7 +204,7 @@ task autonomous(){
 
 	if(SensorValue(autonomousConfig1)==0 && SensorValue(autonomousConfig2)==0){
 		autonomousMode=5;
-		//Blue back with 2nd offensive
+		//Blue scoring
 		writeDebugStreamLine("Position: Blue Scoring");
 	}
 	else if(SensorValue(autonomousConfig1)==0 && SensorValue(autonomousConfig2)==1){
@@ -258,7 +258,7 @@ task autonomous(){
 		stopMotors();
 		moveForward(2.25);
 		stopMotors();
-		//motor[armMotor] = -127; //Un-Extend Arm
+		motor[armMotor] = -127; //Un-Extend Arm
 		wait1Msec(500);
 		motor[armMotor] = 0; //Stop Arm
 		stopMotors();
@@ -269,24 +269,18 @@ task autonomous(){
 	{
 		//Red Scoring
 		moveForward(3.25);
-		turn(-120); //Right
+		turn(120); //left
 		stopMotors();
-		moveForward(0.4);
+		moveForward(2.25);
 		stopMotors();
-		moveBackward(2.2);
 		motor[armMotor] = 127; //Extend Arm
 		wait1Msec(1000);
 		stopMotors();
 		motor[armMotor] = 0; //Stop Arm
-		moveForward(0.2); //Move a tad forward
-		wait1Msec(500);
-		moveBackward(0.2); //Move a tad back
-		//motor[armMotor] = -127; //Un-Extend Arm
-		wait1Msec(500);
-		stopMotors();
-		motor[armMotor] = 0; //Stop Arm
-		moveForward(4);
-		stopMotors();
+		turn(135); //left
+		moveForward(1); //Move forward to home square
+		while(SensorValue(unPauseAtonomous)==0){}
+		moveForward(1.75); //move towards barrier
 	}
 	else if(autonomousMode==4)
 	{
@@ -296,22 +290,22 @@ task autonomous(){
 		stopMotors();
 		moveForward(2.25);
 		stopMotors();
-		//motor[armMotor] = -127; //Un-Extend Arm
+		motor[armMotor] = -127; //Un-Extend Arm
 		wait1Msec(500);
 		motor[armMotor] = 0; //Stop Arm
 		stopMotors();
 		moveForward(1.5);
 		stopMotors();
 	}
-else if(autonomousMode==5)
+	else if(autonomousMode==5)
 	{
-		//Blue Dead
+		//Blue scoring
 		//for if there is  a second offensive robot
 		strafeLeft(1.75);
 		turn(-120); //right
 		stopMotors();
 		moveForward(2.25);
-		//motor[armMotor] = -127; //Un-Extend Arm
+		motor[armMotor] = -127; //Un-Extend Arm
 		wait1Msec(500);
 		motor[armMotor] = 0; //Stop Arm
 		stopMotors();
