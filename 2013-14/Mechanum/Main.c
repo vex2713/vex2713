@@ -22,12 +22,12 @@
 #include "Vex_Competition_Includes.c"   //Main competition background code...do not modify!
 
 /////////////////////////////////////////////////////////////////////////////////////////
-//
-//                          Pre-Autonomous Functions
-//
-// You may want to perform some actions before the competition starts. Do them in the
-// following function.
-//
+//                                                                                     //
+//                          Pre-Autonomous Functions                                   //
+//                                                                                     //
+// You may want to perform some actions before the competition starts. Do them in the  //
+// following function.                                                                 //
+//                                                                                     //
 /////////////////////////////////////////////////////////////////////////////////////////
 
 void pre_auton(){
@@ -189,14 +189,14 @@ void turn(float degrees){
 	stopMotors();
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
-//
-//                                 Autonomous Task
-//
-// This task is used to control your robot during the autonomous phase of a VEX Competition.
-// You must modify the code to add your own robot specific commands here.
-//
-/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
+//                                                                                            //
+//                                 Autonomous Task                                            //
+//                                                                                            //
+// This task is used to control your robot during the autonomous phase of a VEX Competition.  //
+// You must modify the code to add your own robot specific commands here.                     //
+//                                                                                            //
+////////////////////////////////////////////////////////////////////////////////////////////////
 
 task autonomous(){
 	writeDebugStreamLine("Autonomous Started");
@@ -316,14 +316,14 @@ task autonomous(){
 
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
-//
-//                                 User Control Task
-//
-// This task is used to control your robot during the user control phase of a VEX Competition.
-// You must modify the code to add your own robot specific commands here.
-//
-/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+//                                                                                             //
+//                                 User Control Task                                           //
+//                                                                                             //
+// This task is used to control your robot during the user control phase of a VEX Competition. //
+// You must modify the code to add your own robot specific commands here.                      //
+//                                                                                             //
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 task usercontrol()
 {
