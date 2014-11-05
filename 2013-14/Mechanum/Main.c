@@ -399,10 +399,10 @@ task usercontrol()
 {
 	writeDebugStreamLine("User Control Started");
 
-	word strafeLeft=false;
-	word strafeRight=false;
-	word rotateLeft=false;
-	word rotateRight=false;
+	word strafeLeft = false;
+	word strafeRight = false;
+	word rotateLeft = false;
+	word rotateRight = false;
 	word altControlUse=SensorValue(altControl);
 
 	while(true){
