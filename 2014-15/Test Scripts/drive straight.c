@@ -29,7 +29,7 @@
 void driveStraight(float feet)
 {
 	float distance=200*feet;//we measured and found that 200 is a good value
-	nMotorEncoder[frontright]  	=0;
+	nMotorEncoder[frontright]  =0;
 	nMotorEncoder[frontleft]  =0;
 	float distanceTraveled = 0;
 	int rightSensor;
@@ -76,7 +76,7 @@ void driveStraight(float feet)
 void  turn(float degrees)
 {
 	float distance=200*degrees;//we measured and found that 200 is a good value
-	nMotorEncoder[frontright]  	=0;
+	nMotorEncoder[frontright]  =0;
 	nMotorEncoder[frontleft]  =0;
 	float distanceTraveled = 0;
 	int rightSensor;
@@ -100,14 +100,29 @@ void  turn(float degrees)
 				rightPower =-(127-(rightSensor-leftSensor));
 
 			}
-			else
-			{
+			else {
 				rightPower =-127;
 				leftPower =127;
 			}
 		}
-		else
-		{//turning left
+		else {
+			//turning left
+			rightSensor = nMotorEncoder[frontright];
+			leftSensor = nMotorEncoder[frontleft];
+			distanceTraveled = rightSensor;
+			if(leftSensor>rightSensor){
+				rightPower =127;
+				leftPower =-(127-(leftSensor-rightSensor));
+			}
+			else if(rightSensor>leftSensor){
+				leftPower =-127;
+				rightPower =(127-(rightSensor-leftSensor));
+
+			}
+			else {
+				rightPower =127;
+				leftPower =-127;
+			}
 		}
 
 		motor[frontright] = rightPower;
@@ -128,7 +143,8 @@ void pre_auton()
 	// Set bStopTasksBetweenModes to false if you want to keep user created tasks running between
 	// Autonomous and Tele-Op modes. You will need to manage all user created tasks if set to false.
 	bStopTasksBetweenModes = true;
-
+	nMotorEncoder[frontright]  =0;
+	nMotorEncoder[frontleft]  =0;
 	// All activities that occur before the competition starts
 	// Example: clearing encoders, setting servo positions, ...
 }
@@ -145,6 +161,7 @@ void pre_auton()
 task autonomous()
 {
 	driveStraight(4);
+	turn(90);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -160,4 +177,5 @@ task usercontrol()
 {
 	// User control code here, inside the loop
 	driveStraight(4);
+	turn(-90);
 }
