@@ -39,8 +39,8 @@ void driveStraight(float feet)
 
 	while (distance >= distanceTraveled)
 	{
-		rightSensor = -nMotorEncoder[frontright];
-		leftSensor = nMotorEncoder[frontleft];
+		rightSensor = nMotorEncoder[frontright];
+		leftSensor = -nMotorEncoder[frontleft];
 		distanceTraveled = rightSensor;
 		if(leftSensor>rightSensor){
 			rightPower =127;
@@ -88,7 +88,7 @@ void  turn(float degrees)
 	{
 		if(degrees>0){
 			//turn right
-			rightSensor = nMotorEncoder[frontright];
+		rightSensor = nMotorEncoder[frontright];
 			leftSensor = nMotorEncoder[frontleft];
 			distanceTraveled = rightSensor;
 			if(leftSensor>rightSensor){
@@ -123,6 +123,11 @@ void  turn(float degrees)
 				rightPower =127;
 				leftPower =-127;
 			}
+
+
+
+
+
 		}
 
 		motor[frontright] = rightPower;
@@ -161,7 +166,7 @@ void pre_auton()
 task autonomous()
 {
 	driveStraight(4);
-	turn(90);
+//	turn(90);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -177,5 +182,5 @@ task usercontrol()
 {
 	// User control code here, inside the loop
 	driveStraight(4);
-	turn(-90);
+//	turn(-90);
 }
