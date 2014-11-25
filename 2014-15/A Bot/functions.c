@@ -52,13 +52,15 @@ void pincherControl(){
 			motor[leftPincher]=0;
 		}
 
-		if (Sensorvalue[rightPincherStop]==0){
+		if (SensorValue[rightPincherStop]==0){
 			motor[rightPincher]=127;
 		}
 		else{
 			motor[rightPincher]=0;
 		}
-
 	}
-
+	else{
+		motor[rightPincher]=0;
+		motor[leftPincher]=0;
+	}
 }
