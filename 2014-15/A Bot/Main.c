@@ -59,9 +59,6 @@ void pre_auton()
 
 task autonomous()
 {
-	// .....................................................................................
-	// Insert user code here.
-	// .....................................................................................
 	driveStraight(2);
 }
 
@@ -84,19 +81,19 @@ task usercontrol()
 
 		// This is the main execution loop for the user control program. Each time through the loop
 		// your program should update motor + servo values based on feedback from the joysticks.
-if (isTank == false){
-		//Arcade Drive
-		motor[MotorLeftFront]  = vexRT[Ch3] + vexRT[Ch4];
-		motor[MotorRightFront] = vexRT[Ch3] - vexRT[Ch4];
-		motor[MotorLeftBack]  = vexRT[Ch3] + vexRT[Ch4];
-		motor[MotorRightBack] = vexRT[Ch3] - vexRT[Ch4];
-	}
-	else{
-		motor[MotorLeftFront]  = vexRT[Ch2];
-		motor[MotorRightFront] = vexRT[Ch3];
-		motor[MotorLeftBack]  = vexRT[Ch2];
-		motor[MotorRightBack] = vexRT[Ch3];
-}
+		if (isTank == false){
+			//Arcade Drive
+			motor[MotorLeftFront]  = vexRT[Ch3] + vexRT[Ch4];
+			motor[MotorRightFront] = vexRT[Ch3] - vexRT[Ch4];
+			motor[MotorLeftBack]  = vexRT[Ch3] + vexRT[Ch4];
+			motor[MotorRightBack] = vexRT[Ch3] - vexRT[Ch4];
+		}
+		else{
+			motor[MotorLeftFront]  = vexRT[Ch2];
+			motor[MotorRightFront] = vexRT[Ch3];
+			motor[MotorLeftBack]  = vexRT[Ch2];
+			motor[MotorRightBack] = vexRT[Ch3];
+		}
 
 		//Arm Control
 		motor[armShoulder] = vexRT[Ch3Xmtr2]; //Xmtr2 == Partner Controller
