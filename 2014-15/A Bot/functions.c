@@ -12,7 +12,7 @@ void driveStraight(float feet)
 	while (distance >= distanceTraveled)
 	{
 		rightSensor = nMotorEncoder[MotorRightFront];
-		leftSensor = -nMotorEncoder[MotorLeftFront];
+		leftSensor = nMotorEncoder[MotorLeftFront];
 		distanceTraveled = rightSensor;
 		if(leftSensor>rightSensor){
 			rightPower =127;
@@ -41,4 +41,24 @@ void driveStraight(float feet)
 	motor[MotorLeftFront] = 0;
 	motor[MotorRightBack] = 0;
 	motor[MotorLeftBack] = 0;
+}
+
+void pincherControl(){
+	if (SensorValue[pincherStart]==1){
+		if (SensorValue[leftPincherStop]==0){
+			motor[leftPincher]=127;
+		}
+		else{
+			motor[leftPincher]=0;
+		}
+
+		if (Sensorvalue[rightPincherStop]==0){
+			motor[rightPincher]=127;
+		}
+		else{
+			motor[rightPincher]=0;
+		}
+
+	}
+
 }
