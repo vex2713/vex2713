@@ -44,7 +44,7 @@ void driveStraight(float feet)
 }
 
 void pincherControl(){
-	if (SensorValue[pincherStart]==1){
+	if (SensorValue[pincherStart]==1 || vexRT(Btn8D)){
 		if (SensorValue[leftPincherStop]==0){
 			motor[leftPincher]=127;
 		}
@@ -58,6 +58,10 @@ void pincherControl(){
 		else{
 			motor[rightPincher]=0;
 		}
+	}
+	else if(vexRT(Btn8U)){
+		motor[leftPincher]=-127;
+		motor[rightPincher]=-127;
 	}
 	else{
 		motor[rightPincher]=0;
