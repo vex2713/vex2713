@@ -1,4 +1,6 @@
 #pragma config(I2C_Usage, I2C1, i2cSensors)
+#pragma config(Sensor, in1,    shoulderPot,    sensorPotentiometer)
+#pragma config(Sensor, in2,    armPot,         sensorPotentiometer)
 #pragma config(Sensor, dgtl1,  isTank,         sensorTouch)
 #pragma config(Sensor, dgtl2,  pincherStart,   sensorTouch)
 #pragma config(Sensor, dgtl3,  leftPincherStop, sensorTouch)
@@ -8,8 +10,6 @@
 #pragma config(Sensor, I2C_4,  ,               sensorQuadEncoderOnI2CPort,    , AutoAssign)
 #pragma config(Sensor, I2C_5,  ,               sensorQuadEncoderOnI2CPort,    , AutoAssign)
 #pragma config(Sensor, I2C_6,  ,               sensorQuadEncoderOnI2CPort,    , AutoAssign)
-#pragma config(Sensor, I2C_7,  ,               sensorQuadEncoderOnI2CPort,    , AutoAssign)
-#pragma config(Sensor, I2C_8,  ,               sensorQuadEncoderOnI2CPort,    , AutoAssign)
 #pragma config(Motor,  port1,           MotorLeftFront, tmotorVex269_HBridge, openLoop, reversed)
 #pragma config(Motor,  port2,           MotorRightFront, tmotorVex269_MC29, openLoop)
 #pragma config(Motor,  port3,           MotorLeftBack, tmotorVex393_MC29, openLoop)
@@ -95,8 +95,6 @@ task usercontrol()
 			motor[MotorRightBack] = vexRT[Ch3];
 		}
 
-		//Arm Control
-		motor[armShoulder] = vexRT[Ch3Xmtr2]; //Xmtr2 == Partner Controller
-		motor[armElbow] = vexRT[Ch2Xmtr2];
+		armControl();
 	}
 }

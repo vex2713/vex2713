@@ -43,6 +43,29 @@ void driveStraight(float feet)
 	motor[MotorLeftBack] = 0;
 }
 
+void armControl(){
+	int shoulderMin = 100;
+	int shoulderMax = 3500;
+
+	int armMin = 100;
+	int armMax = 3500; //How far can it go?
+
+	if (SensorValue[shoulderPot]<shoulderMin || SensorValue[shoulderPot]>shoulderMax){
+		motor[armShoulder] = 0;
+	}
+	else{
+		motor[armShoulder] = vexRT[Ch3Xmtr2]; //Xmtr2 == Partner Controller
+	}
+
+	if (SensorValue[armPot]<armMin || SensorValue[armPot]>armMax){
+		motor[armShoulder] = 0;
+	}
+	else{
+		motor[armShoulder] = vexRT[Ch2Xmtr2];
+	}
+
+}
+
 void pincherControl(){
 	if (SensorValue[pincherStart]==1 || vexRT(Btn8D)){
 		if (SensorValue[leftPincherStop]==0){
@@ -60,8 +83,8 @@ void pincherControl(){
 		}
 	}
 	else if(vexRT(Btn8U)){
-		motor[leftPincher]=-127;
-		motor[rightPincher]=-127;
+		motor[leftPincher]=-80;
+		motor[rightPincher]=-80;
 	}
 	else{
 		motor[rightPincher]=0;
