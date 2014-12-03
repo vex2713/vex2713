@@ -58,10 +58,10 @@ void armControl(){
 	}
 
 	if (SensorValue[armPot]<armMin || SensorValue[armPot]>armMax){
-		motor[armShoulder] = 0;
+		motor[armElbow] = 0;
 	}
 	else{
-		motor[armShoulder] = vexRT[Ch2Xmtr2];
+		motor[armElbow] = vexRT[Ch2Xmtr2];
 	}
 
 }
