@@ -5,6 +5,16 @@ void stopDriving(){
 	motor[MotorLeftBack] = 0;
 }
 
+void leftDriveSpeed(int speed){
+	motor[MotorLeftBack] = speed;
+	motor[MotorLeftFront] = speed;
+}
+
+void rightDriveSpeed(int speed){
+	motor[MotorRightBack] = speed;
+	motor[MotorRightFront] = speed;
+}
+
 void driveStraight(float feet)
 {
 	float distance=200*feet;//we measured and found that 200 is a good value
@@ -37,22 +47,13 @@ void driveStraight(float feet)
 		}
 
 
-		leftDriveSpeed = leftPower;
-		rightDriveSpeed = rightPower;
+		leftDriveSpeed(leftPower);
+		rightDriveSpeed(rightPower);
 
 	}
 	stopDriving();
 }
 
-void leftDriveSpeed(int speed){
-	motor[MotorLeftBack] = speed;
-	motor[MotorLeftFront] = speed;
-}
-
-void rightDriveSpeed(int speed){
-	motor[MotorRightBack] = speed;
-	motor[MotorRightFront] = speed;
-}
 
 
 void turn(float deg){
