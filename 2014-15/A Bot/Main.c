@@ -5,6 +5,7 @@
 #pragma config(Sensor, dgtl2,  pincherStart,   sensorTouch)
 #pragma config(Sensor, dgtl3,  leftPincherStop, sensorTouch)
 #pragma config(Sensor, dgtl4,  rightPincherStop, sensorTouch)
+#pragma config(Sensor, dgtl5,  autoTrigger,    sensorTouch)
 #pragma config(Sensor, I2C_1,  leftEncoder,    sensorNone)
 #pragma config(Sensor, I2C_2,  rightEncoder,   sensorNone)
 #pragma config(Sensor, I2C_4,  ,               sensorQuadEncoderOnI2CPort,    , AutoAssign)
@@ -59,7 +60,17 @@ void pre_auton()
 
 task autonomous()
 {
-	driveStraight(2);
+	while(true){
+		driveStraight(2);
+		turn(-90);
+		driveStraight(2);
+		turn(-135);
+		driveStraight(3);
+
+		while(SensorValue[autoTrigger]==0){
+			//Wait for trigger to be pushed
+		}
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

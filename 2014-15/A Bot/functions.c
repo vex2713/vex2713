@@ -1,3 +1,10 @@
+void stopDriving(){
+	motor[MotorRightFront] = 0;
+	motor[MotorLeftFront] = 0;
+	motor[MotorRightBack] = 0;
+	motor[MotorLeftBack] = 0;
+}
+
 void driveStraight(float feet)
 {
 	float distance=200*feet;//we measured and found that 200 is a good value
@@ -30,17 +37,46 @@ void driveStraight(float feet)
 		}
 
 
-
-		motor[MotorLeftFront] = rightPower;
-		motor[MotorRightFront] = leftPower;
+		motor[MotorLeftFront] = leftPower;
 		motor[MotorLeftBack] = leftPower;
 		motor[MotorRightBack] = rightPower;
+		motor[MotorRightFront] = rightPower;
 
 	}
-	motor[MotorRightFront] = 0;
-	motor[MotorLeftFront] = 0;
-	motor[MotorRightBack] = 0;
-	motor[MotorLeftBack] = 0;
+	stopDriving();
+}
+
+void leftDriveSpeed(int speed){
+	motor[MotorLeftBack] = speed;
+	motor[MotorLeftFront] = speed;
+}
+
+void rightDriveSpeed(int speed){
+	motor[MotorRightBack] = speed;
+	motor[MotorRightFront] = speed;
+}
+
+
+void turn(float deg){
+	float targetDistance = 2*abs(deg); //Not sure if 2 is appropriate
+	int currentDistance = 0;
+	nMotorEncoder[MotorRightFront]  =0;
+
+	if (deg < 0){
+		//Turning Left
+		leftDriveSpeed(-127);
+		rightDriveSpeed(127);
+		}else{
+		//Turning Right
+		leftDriveSpeed(127);
+		rightDriveSpeed(-127);
+	}
+	//Wait until desired angle is reached
+	while(targetDistance > currentDistance){
+		currentDistance = abs(nMotorEncoder[MotorRightFront]);
+	}
+	//Stop Motors
+	stopDriving();
 }
 
 void armControl(){
