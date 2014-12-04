@@ -37,10 +37,8 @@ void driveStraight(float feet)
 		}
 
 
-		motor[MotorLeftFront] = leftPower;
-		motor[MotorLeftBack] = leftPower;
-		motor[MotorRightBack] = rightPower;
-		motor[MotorRightFront] = rightPower;
+		leftDriveSpeed = leftPower;
+		rightDriveSpeed = rightPower;
 
 	}
 	stopDriving();
