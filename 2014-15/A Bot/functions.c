@@ -1,4 +1,5 @@
 void stopDriving(){
+	//Stops all Driving Motors
 	motor[MotorRightFront] = 0;
 	motor[MotorLeftFront] = 0;
 	motor[MotorRightBack] = 0;
@@ -6,6 +7,7 @@ void stopDriving(){
 }
 
 void leftDriveSpeed(int speed){
+	//Make Left Motors drive at speed
 	motor[MotorLeftBack] = speed;
 	motor[MotorLeftFront] = speed;
 }
@@ -15,22 +17,23 @@ void rightDriveSpeed(int speed){
 	motor[MotorRightFront] = speed;
 }
 
-void driveStraight(float feet)
-{
-	float distance=200*feet;//we measured and found that 200 is a good value
+void driveStraight(float feet){
+	float distance=232*feet;//(256 per rotation / 13.25in per wheel rotation) * (12in / 1in) = 232 Counts per Foot & 19 Counts per Inch
 	nMotorEncoder[MotorRightFront]  =0;
 	nMotorEncoder[MotorLeftFront]  =0;
 	float distanceTraveled = 0;
 	int rightSensor;
 	int leftSensor;
+	//Uselss Note, Please Ignore. Serves no purpose in life
 	int rightPower;
 	int leftPower;
 
-	while (distance >= distanceTraveled)
+	while (distance > distanceTraveled)
 	{
 		rightSensor = nMotorEncoder[MotorRightFront];
 		leftSensor = nMotorEncoder[MotorLeftFront];
 		distanceTraveled = rightSensor;
+		distanceTraveled = abs(distanceTraveled);
 		if(leftSensor>rightSensor){
 			rightPower =127;
 			leftPower =127-(leftSensor-rightSensor);
