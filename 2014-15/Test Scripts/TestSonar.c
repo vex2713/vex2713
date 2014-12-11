@@ -45,14 +45,13 @@ task autonomous()
 	}
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
-//
-//                                 User Control Task
-//
-// This task is used to control your robot during the user control phase of a VEX Competition.
-// You must modify the code to add your own robot specific commands here.
-//
-/////////////////////////////////////////////////////////////////////////////////////////
+void sonarDrive(){
+	if(sonar>12){
+		motor[Motor1] = 127;
+		}else if(sonar<12){
+		motor[Motor1] = sonar*10;
+	}
+}
 
 task usercontrol()
 {
