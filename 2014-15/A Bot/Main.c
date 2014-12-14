@@ -8,10 +8,10 @@
 #pragma config(Sensor, dgtl5,  autoTrigger,    sensorTouch)
 #pragma config(Sensor, I2C_1,  leftEncoder,    sensorQuadEncoderOnI2CPort,    , AutoAssign)
 #pragma config(Sensor, I2C_2,  rightEncoder,   sensorQuadEncoderOnI2CPort,    , AutoAssign)
-#pragma config(Motor,  port1,           MotorLeftFront, tmotorVex269_HBridge, openLoop, reversed, driveLeft, encoderPort, I2C_1)
-#pragma config(Motor,  port2,           MotorRightFront, tmotorVex269_MC29, openLoop, driveRight, encoderPort, I2C_2)
-#pragma config(Motor,  port3,           MotorLeftBack, tmotorVex393_MC29, openLoop)
-#pragma config(Motor,  port4,           MotorRightBack, tmotorVex393_MC29, openLoop, reversed)
+#pragma config(Motor,  port1,           frontLeft, tmotorVex269_HBridge, openLoop, reversed, driveLeft, encoderPort, I2C_1)
+#pragma config(Motor,  port2,           frontRight, tmotorVex269_MC29, openLoop, driveRight, encoderPort, I2C_2)
+#pragma config(Motor,  port3,           backLeft, tmotorVex393_MC29, openLoop)
+#pragma config(Motor,  port4,           backRight, tmotorVex393_MC29, openLoop, reversed)
 #pragma config(Motor,  port5,           armShoulder,   tmotorVex393_MC29, openLoop)
 #pragma config(Motor,  port6,           armElbow,      tmotorVex393_MC29, openLoop)
 #pragma config(Motor,  port7,           leftPincher,   tmotorServoContinuousRotation, openLoop, reversed)
@@ -91,16 +91,16 @@ task usercontrol()
 		// your program should update motor + servo values based on feedback from the joysticks.
 		if (isTank == false){
 			//Arcade Drive
-			motor[MotorLeftFront]  = vexRT[Ch3] + vexRT[Ch4];
-			motor[MotorRightFront] = vexRT[Ch3] - vexRT[Ch4];
-			motor[MotorLeftBack]  = vexRT[Ch3] + vexRT[Ch4];
-			motor[MotorRightBack] = vexRT[Ch3] - vexRT[Ch4];
+			motor[frontLeft]  = vexRT[Ch3] + vexRT[Ch4];
+			motor[frontRight] = vexRT[Ch3] - vexRT[Ch4];
+			motor[backLeft]  = vexRT[Ch3] + vexRT[Ch4];
+			motor[backRight] = vexRT[Ch3] - vexRT[Ch4];
 		}
 		else{
-			motor[MotorLeftFront]  = vexRT[Ch3];
-			motor[MotorRightFront] = vexRT[Ch2];
-			motor[MotorLeftBack]  = vexRT[Ch3];
-			motor[MotorRightBack] = vexRT[Ch2];
+			motor[frontLeft]  = vexRT[Ch3];
+			motor[frontRight] = vexRT[Ch2];
+			motor[backLeft]  = vexRT[Ch3];
+			motor[backRight] = vexRT[Ch2];
 		}
 
 		//armControl(); //this requires the potentiometers to be connected

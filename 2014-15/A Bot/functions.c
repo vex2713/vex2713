@@ -1,26 +1,26 @@
 void stopDriving(){
 	//Stops all Driving Motors
-	motor[MotorRightFront] = 0;
-	motor[MotorLeftFront] = 0;
-	motor[MotorRightBack] = 0;
-	motor[MotorLeftBack] = 0;
+	motor[frontRight] = 0;
+	motor[frontLeft] = 0;
+	motor[backRight] = 0;
+	motor[backLeft] = 0;
 }
 
 void leftDriveSpeed(int speed){
 	//Make Left Motors drive at speed
-	motor[MotorLeftBack] = speed;
-	motor[MotorLeftFront] = speed;
+	motor[backLeft] = speed;
+	motor[frontLeft] = speed;
 }
 
 void rightDriveSpeed(int speed){
-	motor[MotorRightBack] = speed;
-	motor[MotorRightFront] = speed;
+	motor[backRight] = speed;
+	motor[frontRight] = speed;
 }
 
 void driveStraight(float feet){
 	float distance=232*feet;//(256 per rotation / 13.25in per wheel rotation) * (12in / 1in) = 232 Counts per Foot & 19 Counts per Inch
-	nMotorEncoder[MotorRightFront]  =0;
-	nMotorEncoder[MotorLeftFront]  =0;
+	nMotorEncoder[frontRight]  =0;
+	nMotorEncoder[frontLeft]  =0;
 	float distanceTraveled = 0;
 	int rightSensor;
 	int leftSensor;
@@ -30,8 +30,8 @@ void driveStraight(float feet){
 
 	while (distance > distanceTraveled)
 	{
-		rightSensor = nMotorEncoder[MotorRightFront];
-		leftSensor = nMotorEncoder[MotorLeftFront];
+		rightSensor = nMotorEncoder[frontRight];
+		leftSensor = nMotorEncoder[frontLeft];
 		distanceTraveled = rightSensor;
 		distanceTraveled = abs(distanceTraveled);
 		if(leftSensor>rightSensor){
@@ -62,7 +62,7 @@ void driveStraight(float feet){
 void turn(float deg){
 	float targetDistance = 2*abs(deg); //Not sure if 2 is appropriate
 	int currentDistance = 0;
-	nMotorEncoder[MotorRightFront]  =0;
+	nMotorEncoder[frontRight]  =0;
 
 	if (deg < 0){
 		//Turning Left
@@ -75,7 +75,7 @@ void turn(float deg){
 	}
 	//Wait until desired angle is reached
 	while(targetDistance > currentDistance){
-		currentDistance = abs(nMotorEncoder[MotorRightFront]);
+		currentDistance = abs(nMotorEncoder[frontRight]);
 	}
 	//Stop Motors
 	stopDriving();
