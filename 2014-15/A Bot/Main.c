@@ -58,7 +58,8 @@ void pre_auton()
 
 task autonomous()
 {
-	while(true){
+	driveUntil(5);
+	while(false){
 		driveStraight(2);
 		turn(-90);
 		driveStraight(2);
@@ -70,7 +71,6 @@ task autonomous()
 		}
 	}
 }
-
 /////////////////////////////////////////////////////////////////////////////////////////
 //
 //                                 User Control Task

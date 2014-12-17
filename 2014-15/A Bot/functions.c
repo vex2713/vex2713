@@ -129,3 +129,14 @@ void pincherControl(){
 		motor[leftPincher]=0;
 	}
 }
+void driveUntil(float dist){
+	if(sonar>dist){
+		leftDriveSpeed(127);
+		rightDriveSpeed(127);
+		}else if(sonar<dist){
+		stopDriving();
+		/*to do: leftDriveSpeed(dist*15);
+		rightDriveSpeed(dist*15);
+		*/
+	}
+}
