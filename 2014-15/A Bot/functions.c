@@ -104,6 +104,7 @@ void armControl(){
 
 }
 
+/*
 void pincherControl(){
 	if (SensorValue[pincherStart]==1 || vexRT(Btn8D)){
 		if (SensorValue[leftPincherStop]==0){
@@ -129,14 +130,31 @@ void pincherControl(){
 		motor[leftPincher]=0;
 	}
 }
+*/
+
 void driveUntil(float dist){
 	if(sonar>dist){
-		leftDriveSpeed(127);
-		rightDriveSpeed(127);
+		leftDriveSpeed(70);
+		rightDriveSpeed(70);
 		}else if(sonar<dist){
 		stopDriving();
 		/*to do: leftDriveSpeed(dist*15);
 		rightDriveSpeed(dist*15);
 		*/
+
+		//Output: dgtl7
+		//Input: dgtl6
 	}
+}
+
+void openClaw(){
+	motor[claw] = 127;
+}
+
+void clawGrabCube(){
+	motor[claw] = -127;
+}
+
+void clawGrabSkyrise(){
+	motor[claw] = 0;
 }
