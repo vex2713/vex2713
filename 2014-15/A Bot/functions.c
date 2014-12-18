@@ -106,29 +106,29 @@ void armControl(){
 
 /*
 void pincherControl(){
-	if (SensorValue[pincherStart]==1 || vexRT(Btn8D)){
-		if (SensorValue[leftPincherStop]==0){
-			motor[leftPincher]=127;
-		}
-		else{
-			motor[leftPincher]=0;
-		}
+if (SensorValue[pincherStart]==1 || vexRT(Btn8D)){
+if (SensorValue[leftPincherStop]==0){
+motor[leftPincher]=127;
+}
+else{
+motor[leftPincher]=0;
+}
 
-		if (SensorValue[rightPincherStop]==0){
-			motor[rightPincher]=127;
-		}
-		else{
-			motor[rightPincher]=0;
-		}
-	}
-	else if(vexRT(Btn8U)){
-		motor[leftPincher]=-80;
-		motor[rightPincher]=-80;
-	}
-	else{
-		motor[rightPincher]=0;
-		motor[leftPincher]=0;
-	}
+if (SensorValue[rightPincherStop]==0){
+motor[rightPincher]=127;
+}
+else{
+motor[rightPincher]=0;
+}
+}
+else if(vexRT(Btn8U)){
+motor[leftPincher]=-80;
+motor[rightPincher]=-80;
+}
+else{
+motor[rightPincher]=0;
+motor[leftPincher]=0;
+}
 }
 */
 
@@ -148,13 +148,25 @@ void driveUntil(float dist){
 }
 
 void openClaw(){
-	motor[claw] = 127;
+	motor[claw] = -127;
 }
 
 void clawGrabCube(){
-	motor[claw] = -127;
+	motor[claw] = 127;
 }
 
 void clawGrabSkyrise(){
 	motor[claw] = 0;
+}
+
+void lowerArm(){
+	//TODO: Code
+}
+
+void raiseArm(){
+	//TODO: Code
+}
+
+void raiseCube(){
+	//TODO: Code
 }
