@@ -137,10 +137,8 @@ void driveUntil(float dist){
 		leftDriveSpeed(70);
 		rightDriveSpeed(70);
 		}else if(sonar<dist){
-		stopDriving();
-		/*to do: leftDriveSpeed(dist*15);
+		leftDriveSpeed(dist*15);
 		rightDriveSpeed(dist*15);
-		*/
 
 		//Output: dgtl7
 		//Input: dgtl6
