@@ -12,7 +12,7 @@
 #pragma config(Motor,  port1,           frontLeft,     tmotorVex269_HBridge, openLoop, reversed, encoderPort, I2C_1)
 #pragma config(Motor,  port2,           frontRight,    tmotorVex269_MC29, openLoop, encoderPort, I2C_2)
 #pragma config(Motor,  port3,           backLeft,      tmotorVex393_MC29, openLoop)
-#pragma config(Motor,  port4,           backRight,     tmotorVex393_MC29, openLoop, reversed)
+#pragma config(Motor,  port4,           backRight,     tmotorVex393_MC29, openLoop)
 #pragma config(Motor,  port5,           armShoulder,   tmotorVex393_MC29, openLoop)
 #pragma config(Motor,  port6,           armElbow,      tmotorVex393_MC29, openLoop)
 #pragma config(Motor,  port7,           claw,          tmotorServoStandard, openLoop)
@@ -57,8 +57,10 @@ void pre_auton()
 
 task autonomous()
 {
-	driveUntil(10);
-	while(false){
+	writeDebugStream("Autonomous Started...");
+
+	//driveUntil(10);
+	while(true){
 		driveStraight(2);
 		turn(-90);
 		driveStraight(2);
@@ -86,14 +88,16 @@ task usercontrol()
 	while (true)
 	{
 		if(vexRT[Btn7D]){  //ClawControl
-			openClaw();
+			openClaw(); //Open
 		}
 		else if(vexRT[Btn7R]){
-			clawGrabCube();
+			clawGrabCube(); //Close
 		}
-		else if(vexRT[Btn7L]){
-			clawGrabSkyrise();
-		}
+		//else if(vexRT[Btn7L]){
+		//	clawGrabSkyrise();
+		//}
+
+
 
 
 		if (isTank == false){

@@ -133,10 +133,10 @@ motor[leftPincher]=0;
 */
 
 void driveUntil(float dist){
-	if(sonar>dist){
+	if(sonar > dist){
 		leftDriveSpeed(70);
 		rightDriveSpeed(70);
-		}else if(sonar<dist){
+		}else if(sonar < dist){
 		leftDriveSpeed(dist*15);
 		rightDriveSpeed(dist*15);
 
@@ -146,11 +146,11 @@ void driveUntil(float dist){
 }
 
 void openClaw(){
-	motor[claw] = -127;
+	motor[claw] = 127;
 }
 
 void clawGrabCube(){
-	motor[claw] = 127;
+	motor[claw] = -127;
 }
 
 void clawGrabSkyrise(){
@@ -167,4 +167,19 @@ void raiseArm(){
 
 void raiseCube(){
 	//TODO: Code
+}
+
+void moveShoulder(float position){
+	int currentPosition = SensorValue[shoulderPot];
+	int targetPosition = 1*position;
+	int maxSpeed = 127;
+	int speed = 0;
+
+	while(currentPosition < targetPosition){
+		speed = targetPosition - currentPosition;
+		if (speed > maxSpeed){
+			speed = maxSpeed;
+	}
+		motor[armShoulder] = speed;
+	}
 }

@@ -1,0 +1,12 @@
+1. Calibrate Potientiometer
+
+2. Combine armControl(); and moveShoulder();
+
+3. Make 4 arm Positions
+	Closed (down)
+	Closed
+	Up
+	Thin(Up & Elbo bent)
+
+4. Check email
+
