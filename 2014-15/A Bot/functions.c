@@ -24,7 +24,6 @@ void driveStraight(float feet){
 	float distanceTraveled = 0;
 	int rightSensor;
 	int leftSensor;
-	//Uselss Note, Please Ignore. Serves no purpose in life
 	int rightPower;
 	int leftPower;
 
@@ -158,7 +157,8 @@ void clawGrabSkyrise(){
 }
 
 void lowerArm(){
-	//TODO: Code
+	//TODO: Calibrate Potentiometers for arm
+	//Build won't let me touch it :(
 }
 
 void raiseArm(){
@@ -179,7 +179,7 @@ void moveShoulder(float position){
 		speed = targetPosition - currentPosition;
 		if (speed > maxSpeed){
 			speed = maxSpeed;
-	}
+		}
 		motor[armShoulder] = speed;
 	}
 }
