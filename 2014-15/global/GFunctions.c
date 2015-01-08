@@ -18,6 +18,69 @@ void driveControl(bool isTank){
 	}
 }
 
+void driveStraight(float feet){
+	float distance=232*feet;
+	//(256 per rotation / 13.25in per wheel rotation) * (12in / 1in) = 232 Counts per Foot & 19 Counts per Inch. 
+	//Omni-Directional Wheels
+	nMotorEncoder[frontRight]  =0;
+	nMotorEncoder[frontLeft]  =0;
+	float distanceTraveled = 0;
+	int rightSensor;
+	int leftSensor;
+	int rightPower;
+	int leftPower;
+
+	while (distance > distanceTraveled)
+	{
+		rightSensor = nMotorEncoder[frontRight];
+		leftSensor = nMotorEncoder[frontLeft];
+		distanceTraveled = rightSensor;
+		distanceTraveled = abs(distanceTraveled);
+		if(leftSensor>rightSensor){
+			rightPower =127;
+			leftPower =127-(leftSensor-rightSensor);
+		}
+		else if(rightSensor>leftSensor){
+			leftPower =127;
+			rightPower =127-(rightSensor-leftSensor);
+
+		}
+		else
+		{
+			rightPower =127;
+			leftPower =127;
+		}
+
+
+		leftDriveSpeed(leftPower);
+		rightDriveSpeed(rightPower);
+
+	}
+	stopDriving();
+}
+
+void turn(float deg){
+	float targetDistance = 2*abs(deg); //Not sure if 2 is appropriate
+	int currentDistance = 0;
+	nMotorEncoder[frontRight]  =0;
+
+	if (deg < 0){
+		//Turning Left
+		leftDriveSpeed(-127);
+		rightDriveSpeed(127);
+		}else{
+		//Turning Right
+		leftDriveSpeed(127);
+		rightDriveSpeed(-127);
+	}
+	//Wait until desired angle is reached
+	while(targetDistance > currentDistance){
+		currentDistance = abs(nMotorEncoder[frontRight]);
+	}
+	//Stop Motors
+	stopDriving();
+}
+
 void stopDriving(){
 	//Stops all Driving Motors
 	motor[frontRight] = 0;
