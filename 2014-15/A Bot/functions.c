@@ -1,21 +1,7 @@
-void stopDriving(){
-	//Stops all Driving Motors
-	motor[frontRight] = 0;
-	motor[frontLeft] = 0;
-	motor[backRight] = 0;
-	motor[backLeft] = 0;
-}
+//READ: THIS FILE IS NOT TO BE COMPILED STANDALONE
+//Please #include from a proper program
 
-void leftDriveSpeed(int speed){
-	//Make Left Motors drive at speed
-	motor[backLeft] = speed;
-	motor[frontLeft] = speed;
-}
-
-void rightDriveSpeed(int speed){
-	motor[backRight] = speed;
-	motor[frontRight] = speed;
-}
+#include "../global/GFunctions.c"
 
 void driveStraight(float feet){
 	float distance=232*feet;//(256 per rotation / 13.25in per wheel rotation) * (12in / 1in) = 232 Counts per Foot & 19 Counts per Inch
