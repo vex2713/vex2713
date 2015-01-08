@@ -80,29 +80,6 @@ void turn(float deg){
 	stopDriving();
 }
 
-void armControl(){
-	int shoulderMin = 100;
-	int shoulderMax = 3500;
-
-	int armMin = 100;
-	int armMax = 3500; //How far can it go?
-
-	if (SensorValue[shoulderPot]<shoulderMin || SensorValue[shoulderPot]>shoulderMax){
-		motor[armShoulder] = 0;
-	}
-	else{
-		motor[armShoulder] = vexRT[Ch3Xmtr2]; //Xmtr2 == Partner Controller
-	}
-
-	if (SensorValue[armPot]<armMin || SensorValue[armPot]>armMax){
-		motor[armElbow] = 0;
-	}
-	else{
-		motor[armElbow] = vexRT[Ch2Xmtr2];
-	}
-
-}
-
 /*
 void pincherControl(){
 if (SensorValue[pincherStart]==1 || vexRT(Btn8D)){
@@ -156,18 +133,6 @@ void clawGrabSkyrise(){
 	motor[claw] = 0;
 }
 
-void lowerArm(){
-	//TODO: Calibrate Potentiometers for arm
-	//Build won't let me touch it :(
-}
-
-void raiseArm(){
-	//TODO: Code
-}
-
-void raiseCube(){
-	//TODO: Code
-}
 
 void moveShoulder(float position){
 	int currentPosition = SensorValue[shoulderPot];
@@ -182,4 +147,45 @@ void moveShoulder(float position){
 		}
 		motor[armShoulder] = speed;
 	}
+}
+void jointControl(int motorPort, int potentiometer, int tarPos) {
+	//step 1: determine the speed
+	int speed = abs(SenorValue[potentiometer]-tarPos);
+	if(speed>125){
+		speed = 125;
+	}
+	//step 2: determine direction
+	if(tarPos>SensorValue[potentiometer]){//motor needs to move forward
+		motor[motorPort] = speed;
+	}
+	else{//motor runs backwards
+		motor[motorPort] = -speed;
+
+	}
+
+}
+/*target position is 4000 and if reading is 3000 the motor speed will decrease
+
+
+*/
+void armControl(int elbowTarPos, int shoulderTarPos){
+	jointControl(shoulderMotor, shoulderPot, shoulderTarPos);//shoulder motor = 5 potentiometer = 1
+	jointControl(elbowMotor, elbowPot, elbowTarPos);//elbow motor = 6  potentiometer = 2
+}
+void driveControl(bool isTank){
+	if (isTank == false){
+		//Arcade Drive
+		motor[frontLeft]  = vexRT[Ch3] + vexRT[Ch4];
+		motor[frontRight] = vexRT[Ch3] - vexRT[Ch4];
+		motor[backLeft]  = vexRT[Ch3] + vexRT[Ch4];
+		motor[backRight] = vexRT[Ch3] - vexRT[Ch4];
+	}
+	else{
+		motor[frontLeft]  = vexRT[Ch3];
+		motor[frontRight] = vexRT[Ch2];
+		motor[backLeft]  = vexRT[Ch3];
+		motor[backRight] = vexRT[Ch2];
+	}
+
+
 }
