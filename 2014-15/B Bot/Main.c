@@ -26,7 +26,7 @@
 void pre_auton()
 {
 	bStopTasksBetweenModes = true;
-	word WHEEL_TYPE = omni;
+	int WHEEL_TYPE = "omni";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
