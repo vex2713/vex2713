@@ -32,10 +32,10 @@ motor[leftPincher]=0;
 */
 
 void driveUntil(float dist){
-	if(sonar > dist){
+	if(SensorValue[sonar] > dist){
 		leftDriveSpeed(70);
 		rightDriveSpeed(70);
-		}else if(sonar < dist){
+		}else if(SensorValue[sonar] < dist){
 		leftDriveSpeed(dist*15);
 		rightDriveSpeed(dist*15);
 
@@ -68,12 +68,12 @@ void moveShoulder(float position){
 		if (speed > maxSpeed){
 			speed = maxSpeed;
 		}
-		motor[armShoulder] = speed;
+		motor[shoulderMotor] = speed;
 	}
 }
 void jointControl(int motorPort, int potentiometer, int tarPos) {
 	//step 1: determine the speed
-	int speed = abs(SenorValue[potentiometer]-tarPos);
+	int speed = abs(SensorValue[potentiometer]-tarPos);
 	if(speed>125){
 		speed = 125;
 	}
@@ -94,21 +94,4 @@ void jointControl(int motorPort, int potentiometer, int tarPos) {
 void armControl(int elbowTarPos, int shoulderTarPos){
 	jointControl(shoulderMotor, shoulderPot, shoulderTarPos);//shoulder motor = 5 potentiometer = 1
 	jointControl(elbowMotor, elbowPot, elbowTarPos);//elbow motor = 6  potentiometer = 2
-}
-void driveControl(bool isTank){
-	if (isTank == false){
-		//Arcade Drive
-		motor[frontLeft]  = vexRT[Ch3] + vexRT[Ch4];
-		motor[frontRight] = vexRT[Ch3] - vexRT[Ch4];
-		motor[backLeft]  = vexRT[Ch3] + vexRT[Ch4];
-		motor[backRight] = vexRT[Ch3] - vexRT[Ch4];
-	}
-	else{
-		motor[frontLeft]  = vexRT[Ch3];
-		motor[frontRight] = vexRT[Ch2];
-		motor[backLeft]  = vexRT[Ch3];
-		motor[backRight] = vexRT[Ch2];
-	}
-
-
 }

@@ -80,7 +80,7 @@ task autonomous()
 task usercontrol()
 {
 	// User control code here, inside the loop
-	int sholderTarPos = 0;
+	int shoulderTarPos = 0;
 	int elbowTarPos = 0;
 	while (true)
 	{
@@ -100,7 +100,7 @@ task usercontrol()
 		  shoulderTarPos = 4000;
 			elbowTarPos = 4000;
 		}
-		driveControl(isTank);
+		driveControl(false);
 		armControl(elbowTarPos,shoulderTarPos); //this requires the potentiometers to be connected
 	}
 }
