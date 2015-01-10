@@ -1,6 +1,8 @@
 #pragma config(I2C_Usage, I2C1, i2cSensors)
-#pragma config(Motor,  port1,           backRight,     tmotorVex269_HBridge, openLoop, reversed, driveLeft, encoderPort, None)
-#pragma config(Motor,  port2,           backLeft,      tmotorVex269_MC29, openLoop, driveRight, encoderPort, None)
+#pragma config(Sensor, I2C_1,  ,               sensorQuadEncoderOnI2CPort,    , AutoAssign)
+#pragma config(Sensor, I2C_2,  ,               sensorQuadEncoderOnI2CPort,    , AutoAssign)
+#pragma config(Motor,  port1,           backRight,     tmotorVex269_HBridge, openLoop, reversed, driveRight, encoderPort, I2C_1)
+#pragma config(Motor,  port2,           backLeft,      tmotorVex269_MC29, openLoop, driveLeft, encoderPort, I2C_2)
 #pragma config(Motor,  port3,           frontRight,    tmotorVex393_MC29, openLoop, reversed)
 #pragma config(Motor,  port4,           frontLeft,     tmotorVex393_MC29, openLoop)
 #pragma config(Motor,  port8,           claw,          tmotorServoStandard, openLoop)
@@ -29,6 +31,7 @@ void pre_auton()
 {
 	bStopTasksBetweenModes = true;
 	string WHEEL_TYPE = "omni";
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -42,7 +45,7 @@ void pre_auton()
 
 task autonomous()
 {
-	//Insert Code Here
+//	driveStraight(-1);
 }
 
 

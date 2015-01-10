@@ -54,21 +54,21 @@ void pre_auton()
 task autonomous()
 {
 	writeDebugStream("Autonomous Started...");
+	driveStraight(2);
 
-	//driveUntil(10);
-	while(true){
+	//	while(true){
 
 
-		driveStraight(2);
-		turn(-90);
-		driveStraight(2);
-		turn(-135);
-		driveStraight(3);
-
-		while(SensorValue[autoTrigger]==0){
-			//Wait for trigger to be pushed
-		}
-	}
+	//		driveStraight(2);
+	//	/*	turn(-90);
+	//		driveStraight(2);
+	//		turn(-135);
+	//		driveStraight(3);
+	//*/
+	//		while(SensorValue[autoTrigger]==0){
+	//			//Wait for trigger to be pushed
+	//		}
+	//}
 }
 /////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -102,8 +102,12 @@ task usercontrol()
 			shoulderTarPos = 4000;
 			elbowTarPos = 4000;
 		}
-		//driveControl(false);
-		manualArmControl();
-		//armControl(elbowTarPos,shoulderTarPos); //this requires the potentiometers to be connected
+		driveControl(true);
+
+		if(false){//!vexRT[Btn6DXmtr2]) {
+			armControl(elbowTarPos,shoulderTarPos); //this requires the potentiometers to be connected
+			} else {
+			manualArmControl();
+		}
 	}
 }

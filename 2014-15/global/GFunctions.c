@@ -77,11 +77,15 @@ void clawPosControl(int motorNumb){
 
 void driveStraight(float feet){
 	float distance=232*feet;
-	//(256 per rotation / 13.25in per wheel rotation) * (12in / 1in) = 232 Counts per Foot & 19 Counts per Inch.
+	//(256 per rotation / 13.25in per wheel rotation) * (12in / 1in) = 232 Counts per Foot & 19 Counts per Inch. (A-Bot)
 	//Omni-Directional Wheels
 	nMotorEncoder[frontRight]  =0;
 	nMotorEncoder[frontLeft]  =0;
+	nMotorEncoder[backRight]  =0;
+	nMotorEncoder[backLeft]  =0;
 	float distanceTraveled = 0;
+	int maxSpeed = 90;
+
 	int rightSensor;
 	int leftSensor;
 	int rightPower;
@@ -94,18 +98,18 @@ void driveStraight(float feet){
 		distanceTraveled = rightSensor;
 		distanceTraveled = abs(distanceTraveled);
 		if(leftSensor>rightSensor){
-			rightPower =127;
-			leftPower =127-(leftSensor-rightSensor);
+			rightPower =maxSpeed;
+			leftPower =maxSpeed-(leftSensor-rightSensor);
 		}
 		else if(rightSensor>leftSensor){
-			leftPower =127;
-			rightPower =127-(rightSensor-leftSensor);
+			leftPower =maxSpeed;
+			rightPower =maxSpeed-(rightSensor-leftSensor);
 
 		}
 		else
 		{
-			rightPower =127;
-			leftPower =127;
+			rightPower =maxSpeed;
+			leftPower =maxSpeed;
 		}
 
 
