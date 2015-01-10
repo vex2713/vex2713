@@ -39,6 +39,42 @@ void driveControl(bool isTank){
 	}
 }
 
+void servoOpen(int motnrNumb){
+	motor[motnrNumb] = 127;
+}
+
+void servoClose(int motnrNumb){
+	motor[motnrNumb] = -127;
+}
+
+void servoMid(int motnrNumb){
+	motor[motnrNumb] = 0;
+}
+
+void clawControl(int motorNumb){
+	if(vexRT[Btn7U]){
+		servoOpen(motorNumb);
+	}
+	else if(vexRT[Btn7D]) {
+		servoClose(motorNumb);
+	}
+	else if(vexRT[Btn7R]) {
+		servoMid(motorNumb);
+	}
+}
+
+void clawPosControl(int motorNumb){
+	if(vexRT[Btn8U]){
+		servoOpen(motorNumb);
+	}
+	else if(vexRT[Btn8D]) {
+		servoClose(motorNumb);
+	}
+	else if(vexRT[Btn8R]) {
+		servoMid(motorNumb);
+	}
+}
+
 void driveStraight(float feet){
 	float distance=232*feet;
 	//(256 per rotation / 13.25in per wheel rotation) * (12in / 1in) = 232 Counts per Foot & 19 Counts per Inch.

@@ -44,18 +44,6 @@ void driveUntil(float dist){
 	}
 }
 
-void openClaw(){
-	motor[claw] = 127;
-}
-
-void clawGrabCube(){
-	motor[claw] = -127;
-}
-
-void clawGrabSkyrise(){
-	motor[claw] = 0;
-}
-
 
 void moveShoulder(float position){
 	int currentPosition = SensorValue[shoulderPot];
@@ -87,9 +75,8 @@ void jointControl(int motorPort, int potentiometer, int tarPos) {
 	}
 
 }
-/*target position is 4000 and if reading is 3000 the motor speed will decrease
-
-*/void manualArmControl(){
+//target position is 4000 and if reading is 3000 the motor speed will decrease
+void manualArmControl(){
 	motor[shoulderMotor]  = vexRT[Ch3];
 	motor[elbowMotor]  = vexRT[Ch2];
 }

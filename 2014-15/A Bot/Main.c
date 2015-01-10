@@ -59,7 +59,7 @@ task autonomous()
 	while(true){
 
 
-	  driveStraight(2);
+		driveStraight(2);
 		turn(-90);
 		driveStraight(2);
 		turn(-135);
@@ -93,17 +93,17 @@ task usercontrol()
 		else if(vexRT[Btn7D]) { //ArmDown
 			shoulderTarPos = 2000;
 			elbowTarPos = 100;
-	}
+		}
 		else if(vexRT[Btn7L]) { //ArmDrop
 			shoulderTarPos = 4000;
 			elbowTarPos = 0;
-	}
+		}
 		else if(vexRT[Btn7R]){ //ArmSet
-		  shoulderTarPos = 4000;
+			shoulderTarPos = 4000;
 			elbowTarPos = 4000;
 		}
 		//driveControl(false);
 		manualArmControl();
-		armControl(elbowTarPos,shoulderTarPos); //this requires the potentiometers to be connected
+		//armControl(elbowTarPos,shoulderTarPos); //this requires the potentiometers to be connected
 	}
 }
