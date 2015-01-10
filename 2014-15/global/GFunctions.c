@@ -23,7 +23,7 @@ void rightDriveSpeed(int speed){
 }
 
 void driveControl(bool isTank){
-//Standard drive control
+	//Standard drive control
 	if (isTank == false){
 		//Arcade Drive
 		motor[frontLeft]  = vexRT[Ch3] + vexRT[Ch4];
@@ -39,7 +39,7 @@ void driveControl(bool isTank){
 	}
 }
 
-/*void driveStraight(float feet){
+void driveStraight(float feet){
 	float distance=232*feet;
 	//(256 per rotation / 13.25in per wheel rotation) * (12in / 1in) = 232 Counts per Foot & 19 Counts per Inch.
 	//Omni-Directional Wheels
@@ -79,19 +79,20 @@ void driveControl(bool isTank){
 	}
 	stopDriving();
 }
-*/
+
 void testDriveAuto(string direction, int autoSpeed){//12ft = 0.90566 rotation
-	while(direction = "F"){
+	while(direction == "F"){
 		motor[backLeft] = autoSpeed;
 		motor[backRight] = autoSpeed;
-		motor[frontLeft
-}
-	while(direction = "B"){
+		motor[frontLeft] = autoSpeed;
+		motor[frontRight] = autoSpeed;
+	}
+	while(direction == "B"){
 
-}
-	while(direction = "L"){
+	}
+	while(direction == "L"){
 
-}
+	}
 }
 void turn(float deg){
 	float targetDistance = 2*abs(deg); //Not sure if 2 is appropriate
