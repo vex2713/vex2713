@@ -36,6 +36,8 @@
 //
 /////////////////////////////////////////////////////////////////////////////////////////
 
+int BOT_ID = 1;
+
 void pre_auton()
 {
 	bStopTasksBetweenModes = true;
@@ -54,7 +56,7 @@ void pre_auton()
 task autonomous()
 {
 	writeDebugStream("Autonomous Started...");
-	driveStraight(2);
+	driveStraight(2, BOT_ID);
 
 	//	while(true){
 
@@ -102,7 +104,7 @@ task usercontrol()
 			shoulderTarPos = 4000;
 			elbowTarPos = 4000;
 		}
-		driveControl(true);
+		driveControl(1);
 
 		if(false){//!vexRT[Btn6DXmtr2]) {
 			armControl(elbowTarPos,shoulderTarPos); //this requires the potentiometers to be connected

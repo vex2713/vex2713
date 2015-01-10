@@ -84,3 +84,8 @@ void armControl(int elbowTarPos, int shoulderTarPos){
 	jointControl(shoulderMotor, shoulderPot, shoulderTarPos);//shoulder motor = 5 potentiometer = 1
 	jointControl(elbowMotor, elbowPot, elbowTarPos);//elbow motor = 6  potentiometer = 2
 }
+void armAuton(){
+	motor[shoulderMotor] = 127;
+	waitInMilliseconds(2000);
+	motor[shoulderMotor] = 127;
+}

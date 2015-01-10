@@ -27,11 +27,14 @@
 //
 /////////////////////////////////////////////////////////////////////////////////////////
 
+int BOT_ID = 2; //2 = B
+
 void pre_auton()
 {
 	bStopTasksBetweenModes = true;
 	string WHEEL_TYPE = "omni";
-
+	nMotorEncoder[backRight]  =0;
+	nMotorEncoder[backLeft]  =0;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -45,7 +48,9 @@ void pre_auton()
 
 task autonomous()
 {
-//	driveStraight(-1);
+	driveStraight(1, BOT_ID);
+	//driveStraight(1, BOT_ID);
+	//servoOpen(8);
 }
 
 
@@ -61,7 +66,7 @@ task autonomous()
 task usercontrol()
 {
 	while (true){
-		driveControl(true); //true = tank
+		driveControl(1); //tank = 1 arcade = 2 RC = 3
 		clawControl(claw);
 		clawPosControl(clawPos);
 	}
