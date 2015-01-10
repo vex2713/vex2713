@@ -24,12 +24,13 @@ void rightDriveSpeed(int speed){
 
 void driveControl(int driveMode){// tank = 1 arcade = 2 RC = 3
 	//Standard drive control
+  float turnSpeed = 0.8;
 	if (driveMode == 2){
 		//Arcade Drive
-		motor[frontLeft]  = vexRT[Ch3] + vexRT[Ch4];
-		motor[frontRight] = vexRT[Ch3] - vexRT[Ch4];
-		motor[backLeft]  = vexRT[Ch3] + vexRT[Ch4];
-		motor[backRight] = vexRT[Ch3] - vexRT[Ch4];
+		motor[frontLeft]  = vexRT[Ch3] + vexRT[Ch4] * turnSpeed;
+		motor[frontRight] = vexRT[Ch3] - vexRT[Ch4] * turnSpeed;
+		motor[backLeft]  = vexRT[Ch3] + vexRT[Ch4] * turnSpeed;
+		motor[backRight] = vexRT[Ch3] - vexRT[Ch4] * turnSpeed;
 		}else if(driveMode == 1){
 		//Tank Drive
 		motor[frontLeft]  = vexRT[Ch3];
@@ -39,10 +40,10 @@ void driveControl(int driveMode){// tank = 1 arcade = 2 RC = 3
 	}
 	else if(driveMode == 3){
 		//RC Car
-		motor[frontLeft]  = vexRT[Ch3] + vexRT[Ch1];
-		motor[frontRight] = vexRT[Ch3] - vexRT[Ch1];
-		motor[backLeft]  = vexRT[Ch3] + vexRT[Ch1];
-		motor[backRight] = vexRT[Ch3] - vexRT[Ch1];
+		motor[frontLeft]  = vexRT[Ch3] + vexRT[Ch1] * turnSpeed;
+		motor[frontRight] = vexRT[Ch3] - vexRT[Ch1] * turnSpeed;
+		motor[backLeft]  = vexRT[Ch3] + vexRT[Ch1] * turnSpeed;
+		motor[backRight] = vexRT[Ch3] - vexRT[Ch1] * turnSpeed;
 }
 
 }

@@ -66,7 +66,7 @@ task autonomous()
 task usercontrol()
 {
 	while (true){
-		driveControl(1); //tank = 1 arcade = 2 RC = 3
+		driveControl(3); //tank = 1 arcade = 2 RC = 3
 		clawControl(claw);
 		clawPosControl(clawPos);
 	}
