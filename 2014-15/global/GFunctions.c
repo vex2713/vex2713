@@ -39,7 +39,7 @@ void driveControl(bool isTank){
 	}
 }
 
-void driveStraight(float feet){
+/*void driveStraight(float feet){
 	float distance=232*feet;
 	//(256 per rotation / 13.25in per wheel rotation) * (12in / 1in) = 232 Counts per Foot & 19 Counts per Inch.
 	//Omni-Directional Wheels
@@ -79,7 +79,20 @@ void driveStraight(float feet){
 	}
 	stopDriving();
 }
+*/
+void testDriveAuto(string direction, int autoSpeed){//12ft = 0.90566 rotation
+	while(direction = "F"){
+		motor[backLeft] = autoSpeed;
+		motor[backRight] = autoSpeed;
+		motor[frontLeft
+}
+	while(direction = "B"){
 
+}
+	while(direction = "L"){
+
+}
+}
 void turn(float deg){
 	float targetDistance = 2*abs(deg); //Not sure if 2 is appropriate
 	int currentDistance = 0;

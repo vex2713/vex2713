@@ -57,7 +57,9 @@ task autonomous()
 
 	//driveUntil(10);
 	while(true){
-		driveStraight(2);
+
+
+	  driveStraight(2);
 		turn(-90);
 		driveStraight(2);
 		turn(-135);
@@ -100,7 +102,8 @@ task usercontrol()
 		  shoulderTarPos = 4000;
 			elbowTarPos = 4000;
 		}
-		driveControl(false);
+		//driveControl(false);
+		manualArmControl();
 		armControl(elbowTarPos,shoulderTarPos); //this requires the potentiometers to be connected
 	}
 }
