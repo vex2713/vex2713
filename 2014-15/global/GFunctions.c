@@ -24,7 +24,7 @@ void rightDriveSpeed(int speed){
 
 void driveControl(int driveMode){// tank = 1 arcade = 2 RC = 3
 	//Standard drive control
-  float turnSpeed = 0.8;
+	float turnSpeed = 0.8;
 	if (driveMode == 2){
 		//Arcade Drive
 		motor[frontLeft]  = vexRT[Ch3] + vexRT[Ch4] * turnSpeed;
@@ -44,7 +44,7 @@ void driveControl(int driveMode){// tank = 1 arcade = 2 RC = 3
 		motor[frontRight] = vexRT[Ch3] - vexRT[Ch1] * turnSpeed;
 		motor[backLeft]  = vexRT[Ch3] + vexRT[Ch1] * turnSpeed;
 		motor[backRight] = vexRT[Ch3] - vexRT[Ch1] * turnSpeed;
-}
+	}
 
 }
 
@@ -142,18 +142,18 @@ void driveStraight(float feet, int BOT_ID){
 }
 /*
 void testDriveAuto(string direction, int autoSpeed){//12ft = 0.90566 rotation
-	while(direction == "F"){
-		motor[backLeft] = autoSpeed;
-		motor[backRight] = autoSpeed;
-		motor[frontLeft] = autoSpeed;
-		motor[frontRight] = autoSpeed;
-	}
-	while(direction == "B"){
+while(direction == "F"){
+motor[backLeft] = autoSpeed;
+motor[backRight] = autoSpeed;
+motor[frontLeft] = autoSpeed;
+motor[frontRight] = autoSpeed;
+}
+while(direction == "B"){
 
-	}
-	while(direction == "L"){
+}
+while(direction == "L"){
 
-	}
+}
 }
 */
 void turn(float deg){
