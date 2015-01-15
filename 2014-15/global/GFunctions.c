@@ -37,8 +37,7 @@ void driveControl(int driveMode){// tank = 1 arcade = 2 RC = 3
 		motor[frontRight] = vexRT[Ch2];
 		motor[backLeft]  = vexRT[Ch3];
 		motor[backRight] = vexRT[Ch2];
-	}
-	else if(driveMode == 3){
+		}else if(driveMode == 3){
 		//RC Car
 		motor[frontLeft]  = vexRT[Ch3] + vexRT[Ch1] * turnSpeed;
 		motor[frontRight] = vexRT[Ch3] - vexRT[Ch1] * turnSpeed;
