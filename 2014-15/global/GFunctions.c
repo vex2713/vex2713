@@ -94,12 +94,12 @@ void driveStraight(float feet, int BOT_ID){
 	//Omni-Directional Wheels
 	//B bot:(650 per rotation / 13.25in per wheel rotation) * (12in / 1in) = 588.68 counts per foot & 49.06 Counts per Inch.
 	if (BOT_ID==1){
-		float distance=231.85*feet;
+		distance=231.85*feet;
 		nMotorEncoder[frontRight]  =0;
 		nMotorEncoder[frontLeft]  =0;
 	}
 	else if (BOT_ID==2){
-		float distance=588.68*feet;//motor calibration for b bot complete!
+		distance=588.68*feet;//motor calibration for b bot complete!
 		nMotorEncoder[backRight]  =0;
 		nMotorEncoder[backLeft]  =0;
 	}
