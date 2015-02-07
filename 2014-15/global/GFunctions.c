@@ -37,7 +37,8 @@ void driveControl(int driveMode){// tank = 1 arcade = 2 RC = 3
 		motor[frontRight] = vexRT[Ch2];
 		motor[backLeft]  = vexRT[Ch3];
 		motor[backRight] = vexRT[Ch2];
-		}else if(driveMode == 3){
+	}
+	else if(driveMode == 3){
 		//RC Car
 		motor[frontLeft]  = vexRT[Ch3] + vexRT[Ch1] * turnSpeed;
 		motor[frontRight] = vexRT[Ch3] - vexRT[Ch1] * turnSpeed;
@@ -57,6 +58,10 @@ void servoClose(int motnrNumb){
 
 void servoMid(int motnrNumb){
 	motor[motnrNumb] = 0;
+}
+
+void servoSet(int motnrNumb, int pos){
+	motor[motnrNumb] = pos;
 }
 
 void clawControl(int motorNumb){
@@ -84,14 +89,17 @@ void clawPosControl(int motorNumb){
 }
 
 void driveStraight(float feet, int BOT_ID){
-	float distance=232*feet;
-	//(256 per rotation / 13.25in per wheel rotation) * (12in / 1in) = 232 Counts per Foot & 19 Counts per Inch. (A-Bot)
+	float distance;
+	//A bot:(256 per rotation / 13.25in per wheel rotation) * (12in / 1in) = 231.85 Counts per Foot & 19.33 Counts per Inch.
 	//Omni-Directional Wheels
+	//B bot:(650 per rotation / 13.25in per wheel rotation) * (12in / 1in) = 588.68 counts per foot & 49.06 Counts per Inch.
 	if (BOT_ID==1){
+		float distance=231.85*feet;
 		nMotorEncoder[frontRight]  =0;
 		nMotorEncoder[frontLeft]  =0;
 	}
 	else if (BOT_ID==2){
+		float distance=588.68*feet;//motor calibration for b bot complete!
 		nMotorEncoder[backRight]  =0;
 		nMotorEncoder[backLeft]  =0;
 	}
@@ -139,22 +147,7 @@ void driveStraight(float feet, int BOT_ID){
 	}
 	stopDriving();
 }
-/*
-void testDriveAuto(string direction, int autoSpeed){//12ft = 0.90566 rotation
-while(direction == "F"){
-motor[backLeft] = autoSpeed;
-motor[backRight] = autoSpeed;
-motor[frontLeft] = autoSpeed;
-motor[frontRight] = autoSpeed;
-}
-while(direction == "B"){
 
-}
-while(direction == "L"){
-
-}
-}
-*/
 void turn(float deg){
 	float targetDistance = 2*abs(deg); //Not sure if 2 is appropriate
 	int currentDistance = 0;
@@ -175,4 +168,29 @@ void turn(float deg){
 	}
 	//Stop Motors
 	stopDriving();
+}
+
+void digitalArmContol(int motorNumb, int forwardBtn, int backwardBtn, int speed){
+	if(vexRT[forwardBtn]){//rotate arm forwards
+		motor[motorNumb]=speed;
+	}
+	else if(vexRT[backwardBtn]) {//rotate arm backwards
+		motor[motorNumb]=-speed;
+	}
+	else{
+		motor[motorNumb]= 0;//stop motor
+	}
+}
+
+void digitalServoControl(int motorNumb, int closeBtn, int openBtn){
+	if(vexRT[closeBtn]){//close
+		servoClose(motorNumb);
+	}
+	else if(vexRT[openBtn]) {//open
+		servoOpen(motorNumb);
+	}
+}
+
+void analogArmControl(int motorNumb, int analogChannel){
+	motor[motorNumb] = vexRT[analogChannel];
 }
