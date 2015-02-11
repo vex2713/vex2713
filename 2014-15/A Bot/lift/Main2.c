@@ -88,6 +88,5 @@ task usercontrol()
 	while (true)
 	{
 		driveControl(1);  //1 = Tank
-		liftControl();
 	}
 }
