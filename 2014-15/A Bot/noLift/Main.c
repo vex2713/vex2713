@@ -72,11 +72,10 @@ task usercontrol()
 	// User control code here, inside the loop
 	int shoulderTarPos = 0;
 	int elbowTarPos = 0;
-	while (true)
-	{
-		if(vexRT[Btn7U]){  //ArmUp
+	while (true){
+		if(vexRT[Btn7U]){ //ArmUp
 			shoulderTarPos = 4000;
-			elbowTarPos = 333;//measure pot for button values
+			elbowTarPos = 333; //measure pot for button values
 		}
 		else if(vexRT[Btn7D]) { //ArmDown
 			shoulderTarPos = 2000;
@@ -90,10 +89,11 @@ task usercontrol()
 			shoulderTarPos = 4000;
 			elbowTarPos = 4000;
 		}
+
 		driveControl(1);
 
 		if(false){//!vexRT[Btn6DXmtr2]) {
-			armControl(elbowTarPos,shoulderTarPos); //this requires the potentiometers to be connected
+			armControl(elbowTarPos, shoulderTarPos); //this requires the potentiometers to be connected
 			} else {
 			manualArmControl();
 		}

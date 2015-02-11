@@ -10,17 +10,38 @@ void stopDriving(){
 	motor[backLeft] = 0;
 }
 
+
+void driveSpeed(int speed, string side){
+	if (side == "both"){
+		motor[backLeft] = speed;
+		motor[frontLeft] = speed;
+		motor[backRight] = speed;
+		motor[frontRight] = speed;
+	}
+	else if (side == "left"){
+		motor[backLeft] = speed;
+		motor[frontLeft] = speed;
+	}
+	else if (side == "right"){
+		motor[backRight] = speed;
+		motor[frontRight] = speed;
+	}
+}
+
+
 void leftDriveSpeed(int speed){
 	//Make Left Motors drive at speed
 	motor[backLeft] = speed;
 	motor[frontLeft] = speed;
 }
 
+
 void rightDriveSpeed(int speed){
 	//Make Right motors drive at speed
 	motor[backRight] = speed;
 	motor[frontRight] = speed;
 }
+
 
 void driveControl(int driveMode){// tank = 1 arcade = 2 RC = 3
 	//Standard drive control
@@ -37,34 +58,36 @@ void driveControl(int driveMode){// tank = 1 arcade = 2 RC = 3
 		motor[frontRight] = vexRT[Ch2];
 		motor[backLeft]  = vexRT[Ch3];
 		motor[backRight] = vexRT[Ch2];
-	}
-	else if(driveMode == 3){
+		}else if(driveMode == 3){
 		//RC Car
 		motor[frontLeft]  = vexRT[Ch3] + vexRT[Ch1] * turnSpeed;
 		motor[frontRight] = vexRT[Ch3] - vexRT[Ch1] * turnSpeed;
 		motor[backLeft]  = vexRT[Ch3] + vexRT[Ch1] * turnSpeed;
 		motor[backRight] = vexRT[Ch3] - vexRT[Ch1] * turnSpeed;
 	}
-
 }
+
 
 void servoOpen(int motnrNumb){
 	motor[motnrNumb] = 127;
 }
 
+
 void servoClose(int motnrNumb){
 	motor[motnrNumb] = -127;
 }
+
 
 void servoMid(int motnrNumb){
 	motor[motnrNumb] = 0;
 }
 
+
 void servoSet(int motnrNumb, int pos){
 	motor[motnrNumb] = pos;
 }
 
-void clawControl(int motorNumb){
+/*void clawControl(int motorNumb){
 	if(vexRT[Btn7U]||vexRT[Btn5D]){//close
 		servoOpen(motorNumb);
 	}
@@ -87,7 +110,7 @@ void clawPosControl(int motorNumb){
 		servoMid(motorNumb);
 	}
 }
-
+*/
 void driveStraight(float feet, int BOT_ID){
 	float distance;
 	//A bot:(256 per rotation / 13.25in per wheel rotation) * (12in / 1in) = 231.85 Counts per Foot & 19.33 Counts per Inch.
@@ -103,10 +126,8 @@ void driveStraight(float feet, int BOT_ID){
 		nMotorEncoder[backRight]  =0;
 		nMotorEncoder[backLeft]  =0;
 	}
-
 	float distanceTraveled = 0;
 	int maxSpeed = 90;
-
 	int rightSensor;
 	int leftSensor;
 	int rightPower;
@@ -122,7 +143,6 @@ void driveStraight(float feet, int BOT_ID){
 			rightSensor = nMotorEncoder[backRight];
 			leftSensor = nMotorEncoder[backLeft];
 		}
-
 		distanceTraveled = rightSensor;
 		distanceTraveled = abs(distanceTraveled);
 		if(leftSensor>rightSensor){
@@ -132,21 +152,18 @@ void driveStraight(float feet, int BOT_ID){
 		else if(rightSensor>leftSensor){
 			leftPower =maxSpeed;
 			rightPower =maxSpeed-(rightSensor-leftSensor);
-
 		}
 		else
 		{
 			rightPower =maxSpeed;
 			leftPower =maxSpeed;
 		}
-
-
 		leftDriveSpeed(leftPower);
 		rightDriveSpeed(rightPower);
-
 	}
 	stopDriving();
 }
+
 
 void turn(float deg){
 	float targetDistance = 2*abs(deg); //Not sure if 2 is appropriate
@@ -169,18 +186,24 @@ void turn(float deg){
 	//Stop Motors
 	stopDriving();
 }
+////////////////////////////////////////////////////
+//																								//
+//************control for claws and arm***********//
+//																								//
+////////////////////////////////////////////////////
 
 void digitalArmContol(int motorNumb, int forwardBtn, int backwardBtn, int speed){
-	if(vexRT[forwardBtn]){//rotate arm forwards
+	if (vexRT[forwardBtn]){//rotate arm forwards
 		motor[motorNumb]=speed;
 	}
 	else if(vexRT[backwardBtn]) {//rotate arm backwards
 		motor[motorNumb]=-speed;
 	}
-	else{
+	else {
 		motor[motorNumb]= 0;//stop motor
 	}
 }
+
 
 void digitalServoControl(int motorNumb, int closeBtn, int openBtn){
 	if(vexRT[closeBtn]){//close
@@ -191,6 +214,12 @@ void digitalServoControl(int motorNumb, int closeBtn, int openBtn){
 	}
 }
 
+
 void analogArmControl(int motorNumb, int analogChannel){
-	motor[motorNumb] = vexRT[analogChannel];
+	if(vexRT[analogChannel] == 0){
+		motor[motorNumb] = 0;
+	}
+	else{
+		motor[motorNumb] = vexRT[analogChannel];
+	}
 }
