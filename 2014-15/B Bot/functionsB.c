@@ -11,10 +11,10 @@ void setLiftSpeed(int speed){
 }
 
 void holdLift(){
-	motor[lift1] = 45;
-	motor[lift2] = 45;
-	motor[lift3] = 45;
-	motor[lift4] = 45;
+	motor[lift1] = 20;
+	motor[lift2] = 20;
+	motor[lift3] = 20;
+	motor[lift4] = 20;
 }
 
 void liftControl(){
@@ -22,10 +22,13 @@ void liftControl(){
 		setLiftSpeed(0);
 	}
 	else if(vexRT[Btn8U]){
-		setLiftSpeed(100);
+		setLiftSpeed(75);
 	}
 	else if(vexRT[Btn8D]){
-		setLiftSpeed(100);
+		setLiftSpeed(-20);
+		while(vexRT[Btn8D]){
+			setLiftSpeed(-5);
+		}
 	}
 	else {
 		holdLift();
