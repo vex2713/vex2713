@@ -72,9 +72,7 @@ void jointControl(int motorPort, int potentiometer, int tarPos) {
 	}
 	else{//motor runs backwards
 		motor[motorPort] = -speed;
-
 	}
-
 }
 
 //target position is 4000 and if reading is 3000 the motor speed will decrease
@@ -93,12 +91,4 @@ void armAuton(){
 	motor[shoulderMotor] = 127;
 	wait1Msec(2000);
 	motor[shoulderMotor] = 127;
-}
-
-void setLiftPos(){
-
-}
-
-void liftControl(){
-
 }
