@@ -46,7 +46,6 @@ void pre_auton()
 // You must modify the code to add your own robot specific commands here.
 //
 /////////////////////////////////////////////////////////////////////////////////////////
-
 task autonomous()
 {
 	driveStraight(2, BOT_ID);

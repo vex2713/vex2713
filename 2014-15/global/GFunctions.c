@@ -1,7 +1,6 @@
 //READ: THIS FILE IS NOT TO BE COMPILED STANDALONE
 //Please #include from a proper program
 
-
 void stopDriving(){
 	//Stops all Driving Motors
 	motor[frontRight] = 0;
@@ -9,7 +8,6 @@ void stopDriving(){
 	motor[backRight] = 0;
 	motor[backLeft] = 0;
 }
-
 
 void driveSpeed(int speed, string side){
 	if (side == "both"){
@@ -43,7 +41,8 @@ void rightDriveSpeed(int speed){
 }
 
 
-void driveControl(int driveMode){// tank = 1 arcade = 2 RC = 3
+void driveControl(int driveMode){
+	// tank = 1 arcade = 2 RC = 3
 	//Standard drive control
 	float turnSpeed = 0.8;
 	if (driveMode == 2){
