@@ -111,6 +111,7 @@ void clawPosControl(int motorNumb){
 	}
 }
 */
+
 void driveStraight(float feet, int BOT_ID){
 	float distance;
 	//A bot:(256 per rotation / 13.25in per wheel rotation) * (12in / 1in) = 231.85 Counts per Foot & 19.33 Counts per Inch.
