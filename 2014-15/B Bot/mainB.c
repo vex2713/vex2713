@@ -70,9 +70,6 @@ task usercontrol()
 		driveControl(2); //tank = 1 arcade = 2 RC = 3
 		liftControl();
 		analogArmControl(elbow, Ch2);
-		//analogArmControl(armLift, Ch2);//arm shoulder
-		//digitalArmContol(armWrist, Btn5U, Btn5D, 100);//arm Wrist
-		//digitalServoControl(claw, Btn6D, btn6U);
-		//digitalServoControl(claw2, Btn8L, btn8D); //arm claw
+		digitalServoControl(claw, Btn6D, Btn6U);
 	}
 }
