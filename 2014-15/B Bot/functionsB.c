@@ -4,6 +4,9 @@
 #include "../global/GFunctions.c"
 
 void setLiftSpeed(int speed){
+	if((SensorValue[liftStop1]==1 || SensorValue[liftStop2]==1) && speed<=0){
+		speed=0;
+	}
 	motor[lift1] = speed;
 	motor[lift2] = speed;
 	motor[lift3] = speed;
@@ -18,10 +21,7 @@ void holdLift(){
 }
 
 void liftControl(){
-	if(SensorValue[liftStop1] || SensorValue[liftStop2]){
-		setLiftSpeed(0);
-	}
-	else if(vexRT[Btn8U]){
+	if(vexRT[Btn8U]){
 		setLiftSpeed(75);
 	}
 	else if(vexRT[Btn8D]){

@@ -78,7 +78,7 @@ void jointControl(int motorPort, int potentiometer, int tarPos) {
 //target position is 4000 and if reading is 3000 the motor speed will decrease
 void manualArmControl(){
 	motor[shoulderMotor]  = vexRT[Ch3Xmtr2];
-	motor[shoulderMotor2]  = vexRT[Ch3Xmtr2];
+	motor[shoulderMotor2]  = vexRT[Ch2Xmtr2];
 	motor[elbowMotor]  = vexRT[Ch2Xmtr2];
 }
 
