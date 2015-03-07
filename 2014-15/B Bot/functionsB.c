@@ -4,14 +4,15 @@
 #include "../global/GFunctions.c"
 
 void setLiftSpeed(int speed){
-	while(SensorValue(liftStop1) == 1 || speed<=0){
+	if(SensorValue(liftStop1)==1 || speed<=0){
 		writeDebugStream("Lift Stop Button Pushed, not moving lift");
 		wait1Msec(10);
+		} else {
+		motor[lift1] = speed;
+		motor[lift2] = speed;
+		motor[lift3] = speed;
+		motor[lift4] = speed;
 	}
-	motor[lift1] = speed;
-	motor[lift2] = speed;
-	motor[lift3] = speed;
-	motor[lift4] = speed;
 }
 
 void holdLift(){
