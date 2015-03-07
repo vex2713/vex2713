@@ -15,14 +15,13 @@ void setLiftSpeed(int speed){
 }
 
 void holdLift(){
-	setLiftSpeed(20);
+	setLiftSpeed(0);
 }
 
 void liftControl(){
 	if(vexRT[Btn8U]){
 		setLiftSpeed(80);
-	}
-	else if(vexRT[Btn8D]){
+	} else if(vexRT[Btn8D]){
 		setLiftSpeed(-20);
 		while(vexRT[Btn8D]){
 			setLiftSpeed(-7);
