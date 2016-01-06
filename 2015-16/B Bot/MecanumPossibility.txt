@@ -1,0 +1,5 @@
+fLeft = Ch3 + Ch1 + Ch4
+fRight = Ch3 - Ch1 - Ch4
+bLeft = Ch3 + Ch1 - Ch4
+bRight = Ch3 - Ch1 + Ch4
+
