@@ -32,6 +32,7 @@ void pre_auton()
 	// Example: clearing encoders, setting servo positions, ...
 }
 
+//I put this line in to see if anybody notices it, which they probably won't because it does absolutely nothing at all
 /////////////////////////////////////////////////////////////////////////////////////////
 //
 //                                 Autonomous Task
