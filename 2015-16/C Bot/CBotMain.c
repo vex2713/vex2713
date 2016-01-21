@@ -51,10 +51,15 @@ task autonomous()
 	motor[backRight] = 100;
 	motor[backLeft] = 100;
 	wait(2);
+	motor[frontRight] = 75;
+	motor[frontLeft] = -75;
+	motor[backRight] = 75;
+	motor[backLeft] = -75;
+	wait(2);
 	motor[frontRight] = 100;
-	motor[frontLeft] = -100;
+	motor[frontLeft] = 100;
 	motor[backRight] = 100;
-	motor[backLeft] = -100;
+	motor[backLeft] = 100;
 	wait(2);
 }
 
