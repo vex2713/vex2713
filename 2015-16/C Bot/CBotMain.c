@@ -61,6 +61,11 @@ task autonomous()
 	motor[backRight] = 100;
 	motor[backLeft] = 100;
 	wait(3);
+	motor[frontRight] = -75;
+	motor[frontLeft] = 75;
+	motor[backRight] = -75;
+	motor[backLeft] = 75;
+	wait(2);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
