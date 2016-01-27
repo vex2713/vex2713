@@ -12,6 +12,7 @@
 #pragma userControlDuration(120)
 
 #include "Vex_Competition_Includes.c"   //Main competition background code...do not modify!
+#include "BBotFunctions.c"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -67,9 +68,6 @@ task usercontrol()
 {
 	while (true)
 	{
-	  motor[fLeft] = vexRT[Ch3];
-		motor[fRight] = vexRT[Ch2];
-		motor[bLeft] = vexRT[Ch3];
-		motor[bRight] = vexRT[Ch2];
+	  MotorChannels();
 	}
 }
