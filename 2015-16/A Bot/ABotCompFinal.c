@@ -58,5 +58,5 @@ task autonomous()
 
 task usercontrol()
 {
-	ABotUsercontrol
+	ClawControl
 }

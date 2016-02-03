@@ -3,7 +3,7 @@
 
 #include "../global/GFunctions.c"
 
-void ABotUsercontrol
+void ClawControl
 {
 	while (true)
 	{
