@@ -27,7 +27,7 @@ void ClawControl
 		}
 	}
 }
-void ABotAutonomous
+void MixedNumberWait
 {
 	motor[Left] = 100;
 	motor[Right] = 100;
