@@ -12,6 +12,7 @@
 #pragma userControlDuration(120)
 
 #include "Vex_Competition_Includes.c"   //Main competition background code...do not modify!
+#include "ABotFunctions.c"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -61,25 +62,5 @@ task autonomous()
 
 task usercontrol()
 {
-	while (true)
-	{
-		motor[Left] = vexRT[Ch3];
-		motor[Right] = vexRT[Ch2];
-
-		if(vexRT[Btn7U]){//close
-			motor[Claw] = 127;
-		}
-		else if(vexRT[Btn7D]) {//open
-			motor[Claw] = -127;
-		}
-		if(vexRT[Btn6U]){
-			motor[Arm] = 127;
-		}
-		else if (vexRT[Btn6D]){
-			motor[Arm] = -127;
-		}
-		else {
-			motor[Arm] = 0;
-		}
-	}
+	ABotUsercontrol
 }
