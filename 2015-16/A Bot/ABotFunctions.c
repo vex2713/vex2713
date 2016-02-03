@@ -27,3 +27,11 @@ void ABotUsercontrol
 		}
 	}
 }
+void ABotAutonomous
+{
+	motor[Left] = 100;
+	motor[Right] = 100;
+	wait(1.5);
+	motor[Left] = 0;
+	motor[Right] = 0;
+}

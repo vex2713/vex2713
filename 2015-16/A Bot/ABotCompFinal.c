@@ -44,11 +44,7 @@ void pre_auton()
 
 task autonomous()
 {
-	motor[Left] = 100;
-	motor[Right] = 100;
-	wait(1.5);
-	motor[Left] = 0;
-	motor[Right] = 0;
+	ABotAutonomous
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
