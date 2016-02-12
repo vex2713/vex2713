@@ -12,6 +12,7 @@
 #pragma userControlDuration(120)
 
 #include "Vex_Competition_Includes.c"   //Main competition background code...do not modify!
+#include "CBotFunctions.c"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -43,15 +44,7 @@ void pre_auton()
 
 task autonomous()
 {
-	motor[frontRight] = 100;
-	motor[frontLeft] = 100;
-	motor[backRight] = 100;
-	motor[backLeft] = 100;
-	wait(3);
-	motor[frontRight] = 0;
-	motor[frontLeft] = 0;
-	motor[backRight] = 0;
-	motor[backLeft] = 0;
+	NoJoystickDrive
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -67,11 +60,5 @@ task usercontrol()
 {
 	// User control code here, inside the loop
 
-	while (true)
-	{
-		motor[frontRight] = vexRT[Ch2];
-		motor[frontLeft] = vexRT[Ch3];
-		motor[backRight] = vexRT[Ch2];
-		motor[backLeft] = vexRT[Ch3];
-	}
+	UsercontrolFunctions
 }

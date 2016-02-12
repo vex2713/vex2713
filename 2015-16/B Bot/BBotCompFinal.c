@@ -18,6 +18,7 @@
 #pragma userControlDuration(120)
 
 #include "Vex_Competition_Includes.c"   //Main competition background code...do not modify!
+#include "BBotFunctions.c"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -49,10 +50,15 @@ void pre_auton()
 
 task autonomous()
 {
+<<<<<<< HEAD
 	motor[sLeft] = 127;
 	motor[sRight] = 127;
 	wait(2);
 	motor[Track] = 127;
+=======
+	AutonomousDrive
+
+>>>>>>> 9c337b973d65ba52f5e285e4c02906944f2ab9dd
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -68,6 +74,9 @@ task usercontrol()
 {
 	while (true)
 	{
+<<<<<<< HEAD
+	  MotorChannels();
+=======
 		motor[fLeft] = vexRT[Ch3];
 		motor[fRight] = vexRT[Ch2];
 		motor[bLeft] = vexRT[Ch3];
@@ -89,5 +98,6 @@ task usercontrol()
 			motor[Track] = 0;
 			motor[Sweeper] = 0;
 		}
+>>>>>>> origin/master
 	}
 }
