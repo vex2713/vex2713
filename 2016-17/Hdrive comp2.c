@@ -86,7 +86,7 @@ task autonomous()
 	motor[FR] = -127;
 	motor[BL] = -127;
 	motor[BR] = -127;
-	waitInMilliseconds (900);
+	waitInMilliseconds (800);
 	/* all motors off  */
 	motor[FL] = 0;
 	motor[FR] = 0;
