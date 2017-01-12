@@ -483,7 +483,7 @@ task user_a_bot()
 			*  position goal as determined above depending
 			*  on the mode, and now apply the drive *******/
 			wrist_error = wrist_goal - wrist_position ;
-			wrist_drive =  wrist_error * 10;
+			wrist_drive =  wrist_error * 6;
 			if (wrist_drive > MAX_MOTOR )   /* limit check */
 			{
 				wrist_drive = MAX_MOTOR;
