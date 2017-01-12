@@ -435,7 +435,7 @@ task user_a_bot()
 			else if (wrist_mode ==  WRIST_MODE_manual)
 			{
 				SensorValue[LEDG]= !SensorValue[LEDG] ;
-				if (vexRT[Btn6U] == 1)
+				if (vexRT[Btn6D] == 1)
 				{
 					//wrist_mode =  WRIST_MODE_manual;
 					//wrist_goal = PARK_WRIST;
@@ -452,7 +452,7 @@ task user_a_bot()
 						wrist_goal += GOAL_STEP_SIZE;
 					}
 				}
-				else if (vexRT[Btn6D] == 1)
+				else if (vexRT[Btn6U] == 1)
 				{
 					if (wrist_goal > (wrist_position - GOAL_STEP_SIZE))
 					{
@@ -493,7 +493,7 @@ task user_a_bot()
 				wrist_drive = MIN_MOTOR;
 			}
 			/* drive the motor according to the error signal */
-			motor[W] = wrist_drive ;
+			motor[W] = -wrist_drive ;
 		} // end driving wrist based on position-encoder
 
 		/**************   end of wrist control *********************/
