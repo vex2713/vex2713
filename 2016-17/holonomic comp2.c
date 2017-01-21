@@ -44,7 +44,7 @@
 #define WRIST_SLOPE(x)		(((REACH_WRIST - PICK_WRIST)*x)/(TOP_SHOULDER - PARK_SHOULDER))
 
 
-#define GOAL_STEP_SIZE 2
+#define GOAL_STEP_SIZE 1
 
 /*   shoulder drive modes */
 #define	SHOULDER_MODE_manual 0
@@ -58,20 +58,20 @@
 //#define WRIST_MODE_recover 4
 #define WRIST_MODE_test 5
 
-
+short drive_forward = 1;  // direction control +1 (forward) or -1 ( reverse )
 
 short wrist_position = 0;
 short shoulder_position = 0;
 
-	short wrist_mode =  WRIST_MODE_test; //WRIST_MODE_manual;		/* initialize in test mode - no encoder */
-	short wrist_goal = PARK_WRIST;
-	short wrist_error;
-	short wrist_drive;
+short wrist_mode =  WRIST_MODE_slave; //WRIST_MODE_manual;		/* initialize in test mode - no encoder */
+short wrist_goal = PARK_WRIST;
+short wrist_error;
+short wrist_drive;
 
-  short shoulder_mode = SHOULDER_MODE_manual;//SHOULDER_MODE_test; /* initialize in test mode - no encoder */
-	short shoulder_goal = 0;
-	short shoulder_error;
-	short shoulder_drive;
+short shoulder_mode = SHOULDER_MODE_manual;//SHOULDER_MODE_test; /* initialize in test mode - no encoder */
+short shoulder_goal = 0;
+short shoulder_error;
+short shoulder_drive;
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -203,15 +203,15 @@ task user_a_bot()
 	//	int wrist_up = 0;  // keep track of last action up?
 	//  int elbow_up = 0;
 
-//	short wrist_mode =  WRIST_MODE_test; //WRIST_MODE_manual;		/* initialize in test mode - no encoder */
-//	short wrist_goal = PARK_WRIST;
-//	short wrist_error;
-//	short wrist_drive;
+	//	short wrist_mode =  WRIST_MODE_test; //WRIST_MODE_manual;		/* initialize in test mode - no encoder */
+	//	short wrist_goal = PARK_WRIST;
+	//	short wrist_error;
+	//	short wrist_drive;
 
-//	short shoulder_mode = SHOULDER_MODE_manual;//SHOULDER_MODE_test; /* initialize in test mode - no encoder */
-//	short shoulder_goal = 0;
-//	short shoulder_error;
-//	short shoulder_drive;
+	//	short shoulder_mode = SHOULDER_MODE_manual;//SHOULDER_MODE_test; /* initialize in test mode - no encoder */
+	//	short shoulder_goal = 0;
+	//	short shoulder_error;
+	//	short shoulder_drive;
 	short shoulder_limit;
 	short limit_count = 0;
 	SensorValue[LEDG]=false;
@@ -222,17 +222,35 @@ task user_a_bot()
 		/**********************************************************************
 		*****               holomonic wheels       ***************************
 		*   are controlled here with the joy-sticks "tractor mode"
+		*  Use buttons 7U ( forward ) and 7D ( backwards ) to reverse the drive
 		*********************************************************************/
+		if (drive_forward == 1)
+		{
+			motor[FL] = vexRT[Ch3] * DRIVE_GAIN; // / 1;
+			motor[FR] = vexRT[Ch2] * DRIVE_GAIN; // / 1;
+			motor[BL] = vexRT[Ch3] * DRIVE_GAIN; // / 1;
+			motor[BR] = vexRT[Ch2] * DRIVE_GAIN; // / 1;
+		}
+		else if (drive_forward == -1)
+		{
+			motor[FL] = vexRT[Ch2] * -DRIVE_GAIN; // / 1;
+			motor[FR] = vexRT[Ch3] * -DRIVE_GAIN; // / 1;
+			motor[BL] = vexRT[Ch2] * -DRIVE_GAIN; // / 1;
+			motor[BR] = vexRT[Ch3] * -DRIVE_GAIN; // / 1;
 
-		motor[FL] = vexRT[Ch3] * DRIVE_GAIN; // / 1;
-		motor[FR] = vexRT[Ch2] * DRIVE_GAIN; // / 1;
-		motor[BL] = vexRT[Ch3] * DRIVE_GAIN; // / 1;
-		motor[BR] = vexRT[Ch2] * DRIVE_GAIN; // / 1;
+		}
 
 
 		/*  ToDo:  add other drive modes depending on the driver preference */
 
-
+		if (vexRT[Btn7U] == 1)
+		{
+			drive_forward = 1;
+		}
+		else if (vexRT[Btn7D] == 1)
+		{
+			drive_forward = -1;
+		}
 
 		//	motor[S1] = vexRT[Btn5U] / Btn5D;
 		//	motor[S2] = vexRT[Btn5U] / Btn5D;
@@ -365,11 +383,11 @@ task user_a_bot()
 			{
 				SensorValue[shldr_enc] = MAX_SHOULDER;
 			}
-	  }
-	  else
-	  {
-	  	limit_count = 0;
-	  }
+		}
+		else
+		{
+			limit_count = 0;
+		}
 
 		/*************************************************************************
 		***************************      wrist control    ************************
@@ -469,15 +487,15 @@ task user_a_bot()
 
 				}
 			}  // end WRIST_MODE_manual
-//			else  // ERROR - no valid mode is defined!!!
-//			{
-//				wrist_goal = wrist_position;  // disable wrist
-				// ToDo - set error mode
-//				if ((vexRT[Btn6U] == 1) || (vexRT[Btn6D] == 1))
-//				{
-//					wrist_mode =  WRIST_MODE_manual;
-//				}
-//			}
+			//			else  // ERROR - no valid mode is defined!!!
+			//			{
+			//				wrist_goal = wrist_position;  // disable wrist
+			// ToDo - set error mode
+			//				if ((vexRT[Btn6U] == 1) || (vexRT[Btn6D] == 1))
+			//				{
+			//					wrist_mode =  WRIST_MODE_manual;
+			//				}
+			//			}
 
 			/****** If under position control, now use the
 			*  position goal as determined above depending
