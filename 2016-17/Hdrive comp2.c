@@ -1,4 +1,4 @@
-#pragma config(UART_Usage, UART2, uartNotUsed, baudRate4800, IOPins, None, None)
+
 #pragma config(Sensor, in1,		 LineDetect,		 sensorLineFollower)
 #pragma config(Sensor, in2,		 ClawPot,				 sensorPotentiometer)
 #pragma config(Sensor, in3,		 L_pot,					 sensorPotentiometer)
@@ -73,40 +73,41 @@ task autonomous()
 	/* step 1 : move forward for 4 seconds - to the wall */
 	/* todo:	add line sensor!!! */
 	//	motor[T] = -30;
-	SensorValue[L_Encoder] = 0;	 // wrist encoder
-	motor[M] = 0;
-
-#if 0
-	motor[FL] = 127;
-	motor[FR] = 127;
-	motor[BL] = 127;
-	motor[BR] = 127;
-	waitInMilliseconds (3200);
-	/* step 2:	back off the wall slightly */
-	motor[FL] = -127;
-	motor[FR] = -127;
-	motor[BL] = -127;
-	motor[BR] = -127;
-	waitInMilliseconds (180);
-#else
-
-	// raise lift just a bit
 	motor[L1] = 127;
 	motor[L2] = 127;
 	//	motor[L3] = 127;
 
-	waitInMilliseconds (300);
-	motor[L1] = 0;
-	motor[L2] = 0;
-	//	motor[L3] = 0;
+	waitInMilliseconds (1000);
+	motor[L1] = -127;
+	motor[L2] = -127;
+	//	motor[L3] = 127;
 
+	waitInMilliseconds (1000);
+	motor[FL] = 127;
+	motor[FR] = 127;
+	motor[BL] = 127;
+	motor[BR] = 127;
+	waitInMilliseconds (2000);
+
+	motor [C] = -30;
+waitInMilliseconds (2000);
+
+motor [C] = 30;
+
+	motor[L1] = 127;
+	motor[L2] = 127;
+	waitInMilliseconds (1800);
+	//	motor[L3] = 0;
+		motor[FL] = -60;
+	motor[FR] = 60;
+	motor[BL] = -60;
+	motor[BR] = 60;
+	waitInMilliseconds (1000);
 	//go foward until gray is detected
 	motor[FL] = 60;
 	motor[FR] = 60;
 	motor[BL] = 60;
 	motor[BR] = 60;
-
-	waitInMilliseconds (600);
 
 	while (SensorValue[LineDetect] < 800)
 	{
@@ -135,7 +136,7 @@ task autonomous()
 
 	// then stop!!!!
 
-#endif
+
 
 	/* step 3:	stop motor:	 lift up to knock off a star */
 	motor[FL] = 0;
@@ -180,6 +181,7 @@ task autonomous()
 			motor[FR] = -127;
 			motor[BL] = -127;
 			motor[BR] = -127;
+		motor[L1] = -127;
 			waitInMilliseconds (50);
 			resetTimer(T1);
 		}
@@ -187,7 +189,6 @@ task autonomous()
 
 	waitInMilliseconds (200);
 	{
-		motor[L1] = -127;
 		motor[L2] = -127;
 		//		motor[L3] = -127;
 	}
@@ -272,14 +273,14 @@ task user_b_bot()
 		x2 = abs(vexRT[Ch4]);
 		if (x1>x2)
 		{
-			m_drive = abs(vexRT[Ch1]);
+			m_drive = 1*vexRT[Ch1];
 		}
 		else
 		{
-			m_drive = -1* vexRT[Ch4];	 /* 1&4 controls are backwards */
+			m_drive = 1* vexRT[Ch4];	 /* 1&4 controls are backwards */
 		}
 
-		if((m_drive > 20) || (m_drive < -20))
+		if((m_drive > 108) || (m_drive < -108))
 		{
 			motor[M] = m_drive;
 
