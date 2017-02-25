@@ -1,8 +1,13 @@
-
 #pragma config(Sensor, in1,		 LineDetect,		 sensorLineFollower)
 #pragma config(Sensor, in2,		 ClawPot,				 sensorPotentiometer)
 #pragma config(Sensor, in3,		 L_pot,					 sensorPotentiometer)
 #pragma config(Sensor, dgtl1,	 L_Encoder,			 sensorQuadEncoder)
+#pragma config(Sensor, dgtl7,	 mode3,					 sensorDigitalIn)
+#pragma config(Sensor, dgtl8,	 mode2,					 sensorDigitalIn)
+#pragma config(Sensor, dgtl9,	 mode1,					 sensorDigitalIn)
+#pragma config(Sensor, dgtl10, LEDR,					 sensorDigitalOut)
+#pragma config(Sensor, dgtl11, LEDY,					 sensorDigitalOut)
+#pragma config(Sensor, dgtl12, LEDG,					 sensorDigitalOut)
 #pragma config(Motor,	 port2,						FR,						 tmotorVex393_MC29, openLoop, reversed)
 #pragma config(Motor,	 port3,						BR,						 tmotorVex393_MC29, openLoop, reversed)
 #pragma config(Motor,	 port4,						BL,						 tmotorVex393_MC29, openLoop)
@@ -26,13 +31,32 @@
 
 short lineValue;
 short liftValue;	 /* lift encoder bottom to top ~ 110 */
-short lift_position;	/* potentiometer bottom 784 top 2485 Feb 17, 2017 */
+short lift_position;	/* potentiometer bottom 784 top 2620 Feb 23, 2017 */
 short claw_mode =	 CLAW_MODE_manual;
-short claw_position;	/* actual:	potentiometer reading wide 1400, closed 2780*/
+short claw_position;	/* actual:	potentiometer reading wide 1400, closed 2800*/
 short claw_goal;		/* latched actual:	potentiometer reading when 8R is pressed */
 short claw_error;		/* difference between	 */
 short claw_drive;
 short m_drive;
+short mode_1, mode_2, mode_3;	 /* autonomous mode variables */
+
+short gyroValue;
+short gyroGoal = 0;
+
+#define	LIFT_pot_position_down 790
+#define	LIFT_pot_position_deploy 1200
+#define	LIFT_pot_position_top 2600
+
+#define	CLAW_pot_open 1450
+#define	CLAW_pot_closed 2750
+
+/*	white reflects high and gives low value.	grey reflects less and gives high value */
+/* FIXME - confirm values */
+#define LINE_white 400
+#define LINE_grey	 1200
+#define LINE_threshold ((LINE_white + LINE_grey)/2)
+
+
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -46,10 +70,36 @@ short m_drive;
 
 void pre_auton()
 {
+	SensorValue[LEDG]=1; /* 1 is off, 0 is on */
+	SensorValue[LEDR]=1;
+	SensorValue[LEDY]=1;
+
+	//Completely clear out any previous sensor readings by setting the port to "sensorNone"
+	SensorType[in4] = sensorNone;
+	wait1Msec(1000);
+	//Reconfigure Analog Port 8 as a Gyro sensor and allow time for ROBOTC to calibrate it
+	SensorType[in4] = sensorGyro;
+	wait1Msec(2000);
+	SensorValue[in4] = 0;	 // zero gyro
 	// Set bStopTasksBetweenModes to false if you want to keep user created tasks running between
 	// Autonomous and Tele-Op modes. You will need to manage all user created tasks if set to false.
+
+	mode_1 = SensorValue[mode1];
+	mode_2 = SensorValue[mode2];
+	mode_3 = SensorValue[mode3];
+
+	/* let the LED's confirm the autonomous armed or not ... red is OFF!!! */
+	if (mode_3 == 0)
+	{
+		SensorValue[LEDR]=0;
+	}
+	else
+	{
+		SensorValue[LEDY]=0;
+	}
+
+
 	bStopTasksBetweenModes = true;
-	SensorValue[L_Encoder] = 0;	 // wrist encoder
 
 
 	// All activities that occur before the competition starts
@@ -70,81 +120,246 @@ task autonomous()
 	// .....................................................................................
 	// Insert user code here.
 	// .....................................................................................
-	/* step 1 : move forward for 4 seconds - to the wall */
-	/* todo:	add line sensor!!! */
-	//	motor[T] = -30;
+	/* let the mode_1, mode_2 set the autonomous program;
+	*	 1,2
+	*	 1,1 start on left, pick up cube and deliver
+	*	 1,0 start on right, pick up cube and deliver
+	*	 0,1 start on left, pick up stars and deliver
+	*	 0,0 start on left, pick up stars and deliver
+	*	 let mode_3 = 0 be used to not do autonomous
+	*/
+
+	int i;	/* loop counter */
+
+	SensorValue[LEDG]=1; /* 1 is OFF, 0 is ON */
+	SensorValue[LEDR]=1;
+	SensorValue[LEDY]=1;
+
+	/* mode_3 to bypass autonomous */
+	if ( mode_3 == 0)
+	{
+		while(1)
+	 {
+			waitInMilliseconds(500);
+			SensorValue[LEDR]=0;
+			waitInMilliseconds(500);
+			SensorValue[LEDR]=1;
+		}
+	}
+	else /* green light means GO!!!! */
+	{
+		SensorValue[LEDG]=0;
+	}
+
+	/* lift to deploy the claw */
 	motor[L1] = 127;
 	motor[L2] = 127;
-	//	motor[L3] = 127;
 
-	waitInMilliseconds (1000);
+	resetTimer(T1);
+	while (SensorValue[L_pot] < LIFT_pot_position_deploy)
+	{
+		waitInMilliseconds(5);
+		if (getTimer(T1, seconds) > 3)
+		{
+			break;
+		}
+	}
+	/* lift motor off */
+	motor[L1] = 0;
+	motor[L2] = 0;
+
+	waitInMilliseconds (200);
+
+	/* drop back down AND open claw for pickup at the same time !!!! */
 	motor[L1] = -127;
 	motor[L2] = -127;
-	//	motor[L3] = 127;
+	motor[C] = -80;
 
-	waitInMilliseconds (1000);
+	resetTimer(T1);
+	while ( (SensorValue[L_pot] > (LIFT_pot_position_down + 10))
+		&& (SensorValue[ClawPot] > CLAW_pot_open ) )
+	{
+		waitInMilliseconds(5);
+		if (SensorValue[L_pot] <= (LIFT_pot_position_down + 10))
+		{
+			motor[L1] = 0;
+			motor[L2] = 0;
+		}
+		if (SensorValue[ClawPot] <= CLAW_pot_open )
+		{
+			motor[C] = 0;
+		}
+		if (getTimer(T1, seconds) > 4)
+		{
+			break;
+		}
+	}
+
+	motor[L1] = 0;
+	motor[L2] = 0;
+	motor[C] = 0;
+
+
+	//waitInMilliseconds (2000);
+
+	/* go forward for 2 seconds towards cube */
 	motor[FL] = 127;
 	motor[FR] = 127;
 	motor[BL] = 127;
 	motor[BR] = 127;
 	waitInMilliseconds (2000);
 
-	motor [C] = -30;
-waitInMilliseconds (2000);
+	/* close claw ( assumes we are there ) */
+	motor[C] = 40;
+	waitInMilliseconds (1000);
+	motor[C] = 30;
 
-motor [C] = 30;
-
+	/* going up */
+	resetTimer(T1);
 	motor[L1] = 127;
 	motor[L2] = 127;
-	waitInMilliseconds (1800);
-	//	motor[L3] = 0;
-		motor[FL] = -60;
-	motor[FR] = 60;
-	motor[BL] = -60;
-	motor[BR] = 60;
-	waitInMilliseconds (1000);
-	//go foward until gray is detected
+	/* FIXME - add timeout or check if pot stops changing */
+	while (SensorValue[L_pot] < LIFT_pot_position_top)
+	{
+		waitInMilliseconds(5);
+		if (getTimer(T1, seconds) > 5)
+		{
+			break;
+		}
+	}
+
+	/* turn off lift */
+	motor[L1] = 0;
+	motor[L2] = 0;
+
+	/* now we need to turn towards the wall - mode dependent! */
+	if (mode_2 == 1)
+	{
+		gyroGoal = 600; /* 60 degrees */
+	}
+	else
+	{
+		gyroGoal = 900; /* 90 degrees */
+	}
+
+	//	turn left ( counterclockwise gyro +)	 FIXME, what about starting on the left?	Jumper option or program?
+	if (mode_1 == 1) /* start on left, turn counter clockwise */
+	{
+		motor[FL] = -50;
+		motor[BL] = -50;
+		motor[FR] = 50;
+		motor[BR] = 50;
+	}
+	else	/* start on right, turn clockwise */
+	{
+		motor[FL] = 50;
+		motor[BL] = 50;
+		motor[FR] = -50;
+		motor[BR] = -50;
+	}
+
+	/* turn either way until reaching goal - absolute value */
+	resetTimer(T1);
+	while(abs(gyroValue) < gyroGoal)
+	{
+		gyroValue = SensorValue[in4];
+		wait1Msec(1);
+		if (getTimer(T1, seconds) > 5)
+		{
+			break;
+		}
+	}
+	/* apply brake */
+	if (mode_1 == 1)
+	{
+		motor[FL] = 5;
+		motor[BL] = 5;
+		motor[FR] = -5;
+		motor[BR] = -5;
+	}
+	else
+	{
+		motor[FL] = -5;
+		motor[BL] = -5;
+		motor[FR] = 5;
+		motor[BR] = 5;
+	}
+	wait1Msec(50);
+
+	//go foward until gray is detected ... or just ram into the wall? */
 	motor[FL] = 60;
 	motor[FR] = 60;
 	motor[BL] = 60;
 	motor[BR] = 60;
 
-	while (SensorValue[LineDetect] < 800)
+	resetTimer(T1);
+	while (SensorValue[LineDetect] < LINE_threshold)
 	{
 		//confirm we are in the grey
+		if (getTimer(T1, seconds) > 1)
+		{
+			break;
+		}
 	}
-	while (SensorValue[LineDetect] > 800)
+
+	resetTimer(T1);
+	while (SensorValue[LineDetect] > LINE_threshold)
 	{
 		//continue until white is detected
+		if (getTimer(T1, seconds) > 5)
+		{
+			break;
+		}
 	}
 	waitInMilliseconds (200);
-
-	while (SensorValue[LineDetect] < 800)
+	resetTimer(T1);
+	while (SensorValue[LineDetect] < LINE_threshold)
 	{
 		//continue until gray is detected
+		//confirm we are in the grey
+		if (getTimer(T1, seconds) > 1)
+		{
+			break;
+		}
 	}
+
 	waitInMilliseconds (200);
+	/* slow down as we approach */
 	motor[FL] = 45;
 	motor[FR] = 45;
 	motor[BL] = 45;
 	motor[BR] = 45;
 
-	while (SensorValue[LineDetect] > 800)
+	resetTimer(T1);
+	while (SensorValue[LineDetect] > LINE_threshold)
 	{
 		//continue until white is detected
+		//continue until white is detected
+		if (getTimer(T1, seconds) > 5)
+		{
+			break;
+		}
 	}
 
-	// then stop!!!!
-
-
-
-	/* step 3:	stop motor:	 lift up to knock off a star */
+	/* stop motor !!!		*/
 	motor[FL] = 0;
 	motor[FR] = 0;
 	motor[BL] = 0;
 	motor[BR] = 0;
 
-	waitInMilliseconds (400);
+	/* open claw */
+	motor [C] = -30;
+	resetTimer(T1);
+	while (SensorValue[ClawPot] > CLAW_pot_open )
+	{
+		if (getTimer(T1, seconds) > 3)
+		{
+			break;
+		}
+	}
+	motor [C] = 0;
+
+	/* FIXME - going back?	Why? - to peel off the object if stuck! */
 	motor[FL] = -45;
 	motor[FR] = -45;
 	motor[BL] = -45;
@@ -156,69 +371,99 @@ motor [C] = 30;
 	motor[BL] = 0;
 	motor[BR] = 0;
 
-
+	/* close claw */
+	motor [C] = 30;
 	resetTimer(T1);
-
-	while (SensorValue[L_Encoder] < 1234)
+	while (SensorValue[ClawPot] < CLAW_pot_closed )
 	{
-		motor[L1] = 127;
-		motor[L2] = 127;
-		//		motor[L3] = 127;
-		waitInMilliseconds (20);
-		// check for more than 4 seconds ( probably hung up )
-		//	 then drop, back and up again
-		if(getTimer(T1, seconds) > 4) /* FIXME - use encoder to detect stall!!! */
+		if (getTimer(T1, seconds) > 3)
 		{
-			motor[L1] = -127;
-			motor[L2] = -127;
-			//			motor[L3] = -127;
-			waitInMilliseconds (200);
-			motor[L1] = 0;
-			motor[L2] = 0;
-			//			motor[L3] = 0;
-
-			motor[FL] = -127;
-			motor[FR] = -127;
-			motor[BL] = -127;
-			motor[BR] = -127;
-		motor[L1] = -127;
-			waitInMilliseconds (50);
-			resetTimer(T1);
+			break;
 		}
 	}
 
-	waitInMilliseconds (200);
+	/* now, continue turning in the same direction another 90 degrees. */
+	if (mode_1 == 1) /* start on left, turn counter clockwise */
 	{
-		motor[L2] = -127;
-		//		motor[L3] = -127;
+		motor[FL] = -50;
+		motor[BL] = -50;
+		motor[FR] = 50;
+		motor[BR] = 50;
 	}
-	waitInMilliseconds (1500);
-	motor[FL] = -127;
-	motor[FR] = -127;
-	motor[BL] = -127;
-	motor[BR] = -127;
-	waitInMilliseconds (180);
-	/* step 4:	back off ( shake off star? ) */
-	motor[FL] = 0;
-	motor[FR] = 0;
-	motor[BL] = 0;
-	motor[BR] = 0;
-	waitInMilliseconds (1200);
+	else	/* start on right, turn clockwise */
+	{
+		motor[FL] = 50;
+		motor[BL] = 50;
+		motor[FR] = -50;
+		motor[BR] = -50;
+	}
 
-	motor[L1] = 0;
-	motor[L2] = 0;
-	//	motor[L3] = 0;
+	/* turn either way until reaching goal - absolute value */
+	resetTimer(T1);
+	while(abs(gyroValue) < gyroGoal)
+	{
+		gyroValue = SensorValue[in4];
+		wait1Msec(1);
+		if (getTimer(T1, seconds) > 5)
+		{
+			break;
+		}
+	}
+	/* apply brake */
+	if (mode_1 == 1)
+	{
+		motor[FL] = 5;
+		motor[BL] = 5;
+		motor[FR] = -5;
+		motor[BR] = -5;
+	}
+	else
+	{
+		motor[FL] = -5;
+		motor[BL] = -5;
+		motor[FR] = 5;
+		motor[BR] = 5;
+	}
+	wait1Msec(50);
 
-	motor[FL] = -127;
-	motor[FR] = -127;
-	motor[BL] = -127;
-	motor[BR] = -127;
-	waitInMilliseconds (500);
-	/* all motors off	 */
-	motor[FL] = 0;
-	motor[FR] = 0;
-	motor[BL] = 0;
-	motor[BR] = 0;
+	/* now advance a bit, then open the claw to knock off more stars ? */
+	for ( i=0; i < 4; i++)
+	{
+		motor[FL] = 50;
+		motor[BL] = 50;
+		motor[FR] = 50;
+		motor[BR] = 50;
+
+		wait1Msec(1000);
+		motor[FL] = 0;
+		motor[BL] = 0;
+		motor[FR] = 0;
+		motor[BR] = 0;
+
+		/* open claw */
+		motor [C] = -30;
+		resetTimer(T1);
+		while (SensorValue[ClawPot] > CLAW_pot_open )
+		{
+			if (getTimer(T1, seconds) > 3)
+			{
+				break;
+			}
+		}
+		motor [C] = 0;
+
+		/* close claw */
+		motor [C] = 30;
+		resetTimer(T1);
+		while (SensorValue[ClawPot] < CLAW_pot_closed )
+		{
+			if (getTimer(T1, seconds) > 3)
+			{
+				break;
+			}
+		}
+	}
+
 	allMotorsOff();
 }
 
@@ -233,8 +478,7 @@ motor [C] = 30;
 /////////////////////////////////////////////////////////////////////////////////////////
 
 
-
-
+#if 0
 /*	use this for autonomous control */
 int covert_inches_to_encoders(int inches)
 {
@@ -244,172 +488,251 @@ int covert_inches_to_encoders(int inches)
 
 	int encoder_pulses = inches * counts_per_revolution / wheel_circumference_inches;
 	return encoder_pulses;
-}
+
+#endif
 
 #define MAX_MOTOR 127
 #define MIN_MOTOR -127
 
 
 
-
-task user_b_bot()
-{
-	/* the claw has a potentiometer for position "claw_position"
-	*	 the claw will be opened and closed manually using button 6U (close) and 6D (open)
-	*	 once in the closed position, button 8R will store the current position : "claw_goal"
-	*	 then hold that position using closed loop control until 6U or 6D are pressed */
-
-	short x1, x2;
-
-	/* check battery leve */
-	writeDebugStreamLine("backup battery level: %d milliVolts", BackupBatteryLevel);
-	writeDebugStreamLine("main battery level: %d milliVolts", nAvgBatteryLevel);
-	writeDebugStreamLine("main immediate battery level: %d milliVolts", nImmediateBatteryLevel);
-
-	while(1)
+	task user_b_bot()
 	{
-		/* allow left/right on 1 or 4 */
-		x1 = abs(vexRT[Ch1]);
-		x2 = abs(vexRT[Ch4]);
-		if (x1>x2)
-		{
-			m_drive = 1*vexRT[Ch1];
-		}
-		else
-		{
-			m_drive = 1* vexRT[Ch4];	 /* 1&4 controls are backwards */
-		}
+		/* the claw has a potentiometer for position "claw_position"
+		*	 the claw will be opened and closed manually using button 6U (close) and 6D (open)
+		*	 once in the closed position, button 8R will store the current position : "claw_goal"
+		*	 then hold that position using closed loop control until 6U or 6D are pressed */
 
-		if((m_drive > 108) || (m_drive < -108))
-		{
-			motor[M] = m_drive;
+		short x1, x2;
+		short LED_toggle = 0;
 
-			motor[FL] = 0;
-			motor[FR] = 0;
-			motor[BL] = 0;
-			motor[BR] = 0;
+		SensorValue[LEDG]=0;  /* 1 is OFF, 0 is ON */
+	  SensorValue[LEDR]=1;
+	  SensorValue[LEDY]=1;
 
-		}
-		else
-		{
 
-			//Driving Motor Control - directly from the vex controller
-			motor[FL] = vexRT[Ch3] / 1;
-			motor[FR] = vexRT[Ch2] / 1;
-			motor[BL] = vexRT[Ch3] / 1;
-			motor[BR] = vexRT[Ch2] / 1;
+		/* check battery leve */
+		writeDebugStreamLine("backup battery level: %d milliVolts", BackupBatteryLevel);
+		writeDebugStreamLine("main battery level: %d milliVolts", nAvgBatteryLevel);
+		writeDebugStreamLine("main immediate battery level: %d milliVolts", nImmediateBatteryLevel);
 
-			motor[M] = 0;
+#if 0
+		// For best sensor results, clear out the gyro and manually configure it at the begging of the code.
+		// The Gyro is configured by default to provide values from 0 to -3600 for clockwise rotation,
+		// and 0 to 3600 for counter-clockwise rotation
+		//Adjust SensorScale to correct the scaling for your gyro
+		//SensorScale[in4] = 260;
+		//Adjust SensorFullCount to set the "rollover" point. A value of 3600 sets the rollover point to +/-3600
+		//SensorFullCount[in4] = 3600;
 
-		}
+		//Specify the number of degrees for the robot to turn (1 degree = 10, or 900 = 90 degrees)
+		int degrees10 = 900;
 
-		//		motor[L1] = vexRT[Btn5U] / 1;
-		//		motor[L2] = vexRT[Btn5U] / 1;
-		//		motor[C] = vexRT[Btn6U] / 1;
+		//Completely clear out any previous sensor readings by setting the port to "sensorNone"
+		SensorType[in4] = sensorNone;
+		wait1Msec(1000);
+		//Reconfigure Analog Port 4 as a Gyro sensor and allow time for ROBOTC to calibrate it
+		SensorType[in4] = sensorGyro;
+		wait1Msec(2000);
+		SensorValue[in4] = 0;	 // initialize gyro sensor value
 
-		claw_position = SensorValue[ClawPot];	 // claw potentiometer goes 0 to 4095
-		lineValue = SensorValue[LineDetect];
-		liftValue = SensorValue[L_Encoder];
-		lift_position = SensorValue[L_pot];
+		gyroValue = SensorValue[in4];
+		//While the absolute value of the gyro is less than the desired rotation...
+		//...continue turning clockwise
+		motor[FL] = 30;
+		motor[FR] = -30;
+		motor[BL] = 30;
+		motor[BR] = -30;
+		while(gyroValue > -900)
+		{
+			gyroValue = SensorValue[in4];
+			mode_1 = SensorValue[mode1];
+			mode_2 = SensorValue[mode2];
+			wait1Msec(2);
+		}
+		//brake
+		motor[FL] = -5;
+		motor[FR] = 5;
+		motor[BL] = -5;
+		motor[BR] = 5;
+		wait1Msec(1000);
 
-		/* drive scissor lift - directly with button 5 U/D */
-		if ((vexRT[Btn5U] == 1) && (SensorValue[L_Encoder] < 12345)) /* FIXME - change limit to encoder */
+		//...continue turning counter clockwise
+		motor[FL] = -30;
+		motor[FR] = +30;
+		motor[BL] = -30;
+		motor[BR] = +30;
+		/* turn back to 0 */
+		while(gyroValue < 0)
 		{
-			motor[L1] = 127;
-			motor[L2] = 127;
-			//			motor[L3] = 127;
+			gyroValue = SensorValue[in4];
+			mode_1 = SensorValue[mode1];
+			mode_2 = SensorValue[mode2];
+			wait1Msec(1);
 		}
-		else if (vexRT[Btn5D] == 1)
-		{
-			motor[L1] = -127;
-			motor[L2] = -127;
-			//			motor[L3] = -127;
-		}
-		else
-		{
-			motor[L1] = 0;
-			motor[L2] = 0;
-			//			motor[L3] = 0;
-		}
+		//brake
+		motor[FL] = 5;
+		motor[FR] = -5;
+		motor[BL] = 5;
+		motor[BR] = -5;
+#endif
 
-		/***********************************************
-		*****************			 claw			**************
-		* Use button 6D/U to close/open the claw
-		*
-		* Use button 8R to put the claw into 'hold' mode
-		*	 where it will use the potentiometer to maintain
-		*	 the last position when 8R was pressed
-		* Claw potentiometer wide open 1400, closed 2780 (Feb 17 2017)
-		*********************************************/
-		//		if (vexRT[Btn8R] == 1)	/* switch to 'pot' mode */
-		//		{
-		//			claw_mode =	 CLAW_MODE_pot;
-		//			claw_position = SensorValue[ClawPot];
-		//			claw_goal = claw_position;	/* actual:	potentiometer reading */
-		//			writeDebugStreamLine("claw pot mode: %d", claw_goal);
-		//		}
-		if (vexRT[Btn8R] == 1)	/* switch to 'hold' mode */
+		while(1)
 		{
-			claw_mode =	 CLAW_MODE_hold;
-			motor[C] = 90;	/* ToDo - harder hold torque */
-			writeDebugStreamLine("claw hold mode: %d", claw_goal);
-		}
-		else if (vexRT[Btn8L] == 1) /* switch to 'hold' mode */
-		{
-			claw_mode =	 CLAW_MODE_hold;
-			motor[C] = 50;	/* ToDo - figure out a safe hold torque */
-			writeDebugStreamLine("claw hold mode: %d", claw_goal);
-		}
-		//		else if (vexRT[Btn8U] == 1)	 /* manual drive open 8U */
-		else if (vexRT[Btn6U] == 1)	 /* manual drive open 6U */
-		{
-			motor[C] = -80;
-			claw_mode =	 CLAW_MODE_manual;
-		}
-		//		else if (vexRT[Btn8D] == 1)	 /* manual drive open 8D */
-		else if (vexRT[Btn6D] == 1)	 /* manual drive open 6D */
-		{
-			motor[C] = 100;
-			claw_mode =	 CLAW_MODE_manual;
-		}
-		else if (claw_mode == CLAW_MODE_manual)
-		{
-			motor[C] = 0;	 /* ToDo - do we want some hold drive? */
-		}
-		/*	if hold mode, then use the potentiometer to set the motor drive */
-		else if (claw_mode ==	 CLAW_MODE_pot)
-		{
-			claw_error = (claw_position- claw_goal);
-			claw_drive = claw_error / 4;
-			if (claw_drive > MAX_MOTOR )	 /* limit check */
+			/* heartbeat ... it's alive!!!! */
+			if (LED_toggle++ == 10)
+		  {
+					SensorValue[LEDG]=1;
+		  }
+		  else if (LED_toggle == 20)
+		  {
+					SensorValue[LEDG]=0;
+					LED_toggle = 0;
+		  }
+
+			/* allow left/right on 1 or 4 */
+			x1 = abs(vexRT[Ch1]);
+			x2 = abs(vexRT[Ch4]);
+			if (x1>x2)
 			{
-				claw_drive = MAX_MOTOR;
+				m_drive = 1*vexRT[Ch1];
 			}
-			else if (claw_drive < MIN_MOTOR )		/* limit check */
+			else
 			{
-				claw_drive = MIN_MOTOR;
+				m_drive = 1* vexRT[Ch4];	 /* 1&4 controls are backwards */
 			}
-			/* now set the motor drive */
-			motor[C] = claw_drive;
-		} // end CLAW_MODE_HOLD
 
-		wait1Msec(20);
+			if((m_drive > 108) || (m_drive < -108))
+			{
+				motor[M] = m_drive;
 
-	}	 // end while(1)
-}	 // end task
+				motor[FL] = 0;
+				motor[FR] = 0;
+				motor[BL] = 0;
+				motor[BR] = 0;
+
+			}
+			else
+			{
+
+				//Driving Motor Control - directly from the vex controller
+				motor[FL] = vexRT[Ch3] / 1;
+				motor[FR] = vexRT[Ch2] / 1;
+				motor[BL] = vexRT[Ch3] / 1;
+				motor[BR] = vexRT[Ch2] / 1;
+
+				motor[M] = 0;
+
+			}
+
+			//		motor[L1] = vexRT[Btn5U] / 1;
+			//		motor[L2] = vexRT[Btn5U] / 1;
+			//		motor[C] = vexRT[Btn6U] / 1;
+
+			claw_position = SensorValue[ClawPot];	 // claw potentiometer goes 0 to 4095
+			lineValue = SensorValue[LineDetect];
+			liftValue = SensorValue[L_Encoder];
+			lift_position = SensorValue[L_pot];
+			gyroValue = SensorValue[in4];
+
+			/* drive scissor lift - directly with button 5 U/D */
+			if ((vexRT[Btn5U] == 1) && (SensorValue[L_Encoder] < 12345)) /* FIXME - change limit to encoder */
+			{
+				motor[L1] = 127;
+				motor[L2] = 127;
+				//			motor[L3] = 127;
+			}
+			else if (vexRT[Btn5D] == 1)
+			{
+				motor[L1] = -127;
+				motor[L2] = -127;
+				//			motor[L3] = -127;
+			}
+			else
+			{
+				motor[L1] = 0;
+				motor[L2] = 0;
+				//			motor[L3] = 0;
+			}
+
+			/***********************************************
+			*****************			 claw			**************
+			* Use button 6D/U to close/open the claw
+			*
+			* Use button 8R to put the claw into 'hold' mode
+			*	 where it will use the potentiometer to maintain
+			*	 the last position when 8R was pressed
+			* Claw potentiometer wide open 1400, closed 2780 (Feb 17 2017)
+			*********************************************/
+			//		if (vexRT[Btn8R] == 1)	/* switch to 'pot' mode */
+			//		{
+			//			claw_mode =	 CLAW_MODE_pot;
+			//			claw_position = SensorValue[ClawPot];
+			//			claw_goal = claw_position;	/* actual:	potentiometer reading */
+			//			writeDebugStreamLine("claw pot mode: %d", claw_goal);
+			//		}
+			if (vexRT[Btn8R] == 1)	/* switch to 'hold' mode */
+			{
+				claw_mode =	 CLAW_MODE_hold;
+				motor[C] = 60;	/* ToDo - harder hold torque */
+				writeDebugStreamLine("claw hold mode: %d", claw_goal);
+			}
+			else if (vexRT[Btn8L] == 1) /* switch to 'hold' mode */
+			{
+				claw_mode =	 CLAW_MODE_hold;
+				motor[C] = 40;	/* ToDo - figure out a safe hold torque */
+				writeDebugStreamLine("claw hold mode: %d", claw_goal);
+			}
+			//		else if (vexRT[Btn8U] == 1)	 /* manual drive open 8U */
+			else if (vexRT[Btn6U] == 1)	 /* manual drive open 6U */
+			{
+				motor[C] = -80;
+				claw_mode =	 CLAW_MODE_manual;
+			}
+			//		else if (vexRT[Btn8D] == 1)	 /* manual drive close 8D */
+			else if (vexRT[Btn6D] == 1)	 /* manual drive close 6D */
+			{
+				motor[C] = 80;
+				claw_mode =	 CLAW_MODE_manual;
+			}
+			else if (claw_mode == CLAW_MODE_manual)
+			{
+				motor[C] = 0;	 /* ToDo - do we want some hold drive? */
+			}
+			/*	if hold mode, then use the potentiometer to set the motor drive */
+			else if (claw_mode ==	 CLAW_MODE_pot)
+			{
+				claw_error = (claw_position- claw_goal);
+				claw_drive = claw_error / 4;
+				if (claw_drive > MAX_MOTOR )	 /* limit check */
+				{
+					claw_drive = MAX_MOTOR;
+				}
+				else if (claw_drive < MIN_MOTOR )		/* limit check */
+				{
+					claw_drive = MIN_MOTOR;
+				}
+				/* now set the motor drive */
+				motor[C] = claw_drive;
+			} // end CLAW_MODE_HOLD
+
+			wait1Msec(20);
+
+		}	 // end while(1)
+	}	 // end task
 
 
 
-task usercontrol()
-{
-	// User control code here, inside the loop
+	task usercontrol()
+	{
+		// User control code here, inside the loop
 
-	// This is the main execution loop for the user control program. Each time through the loop
-	// your program should update motor + servo values based on feedback from the joysticks.
+		// This is the main execution loop for the user control program. Each time through the loop
+		// your program should update motor + servo values based on feedback from the joysticks.
 
-	// .....................................................................................
-	// Insert user code here. This is where you use the joystick values to update your motors, etc.
-	// .....................................................................................
+		// .....................................................................................
+		// Insert user code here. This is where you use the joystick values to update your motors, etc.
+		// .....................................................................................
 
-	startTask(user_b_bot); // Remove this function call once you have "real" code.
-}
+		startTask(user_b_bot);
+	}
