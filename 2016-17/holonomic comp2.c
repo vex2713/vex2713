@@ -65,7 +65,7 @@ short gyroGoal = 0;
 #define PARK_SHOULDER 0
 #define DEPLOY_SHOULDER 50
 #define MAX_SHOULDER 140
-#define TOP_SHOULDER 110
+#define TOP_SHOULDER 100
 
 #define GOAL_STEP_SIZE 1
 
@@ -106,34 +106,7 @@ short shoulder_drive;
 *   and wrist in the 'park' position to initialize both
 *   encoders at 0
 */
-task hold_wrist()
-{
-#if 0
-	short wrist_drive;
-	while ( true )
-	{
-		wrist_position = SensorValue[wrist_enc];  // wrist encoder
 
-		if ( wrist_position > 4 )
-		{
-			/* a drive of 25 seems to hold the wrist up at park - CONFIRM!!! */
-			wrist_drive = wrist_position * 6;
-			motor[C1] = wrist_drive;
-			motor[C2] = wrist_drive;
-		}
-		else
-		{
-			/* low power hold mode ... may oscillate */
-			wrist_drive = wrist_position * 3;
-			motor[C1] = wrist_drive;
-			motor[C2] = wrist_drive;
-		}
-
-		waitInMilliseconds(20); // delay?
-
-	}
-#endif
-}
 
 void pre_auton()
 {
@@ -142,10 +115,10 @@ void pre_auton()
 	SensorValue[LEDY]=0;
 
 	//Completely clear out any previous sensor readings by setting the port to "sensorNone"
-	SensorType[in4] = sensorNone;
+	SensorType[in3] = sensorNone;
 	wait1Msec(1000);
 	//Reconfigure Analog Port 8 as a Gyro sensor and allow time for ROBOTC to calibrate it
-	SensorType[in4] = sensorGyro;
+	SensorType[in3] = sensorGyro;
 	wait1Msec(2000);
 	SensorValue[in4] = 0;	 // zero gyro
 	// Set bStopTasksBetweenModes to false if you want to keep user created tasks running between
@@ -172,7 +145,6 @@ void pre_auton()
 	claw_goal = claw_position + 120; /* open just a little */
 
 	shoulder_position = SensorValue[shldr_enc];
-
 
 
 
@@ -217,7 +189,7 @@ task autonomous()
 	if ( mode_3 == 0)
 	{
 		while(1)
-	 {
+		{
 			waitInMilliseconds(500);
 			SensorValue[LEDR]=0;
 			waitInMilliseconds(500);
@@ -229,172 +201,294 @@ task autonomous()
 		SensorValue[LEDG]=1;
 	}
 
-	/* first, deploy the claw! */
-	resetTimer(T1);
-	motor[C1] = -60;
-	motor[C2] = -60;
-
-	/* FIXME - add timeout or check if pot stops changing */
-	while (SensorValue[ClawPot] < claw_goal)
+	if (mode_3 == 1) /* works with GYRO */
 	{
-		waitInMilliseconds(5);
-		if (getTimer(T1, seconds) > 5)
-		{
-			break;
-		}
-	}
-	motor[C1] = 0;
-	motor[C2] = 0;
-	waitInMilliseconds(200); /* allow it to drop */
 
-	/* now fully open */
+		/* first, deploy the claw! */
+		resetTimer(T1);
+		motor[C1] = -60;
+		motor[C2] = -60;
+
+		/* FIXME - add timeout or check if pot stops changing */
+		while (SensorValue[ClawPot] < claw_goal)
+		{
+			waitInMilliseconds(5);
+			if (getTimer(T1, seconds) > 5)
+			{
+				break;
+			}
+		}
+		motor[C1] = 0;
+		motor[C2] = 0;
+		waitInMilliseconds(200); /* allow it to drop */
+
+		/* now fully open the claw */
 		/* drop back down AND open claw for pickup at the same time !!!! */
-	if ( mode_2 == 0) /* going for a cube ... open wide */
-	{
-		claw_goal = CLAW_pot_open; // 3010
-	}
-	else /* pick up some stars - can't open wide! */
-	{
-		claw_goal = CLAW_pot_half_open; //2600
-	}
-
-
-	resetTimer(T1);
-	motor[C1] = -60;
-	motor[C2] = -60;
-	while (SensorValue[ClawPot] < claw_goal)
-	{
-		waitInMilliseconds(5);
-		if (getTimer(T1, seconds) > 3)
+		if ( mode_2 == 1) /* going for a cube ... open wide */
 		{
-			break;
+			claw_goal = CLAW_pot_open; // 3010
 		}
-	}
-	motor[C1] = 0;
-	motor[C2] = 0;
-
-
-  /* approach the cube ( or other object ) */
-	motor[FL] = 127;
-	motor[FR] = 127;
-	motor[BL] = 127;
-	motor[BR] = 127;
-	waitInMilliseconds (3000);
-	/* step 3:  stop motor:   */
-	motor[FL] = 0;
-	motor[FR] = 0;
-	motor[BL] = 0;
-	motor[BR] = 0;
-
-	/* close the claw - and hold - pot value is dropping as we close */
-	resetTimer(T1);
-	claw_position = SensorValue[ClawPot];
-	motor[C1] = 40;
-	motor[C2] = 40;
-	waitInMilliseconds(100);
-	while ( (SensorValue[ClawPot] <  claw_position) /* exits if it stops closing! */
-		      && (getTimer(T1, seconds) < 3) )
-	{
-		claw_position = SensorValue[ClawPot];
-		waitInMilliseconds(100);
-	}
-	/* drop to 'hold' torque */
-	motor[C1] = 30;
-	motor[C2] = 30;
-
-	/* FIXME - if coming up empty, the claw will have fully closed ... open, move up, and try again! */
-
-	/* Turn  to face the wall or away from it depending on stars or cubes */
-	/* FIXME note, if on the wall getting stars, we may have to turn before deploying the outriggers
-	 * but if getting cubes, we may have to lift before turning */
-
-
-	 	/* now we need to turn towards or away from the wall - mode dependent! */
-	if (mode_2 == 1)  /* cube quest, turning 120 degrees from wall and lifting */
-	{
-		gyroGoal = 1200; /* 120 degrees - face away from the wall*/
-		shoulder_position = SensorValue[shldr_enc];
-		waitInMilliseconds(100);
-		while ( (SensorValue[shldr_enc] <  DEPLOY_SHOULDER)
-					&& (SensorValue[shldr_enc] > shoulder_position) ) /* check for 'stall' */
+		else /* pick up some stars - can't open wide! */
 		{
+			claw_goal = CLAW_pot_half_open; //2600
+		}
+
+		resetTimer(T1);
+		motor[C1] = -60;
+		motor[C2] = -60;
+		while (SensorValue[ClawPot] < claw_goal)
+		{
+			waitInMilliseconds(5);
+			if (getTimer(T1, seconds) > 3)
+			{
+				break;
+			}
+		}
+		motor[C1] = 0;
+		motor[C2] = 0;
+
+
+		/* move forward towards the cube ( or other object ) */
+		motor[FL] = 127;
+		motor[FR] = 127;
+		motor[BL] = 127;
+		motor[BR] = 127;
+		waitInMilliseconds (1500);
+		/* step 3:  stop motor:   */
+		motor[FL] = 0;
+		motor[FR] = 0;
+		motor[BL] = 0;
+		motor[BR] = 0;
+
+		/* close the claw - and hold - pot value is dropping as we close */
+		resetTimer(T1);
+		claw_position = SensorValue[ClawPot];
+		motor[C1] = 60;
+		motor[C2] = 60;
+		waitInMilliseconds(1500);
+		while ( (SensorValue[ClawPot] >  claw_position) /* exits if it stops closing! */
+			&& (getTimer(T1, seconds) < 3) )
+		{
+			claw_position = SensorValue[ClawPot];
+			waitInMilliseconds(100);
+		}
+		/* drop to 'hold' torque */
+		motor[C1] = 30;
+		motor[C2] = 30;
+		waitInMilliseconds(500);
+		/* FIXME - if coming up empty, the claw will have fully closed ... open, move up, and try again! */
+
+		/* Turn  to face the wall or away from it depending on stars or cubes */
+		/* FIXME note, if on the wall getting stars, we may have to turn before deploying the outriggers
+		* but if getting cubes, we may have to lift before turning */
+
+
+		/* now we need to turn towards or away from the wall - mode dependent! */
+		if (mode_2 == 1)  /* cube quest, turning 120 degrees from wall and lifting */
+		{
+			gyroGoal = 600; /* 600 = 60 degrees - face away from the wall*/
+			shoulder_position = SensorValue[shldr_enc];
+			motor[S1] = 80;
+			motor[S2] = 80;
+			waitInMilliseconds(100);
+			while ( (SensorValue[shldr_enc] <  DEPLOY_SHOULDER)
+				&& (SensorValue[shldr_enc] > shoulder_position) ) /* check for 'stall' */
+			{
 				shoulder_position = SensorValue[shldr_enc];
 				waitInMilliseconds(100);
+			}
+			/* hold shoulder?  move to separate process with encoder ! */
+			motor[S1] = 20;
+			motor[S2] = 20;
 		}
-	}
-	else /* going to stars ... do not deploy yet! turn 90 degrees towards the Wall */
-	{
-		gyroGoal = 900; /* 90 degrees */
-	}
-
-	//	turn left ( counterclockwise gyro +)	 FIXME, what about starting on the left?	Jumper option or program?
-	if (mode_1 != mode_2) /* cubes from right or stars from left, turn counter clockwise */
-	{
-		motor[FL] = -50;
-		motor[BL] = -50;
-		motor[FR] = 50;
-		motor[BR] = 50;
-	}
-	else	/* cubes from right or starts from left, turn clockwise */
-	{
-		motor[FL] = 50;
-		motor[BL] = 50;
-		motor[FR] = -50;
-		motor[BR] = -50;
-	}
-
-	/* turn either way until reaching goal - absolute value */
-	resetTimer(T1);
-	while(abs(gyroValue) < gyroGoal)
-	{
-		gyroValue = SensorValue[in4];
-		wait1Msec(1);
-		if (getTimer(T1, seconds) > 5)
+		else /* going to stars ... do not deploy yet! turn 90 degrees towards the Wall */
 		{
-			break;
+			gyroGoal = 900; /* 90 degrees */
 		}
-	}
-	/* apply brake */
-	if (mode_1 != mode_2)
-	{
-		motor[FL] = 5;
-		motor[BL] = 5;
-		motor[FR] = -5;
-		motor[BR] = -5;
-	}
-	else
-	{
-		motor[FL] = -5;
-		motor[BL] = -5;
-		motor[FR] = 5;
-		motor[BR] = 5;
-	}
-	wait1Msec(50);
 
-	/* if stars, move forward, then turn 180 degrees and deploy outrigger */
+		//	turn left ( counterclockwise gyro +)	 FIXME, what about starting on the left?	Jumper option or program?
+		resetTimer(T1);
+		if (mode_1 != mode_2) /* cubes from right or stars from left, turn counter clockwise */
+		{
+			motor[FL] = -50;
+			motor[BL] = -50;
+			motor[FR] = 50;
+			motor[BR] = 50;
+		}
+		else	/* cubes from right or starts from left, turn clockwise */
+		{
+			motor[FL] = 50;
+			motor[BL] = 50;
+			motor[FR] = -50;
+			motor[BR] = -50;
+		}
 
-	/*  next - go all the way to the wall and then launch the payload and open claw at top */
+		/* turn either way until reaching goal - absolute value */
+		gyroValue = SensorValue[in3];
 
-	/* then .. call it quits!!! */
+		while(abs(gyroValue) < gyroGoal)
+		{
+			gyroValue = SensorValue[in3];
+			wait1Msec(1);
+			if (getTimer(T1, seconds) > 2)
+			{
+				break;
+			}
+		}
+		/* apply brake */
+		if (mode_1 != mode_2)
+		{
+			motor[FL] = 5;
+			motor[BL] = 5;
+			motor[FR] = -5;
+			motor[BR] = -5;
+		}
+		else
+		{
+			motor[FL] = -5;
+			motor[BL] = -5;
+			motor[FR] = 5;
+			motor[BR] = 5;
+		}
+		wait1Msec(50);
 
+#if 0
+		/* if stars, move forward, then turn 180 degrees and deploy outrigger */
+		if (mode_2 == 0)
+		{
+			/* move forward */
+			motor[FL] = 50;
+			motor[BL] = 50;
+			motor[FR] = 50;
+			motor[BR] = 50;
+			wait1Msec(200);
+			motor[FL] = 0;
+			motor[BL] = 0;
+			motor[FR] = 0;
+			motor[BR] = 0;
 
-#if 0  /* FIXME  old autonomous - use this with 'mode_3'? */
-	waitInMilliseconds (500);
-	motor[S1] = 75;
-	motor[S2] = 75;
-	waitInMilliseconds (1000);
-	motor[S1] = 0;
-	motor[S2] = 0;
-	waitInMilliseconds (1000);
-	/* step 4:  back off ( shake off star? ) */
-	/* all motors off  */
-	/*  FIXME - we have an encoder now ... do something with the wrist and shoulder !!!! */
-	motor[FL] = -127;
-	motor[FR] = -127;
-	motor[BL] = -127;
-	motor[BR] = -127;
-	waitInMilliseconds (1500);
+			/* now we need to turn towards or away from the wall - mode dependent! */
+
+			gyroGoal = 2700; /* 180 degrees - face  to the wall*/
+			shoulder_position = SensorValue[shldr_enc];
+			motor[S1] = 75;
+			motor[S2] = 75;
+			waitInMilliseconds(1000);
+
+			while ( (SensorValue[shldr_enc] <  DEPLOY_SHOULDER)
+				&& (SensorValue[shldr_enc] > shoulder_position) ) /* check for 'stall' */
+			{
+				shoulder_position = SensorValue[shldr_enc];
+				waitInMilliseconds(100);
+
+			}
+			motor[S1] = 20;
+			motor[S2] = 20;
+		}  /* `end stars move from wall */
+		else
+		{
+			gyroGoal = 2700; /* 180 degrees - face  to the wall*/
+		}
+
+		//	turn left ( counterclockwise gyro +)	 FIXME, what about starting on the left?	Jumper option or program?
+		if (mode_1 != mode_2) /* cubes from right or stars from left, turn counter clockwise */
+		{
+			motor[FL] = -50;
+			motor[BL] = -50;
+			motor[FR] = 50;
+			motor[BR] = 50;
+		}
+		else	/* cubes from right or starts from left, turn clockwise */
+		{
+			motor[FL] = 50;
+			motor[BL] = 50;
+			motor[FR] = -50;
+			motor[BR] = -50;
+		}
+
+		/* turn either way until reaching goal - absolute value */
+		resetTimer(T1);
+		while(abs(gyroValue) < gyroGoal)
+		{
+			gyroValue = SensorValue[in4];
+			wait1Msec(1);
+			if (getTimer(T1, seconds) > 2)
+			{
+				break;
+			}
+		}
+		/* apply brake */
+		if (mode_1 != mode_2)
+		{
+			motor[FL] = 5;
+			motor[BL] = 5;
+			motor[FR] = -5;
+			motor[BR] = -5;
+		}
+		else
+		{
+			motor[FL] = -5;
+			motor[BL] = -5;
+			motor[FR] = 5;
+			motor[BR] = 5;
+		}
+		wait1Msec(50);
+
 #endif
+
+		/*  next - go all the way to the fence  */
+		motor[FL] = -70;
+		motor[BL] = -70;
+		motor[FR] = -70;
+		motor[BR] = -70;
+
+		wait1Msec(3000);
+
+		/*  then launch the payload and open claw at top */
+		shoulder_position = SensorValue[shldr_enc];
+		motor[S1] = 120;
+		motor[S2] = 120;
+		waitInMilliseconds(100);
+		while ( (SensorValue[shldr_enc] <  MAX_SHOULDER)
+			&& (SensorValue[shldr_enc] > shoulder_position) ) /* check for 'stall' */
+		{
+			shoulder_position = SensorValue[shldr_enc];
+			waitInMilliseconds(100);
+			if	(SensorValue[shldr_enc] >  TOP_SHOULDER)
+			{
+				motor[C1] = -127;
+				motor[C2] = -127;
+
+			}
+		}
+		/* then .. call it quits!!! */
+
+		motor[C1] = 0;
+		motor[C2] = 0;
+		motor[S1] = 0;
+		motor[S2] = 0;
+
+
+	}
+	else  // mode_3 - old manual mode
+	{
+		//#if 0  /* FIXME  old autonomous - use this with 'mode_3'? */
+		waitInMilliseconds (500);
+		motor[S1] = 75;
+		motor[S2] = 75;
+		waitInMilliseconds (1000);
+		motor[S1] = 0;
+		motor[S2] = 0;
+		waitInMilliseconds (1000);
+		/* step 4:  back off ( shake off star? ) */
+		/* all motors off  */
+		/*  FIXME - we have an encoder now ... do something with the wrist and shoulder !!!! */
+		motor[FL] = -127;
+		motor[FR] = -127;
+		motor[BL] = -127;
+		motor[BR] = -127;
+		waitInMilliseconds (1500);
+	}
 
 	allMotorsOff();
 }
@@ -420,30 +514,30 @@ task autonomous()
 
 task user_a_bot()
 {
-		short LED_toggle = 0;
+	short LED_toggle = 0;
 
 	//	short shoulder_mode = SHOULDER_MODE_manual;//SHOULDER_MODE_test; /* initialize in test mode - no encoder */
 	//	short shoulder_goal = 0;
 	//	short shoulder_error;
 	//	short shoulder_drive;
-  // 	short shoulder_limit;
+	// 	short shoulder_limit;
 	// short limit_count = 0;
-		SensorValue[LEDG]=1;  /* 0 is OFF, 1 is ON */
-	  SensorValue[LEDR]=0;
-	  SensorValue[LEDY]=0;
+	SensorValue[LEDG]=1;  /* 0 is OFF, 1 is ON */
+	SensorValue[LEDR]=0;
+	SensorValue[LEDY]=0;
 
 	while(1 == 1)
 	{
-			/* heartbeat ... it's alive!!!! */
-			if (LED_toggle++ == 10)
-		  {
-					SensorValue[LEDG]=1;
-		  }
-		  else if (LED_toggle == 20)
-		  {
-					SensorValue[LEDG]=0;
-					LED_toggle = 0;
-		  }
+		/* heartbeat ... it's alive!!!! */
+		if (LED_toggle++ == 10)
+		{
+			SensorValue[LEDG]=1;
+		}
+		else if (LED_toggle == 20)
+		{
+			SensorValue[LEDG]=0;
+			LED_toggle = 0;
+		}
 
 		/**********************************************************************
 		*****               holomonic wheels       ***************************
@@ -484,7 +578,7 @@ task user_a_bot()
 		//	motor[W] = vexRT[Btn6U] / Btn6D;
 
 		/*   define potentiometer variables for position control here */
-  	lineValue = SensorValue[LineDetect];
+		lineValue = SensorValue[LineDetect];
 		shoulder_position = SensorValue[shldr_enc];  // shoulder encoder
 		claw_position = SensorValue[ClawPot];	 // claw potentiometer goes 0 to 4095
 
@@ -776,6 +870,6 @@ task usercontrol()
 	// Insert user code here. This is where you use the joystick values to update your motors, etc.
 	// .....................................................................................
 
-	stopTask(hold_wrist);
+	//stopTask(hold_wrist);
 	startTask(user_a_bot);
 }
