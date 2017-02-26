@@ -219,12 +219,18 @@ task autonomous()
 	motor[FR] = 127;
 	motor[BL] = 127;
 	motor[BR] = 127;
-	waitInMilliseconds (2000);
+	waitInMilliseconds (1800);
+
+	/* stop */
+	motor[FL] = 0;
+	motor[FR] = 0;
+	motor[BL] = 0;
+	motor[BR] = 0;
 
 	/* close claw ( assumes we are there ) then hold it*/
 	motor[C] = 40;
-	waitInMilliseconds (1000);
-	motor[C] = 30;
+	waitInMilliseconds (800);
+	motor[C] = 20;
 
 	/* going up */
 	resetTimer(T1);
@@ -234,7 +240,7 @@ task autonomous()
 	while (SensorValue[L_pot] < LIFT_pot_position_top)
 	{
 		waitInMilliseconds(5);
-		if (getTimer(T1, seconds) > 5)
+		if (getTimer(T1, seconds) > 4)
 		{
 			break;
 		}
@@ -247,7 +253,7 @@ task autonomous()
 	/* now we need to turn towards the wall - mode dependent! */
 	if (mode_2 == 1)
 	{
-		gyroGoal = 600; /* 60 degrees */
+		gyroGoal = 550; /* 600 = 60 degrees */
 	}
 	else
 	{
@@ -296,7 +302,7 @@ task autonomous()
 		motor[FR] = 5;
 		motor[BR] = 5;
 	}
-	wait1Msec(50);
+	wait1Msec(10);
 
 	//go foward until gray is detected ... or just ram into the wall? */
 	motor[FL] = 60;
@@ -318,12 +324,12 @@ task autonomous()
 	while (SensorValue[LineDetect] > LINE_threshold)
 	{
 		//continue until white is detected
-		if (getTimer(T1, seconds) > 5)
+		if (getTimer(T1, seconds) > 2)
 		{
 			break;
 		}
 	}
-	waitInMilliseconds (200);
+	waitInMilliseconds (100);
 	resetTimer(T1);
 	while (SensorValue[LineDetect] < LINE_threshold)
 	{
@@ -335,7 +341,7 @@ task autonomous()
 		}
 	}
 
-	waitInMilliseconds (200);
+	waitInMilliseconds (100);
 	/* slow down as we approach */
 	/* FIXME - use the GYRO to turn again and keep straight!!! */
 	motor[FL] = 45;
@@ -348,12 +354,13 @@ task autonomous()
 	{
 		//continue until white is detected
 		//continue until white is detected
-		if (getTimer(T1, seconds) > 5)
+		if (getTimer(T1, seconds) > 1)
 		{
 			break;
 		}
 	}
 
+		motor [C] = 0;
 	/* stop motor !!!		*/
 	motor[FL] = 0;
 	motor[FR] = 0;
@@ -361,7 +368,7 @@ task autonomous()
 	motor[BR] = 0;
 
 	/* open claw */
-	motor [C] = -30;
+	motor [C] = -40;
 	resetTimer(T1);
 	while (SensorValue[ClawPot] > CLAW_pot_open )
 	{
@@ -378,7 +385,7 @@ task autonomous()
 	motor[BL] = -45;
 	motor[BR] = -45;
 
-	waitInMilliseconds (200);
+	waitInMilliseconds (300);
 	motor[FL] = 0;
 	motor[FR] = 0;
 	motor[BL] = 0;
@@ -615,7 +622,7 @@ int covert_inches_to_encoders(int inches)
 				m_drive = 1* vexRT[Ch4];	 /* 1&4 controls are backwards */
 			}
 
-			if((m_drive > 108) || (m_drive < -108))
+			if((m_drive > 125) || (m_drive < -125))
 			{
 				motor[M] = m_drive;
 
