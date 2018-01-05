@@ -50,6 +50,7 @@ short claw_position;	/* actual:	potentiometer reading wide 1400, closed 2780*/
 short claw_goal;		/* latched actual:	potentiometer reading when 8R is pressed */
 //short claw_error;		/* difference between	 */
 short claw_drive;
+bool claw_hold = false;
 
 short mode_1, mode_2, mode_3;	 /* autonomous mode variables */
 
@@ -511,17 +512,31 @@ void clawControl()
 	*
 	*********************************************/
 
-	if (vexRT[Btn6D] == 1)	 /* manual drive open 6D */
+	if (vexRT[Btn6D] == 1)	 /* manual drive close 6D */
 	{
 		claw_drive = -60;
+		claw_hold = false;
 	}
-	else if (vexRT[Btn6U] == 1)	 /* manual drive closed 6U */
+	else if (vexRT[Btn6U] == 1)	 /* manual drive open 6U */
 	{
 		claw_drive = 60;
+		claw_hold = false;
 	}
-	else
+	else if (vexRT[Btn8D] == 1)
 	{
-		claw_drive = 0;
+		claw_hold = true;
+		claw_drive = -30;
+	}
+	else //all controls released
+	{
+		if(claw_hold)
+		{
+			claw_drive = -30;
+		}
+		else
+		{
+			claw_drive = 0;
+		}
 	}
 
 	/* now set the motor drive */
@@ -556,9 +571,9 @@ void shoulderControl()
 			writeDebugStreamLine("pos: %d, driv: %d", shoulder_position,shoulder_drive);
 		}
 		//operate at 10% below half
-		else if ((shoulder_position < 40)&&(shoulder_position > 10))
+		else if ((shoulder_position < 40)&&(shoulder_position > 5))
 		{
-			shoulder_drive = -15;
+			shoulder_drive = -25;
 			writeDebugStreamLine("pos: %d, driv: %d", shoulder_position,shoulder_drive);
 		}
 		//minimum power near lowest position
@@ -615,7 +630,7 @@ void initShoulder()
 void initClaw()
 {
 	writeDebugStreamLine("initClaw");
-	motor[C1] = -30; //close
+	motor[C1] = -60; //close
 	sleep(750);
 
 	motor[C1] = 60;
@@ -713,22 +728,22 @@ task user_a_bot()
 		//claw_position = SensorValue[ClawPot];	 // claw potentiometer goes 0 to 4095
 
 		//crab mode
-		if (vexRT[Btn8R] == 1)
+		if (vexRT[Btn7R] == 1)
 		{
 			motor[FL] = -127 * -DRIVE_GAIN; // / 1;
 			motor[BR] = -127 * -DRIVE_GAIN; // / 1;
 		}
-		if (vexRT[Btn8L] == 1)
+		if (vexRT[Btn7L] == 1)
 		{
 			motor[FL] = 127 * -DRIVE_GAIN; // / 1;
 			motor[BR] = 127 * -DRIVE_GAIN; // / 1;
 		}
-		if (vexRT[Btn8D] == 1)
+		if (vexRT[Btn7D] == 1)
 		{
 			motor[FR] = 127 * -DRIVE_GAIN; // / 1;
 			motor[BL] = 127 * -DRIVE_GAIN; // / 1;
 		}
-		if (vexRT[Btn8U] == 1)
+		if (vexRT[Btn7U] == 1)
 		{
 			motor[FR] = -127 * -DRIVE_GAIN; // / 1;
 			motor[BL] = -127 * -DRIVE_GAIN; // / 1;
@@ -760,6 +775,7 @@ task usercontrol()
 	// .....................................................................................
 
 
+	initShoulder();
 	initShoulder();
 	initClaw();
 
