@@ -23,6 +23,10 @@
 
 #include "Vex_Competition_Includes.c"   //Main competition background code...do not modify!
 
+//prototypes
+void initShoulder();
+void initClaw();
+
 #define MAX_MOTOR 127
 #define MIN_MOTOR -127
 
@@ -164,6 +168,60 @@ void pre_auton()
 
 task autonomous()
 {
+	initShoulder();
+	initShoulder();
+	initClaw();
+
+	motor[FL] = 127 * DRIVE_GAIN;
+	motor[FR] = 127 * DRIVE_GAIN;
+	motor[BL] = 127 * DRIVE_GAIN;
+	motor[BR] = 127 * DRIVE_GAIN;
+	waitInMilliseconds (1000);
+	motor[FL] = 0;
+	motor[FR] = 0;
+	motor[BL] = 0;
+	motor[BR] = 0;
+	waitInMilliseconds (250);
+
+	motor[FL] = 127 * DRIVE_GAIN;
+	motor[FR] = -127 * DRIVE_GAIN;
+	motor[BL] = 127 * DRIVE_GAIN;
+	motor[BR] = -127 * DRIVE_GAIN;
+	waitInMilliseconds (500);
+	motor[FL] = 0;
+	motor[FR] = 0;
+	motor[BL] = 0;
+	motor[BR] = 0;
+	waitInMilliseconds (250);
+
+	motor[FL] = -127 * DRIVE_GAIN;
+	motor[FR] = 127 * DRIVE_GAIN;
+	motor[BL] = -127 * DRIVE_GAIN;
+	motor[BR] = 127 * DRIVE_GAIN;
+	waitInMilliseconds (1000);
+	motor[FL] = 0;
+	motor[FR] = 0;
+	motor[BL] = 0;
+	motor[BR] = 0;
+	waitInMilliseconds (250);
+
+	motor[FL] = 127 * DRIVE_GAIN;
+	motor[FR] = -127 * DRIVE_GAIN;
+	motor[BL] = 127 * DRIVE_GAIN;
+	motor[BR] = -127 * DRIVE_GAIN;
+	waitInMilliseconds (400);
+	motor[FL] = 0;
+	motor[FR] = 0;
+	motor[BL] = 0;
+	motor[BR] = 0;
+	waitInMilliseconds (250);
+
+	return;
+	//////////////////////////////////////
+
+
+
+
 	// .....................................................................................
 	// Insert user code here.
 	// .....................................................................................
@@ -701,14 +759,15 @@ task user_a_bot()
 		}
 		else if (drive_forward == -1)
 		{
-			motor[FL] = vexRT[Ch2] * -DRIVE_GAIN; // / 1;
-			motor[FR] = vexRT[Ch3] * -DRIVE_GAIN; // / 1;
-			motor[BL] = vexRT[Ch2] * -DRIVE_GAIN; // / 1;
-			motor[BR] = vexRT[Ch3] * -DRIVE_GAIN; // / 1;
+			motor[FL] = vexRT[Ch2] * DRIVE_GAIN; // / 1;
+			motor[FR] = vexRT[Ch3] * DRIVE_GAIN; // / 1;
+			motor[BL] = vexRT[Ch2] * DRIVE_GAIN; // / 1;
+			motor[BR] = vexRT[Ch3] * DRIVE_GAIN; // / 1;
 		}
 
 
 		/*  FIXME:  add other drive modes depending on the driver preference */
+		/*
 		if (vexRT[Btn7U] == 1)
 		{
 			drive_forward = 1;
@@ -717,7 +776,7 @@ task user_a_bot()
 		{
 			drive_forward = -1;
 		}
-
+    */
 		//	motor[S1] = vexRT[Btn5U] / Btn5D;
 		//	motor[S2] = vexRT[Btn5U] / Btn5D;
 		//	motor[W] = vexRT[Btn6U] / Btn6D;
