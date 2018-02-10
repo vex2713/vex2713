@@ -21,8 +21,26 @@ void pre_auton()
 
 task autonomous()
 {
+	//deploy claw
+  motor[deployClaw] = -127;
+  sleep(5500);
+  motor[deployClaw] = 0;
 
-}//end autonomous
+  //lift up
+	motor[liftPair1] = -40;
+  motor[liftPair2] = -40;
+  sleep(750);
+	motor[liftPair1] = 0;
+  motor[liftPair2] = 0;
+
+  //move forward
+	motor[rightTrack] = 60;
+	motor[leftTrack] = 60;
+	sleep(500);
+	motor[rightTrack] = 0;
+	motor[leftTrack] = 0;
+
+ }//end autonomous
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -87,22 +105,71 @@ task user_c_bot()
 		if(partnerMode)
 		{
 			//lift
-			motor[liftPair1] = vexRT[Ch2Xmtr2];
-			motor[liftPair2] = vexRT[Ch2Xmtr2];
+			//motor[liftPair1] = vexRT[Ch2Xmtr2];
+			//motor[liftPair2] = vexRT[Ch2Xmtr2];
 
 			//drive
 			motor[rightTrack] = vexRT[Ch2];
 			motor[leftTrack] = vexRT[Ch3];
 
-			//claw
-			motor[claw] = vexRT[Ch3Xmtr2];
+			////////////////////////////////////////////////////
 
-			//Deploy claw
+			//lift progressive power
+			if((vexRT[Btn5UXmtr2] == 1)||(vexRT[Btn5DXmtr2] == 1))
+			{
+				if(power < 126)
+				{
+					power = power + 1;
+				}
+			}
+			//writeDebugStreamLine("power %d", power);
+
+			//lift
+			if(vexRT[Btn5UXmtr2] == 1)
+			{
+				liftValue = power * -1;
+				liftHoldDown = false;
+				liftHoldUp = false;
+			}
+			else if(vexRT[Btn5DXmtr2] == 1)
+			{
+				liftValue = power;
+				liftHoldDown = false;
+				liftHoldUp = false;
+			}
+			else
+			{
+				if(!(liftHoldDown)&&!(liftHoldUp))
+				{
+					liftValue = 0;
+					power = 0;
+				}
+			}
+
+			//lift hold
 			if(vexRT[Btn7UXmtr2] == 1)
+			{
+				liftHoldUp = true;
+				liftHoldDown = false;
+				liftValue = HOLD_POWER * -1;
+			}
+			else if(vexRT[Btn7DXmtr2] == 1)
+			{
+				liftHoldDown = true;
+				liftHoldUp = false;
+				liftValue = HOLD_POWER;
+			}
+			//writeDebugStreamLine("liftValue %d", liftValue);
+			motor[liftPair1] = liftValue;
+			motor[liftPair2] = liftValue;
+
+			/////////////////////////////////////////
+			//Deploy claw
+			if((vexRT[Btn8L] == 1)||(vexRT[Btn8LXmtr2] == 1))
 			{
 				motor[deployClaw] = 127;
 			}
-			else if(vexRT[Btn7DXmtr2] == 1)
+			else if((vexRT[Btn8R] == 1)||(vexRT[Btn8RXmtr2] == 1))
 			{
 				motor[deployClaw] = -127;
 			}
@@ -110,7 +177,37 @@ task user_c_bot()
 			{
 				motor[deployClaw] = 0;
 			}
+
+			//claw
+			if (vexRT[Btn6DXmtr2] == 1)
+			{
+				clawDrive = -60;
+				clawHold = false;
+			}
+			else if (vexRT[Btn6UXmtr2] == 1)	 /* manual drive open 6U */
+			{
+				clawDrive = 60;
+				clawHold = false;
+			}
+			else if (vexRT[Btn8DXmtr2] == 1)
+			{
+				clawHold = true;
+				clawDrive = 30;
+			}
+			else //all controls released
+			{
+				if(clawHold)
+				{
+					clawDrive = HOLD_POWER;
+				}
+				else
+				{
+					clawDrive = 0;
+				}
+			}
+			motor[claw] = clawDrive;
 		}
+		/////////////////////////////////////////////////////////////////////////////
 		//Single user mode
 		else
 		{
