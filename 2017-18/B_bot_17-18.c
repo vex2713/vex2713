@@ -135,18 +135,63 @@ void pre_auton()
 
 task autonomous()
 {
-	// .....................................................................................
-	// Insert user code here.
-	// .....................................................................................
-	/* let the mode_1, mode_2 set the autonomous program;
-	*	 1,2
-	*	 1,1 start on left, pick up cube and deliver
-	*	 1,0 start on right, pick up cube and deliver
-	*	 0,1 start on left, pick up stars and deliver
-	*	 0,0 start on right, pick up stars and deliver
-	*	 let mode_3 = 0 be used to not do autonomous
-	*/
+	motor[C] = 100;
+	//claw hold
+	motor[L1] = 120;
+	motor[L2] = 120;
+	//lift up
+	sleep(1500);
 
+	motor[L1] = 0;
+	motor[L2] = 0;
+	//lift stop
+
+	sleep(1000);
+	motor[FL] = 100;
+	motor[FR] = 100;
+	motor[BL] = 100;
+	motor[BR] = 100;
+	//goes forward
+	sleep(200);
+
+	motor[FL] = 0;
+	motor[FR] = 0;
+	motor[BL] = 0;
+	motor[BR] = 0;
+	//stops
+
+
+	motor[L1] = -120;
+	motor[L2] = -120;
+	//lift down
+
+	sleep(500);
+
+	motor[L1] = 0;
+	motor[L2] = 0;
+	//lift stop
+	sleep(500);
+
+	motor[C] = 0;
+
+	motor[C] = -100;
+	//claw open
+	sleep(1000);
+	motor[C] = 0;
+	//claw stop
+
+
+	motor[FL] = -100;
+	motor[FR] = -100;
+	motor[BL] = -100;
+	motor[BR] = -100;
+
+	sleep(200);
+
+	motor[FL] = 0;
+	motor[FR] = 0;
+	motor[BL] = 0;
+	motor[BR] = 0;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
