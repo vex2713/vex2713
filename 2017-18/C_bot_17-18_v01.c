@@ -54,7 +54,7 @@ task autonomous()
 
 task user_c_bot()
 {
-	bool partnerMode = false;
+	bool partnerMode = true;
 	int power = 0;
 	int liftValue = 0;
 	int clawDrive = 0;

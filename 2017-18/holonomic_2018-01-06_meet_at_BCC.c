@@ -170,7 +170,7 @@ task autonomous()
 {
 	initShoulder();
 	initShoulder();
-	initClaw();
+	//initClaw();
 
 	motor[FL] = 127 * DRIVE_GAIN;
 	motor[FR] = 127 * DRIVE_GAIN;
@@ -181,7 +181,7 @@ task autonomous()
 	motor[FR] = 0;
 	motor[BL] = 0;
 	motor[BR] = 0;
-
+/*
 	waitInMilliseconds (250);
 
 	motor[FL] = 127 * DRIVE_GAIN;
@@ -210,12 +210,14 @@ task autonomous()
 	motor[FR] = -127 * DRIVE_GAIN;
 	motor[BL] = 127 * DRIVE_GAIN;
 	motor[BR] = -127 * DRIVE_GAIN;
+
 	waitInMilliseconds (400);
 	motor[FL] = 0;
 	motor[FR] = 0;
 	motor[BL] = 0;
 	motor[BR] = 0;
 	waitInMilliseconds (250);
+	*/
 
 	return;
 	//////////////////////////////////////
@@ -690,10 +692,10 @@ void initClaw()
 {
 	writeDebugStreamLine("initClaw");
 	motor[C1] = -60; //close
-	sleep(750);
+	sleep(500);
 
 	motor[C1] = 60;
-	sleep(750);
+	sleep(50);
 	motor[C1] = 0;
 }
 
@@ -837,7 +839,7 @@ task usercontrol()
 
 	initShoulder();
 	initShoulder();
-	initClaw();
+	//initClaw();
 
 	startTask(user_a_bot);
 }
