@@ -2,6 +2,7 @@
 #pragma config(Motor,  port1,           frontLeft,     tmotorVex393_HBridge, openLoop)
 #pragma config(Motor,  port2,           rearLeft,      tmotorVex393_MC29, openLoop)
 #pragma config(Motor,  port3,           midLeft,       tmotorVex393_MC29, openLoop)
+#pragma config(Motor,  port7,           capFlip,       tmotorVex393_MC29, openLoop)
 #pragma config(Motor,  port8,           midRight,      tmotorVex393_MC29, openLoop, reversed)
 #pragma config(Motor,  port9,           rearRight,     tmotorVex393_MC29, openLoop, reversed)
 #pragma config(Motor,  port10,          frontRight,    tmotorVex393_HBridge, openLoop, reversed)
@@ -52,6 +53,15 @@ task user_c_bot()
 		motor[frontLeft] = vexRT[Ch3];
 		motor[midLeft] = vexRT[Ch3];
 		motor[rearLeft] = vexRT[Ch3];
+
+		if(vexRT[Btn5U] == 1)
+		{
+			motor[capFlip] = 126;
+		}
+		if(vexRT[Btn5D] == 1)
+		{
+			motor[capFlip] = 0;
+		}
 
 		sleep(10);
 	}
