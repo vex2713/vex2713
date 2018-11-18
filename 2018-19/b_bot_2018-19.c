@@ -28,6 +28,37 @@ void pre_auton()
 
 task autonomous()
 {
+		//turn left
+		motor[frontRight] = -60;
+		motor[midRight] = -60;
+		motor[rearRight] = -60;
+		motor[frontLeft] = 60;
+		motor[midLeft] = 60;
+		motor[rearLeft] = 60;
+
+
+		sleep(700);
+		motor[frontRight] = 0;
+		motor[midRight] = 0;
+		motor[rearRight] = 0;
+		motor[frontLeft] = 0;
+		motor[midLeft] = 0;
+		motor[rearLeft] = 0;
+
+		//to flag
+		motor[frontRight] = 60;
+		motor[midRight] = 60;
+		motor[rearRight] = 60;
+		motor[frontLeft] = 60;
+		motor[midLeft] = 60;
+		motor[rearLeft] = 60;
+		sleep(2000);
+		motor[frontRight] = 0;
+		motor[midRight] = 0;
+		motor[rearRight] = 0;
+		motor[frontLeft] = 0;
+		motor[midLeft] = 0;
+		motor[rearLeft] = 0;
 }
  //end autonomous
 
