@@ -280,7 +280,7 @@ task user_c_bot()
 				clawDrive = -60;
 				clawHold = false;
 			}
-			else if ((vexRT[Btn6UXmtr2] == 1)&&(SensorValue[forkLiftPot] < 1450))
+			else if ((vexRT[Btn6UXmtr2] == 1)&&(SensorValue[forkLiftPot] < 1500))
 			{
 		    clawDrive = 60;
 		    clawHold = false;
@@ -391,7 +391,7 @@ task user_c_bot()
 				clawDrive = -60;
 				clawHold = false;
 			}
-			else if ((vexRT[Btn6U] == 1)&&(SensorValue[forkLiftPot] < 1450))
+			else if ((vexRT[Btn6U] == 1)&&(SensorValue[forkLiftPot] < 1500))
 			{
 				clawDrive = 60;
 				clawHold = false;
