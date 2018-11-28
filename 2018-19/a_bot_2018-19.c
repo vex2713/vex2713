@@ -1,4 +1,5 @@
 #pragma config(Sensor, in1,    teamSwitchPot,  sensorPotentiometer)
+#pragma config(Sensor, in2,    forkLiftPot,    sensorPotentiometer)
 #pragma config(Motor,  port2,           liftPair1,     tmotorVex393_MC29, openLoop, reversed)
 #pragma config(Motor,  port3,           liftPair2,     tmotorVex393_MC29, openLoop)
 #pragma config(Motor,  port4,           claw,          tmotorVex393_MC29, openLoop)
@@ -155,7 +156,9 @@ task user_c_bot()
 	int count = 0;
 	while(1)
 	{
-		writeDebugStreamLine("pot value: %d", SensorValue[teamSwitchPot]);
+		//writeDebugStreamLine("pot value: %d", SensorValue[teamSwitchPot]);
+		//writeDebugStreamLine("pot value: %d", SensorValue[forkLiftPot]);
+    //forkLiftPot
 
 		//select partner or user mode
 		if((vexRT[Btn7R] == 1)&&(vexRT[Btn7L] == 1)&&(partnerMode == true))
@@ -272,15 +275,15 @@ task user_c_bot()
 			}
 
 			//claw
-			if (vexRT[Btn6DXmtr2] == 1)
+			if ((vexRT[Btn6DXmtr2] == 1)&&(SensorValue[forkLiftPot] > 20))
 			{
 				clawDrive = -60;
 				clawHold = false;
 			}
-			else if (vexRT[Btn6UXmtr2] == 1)	 /* manual drive open 6U */
+			else if ((vexRT[Btn6UXmtr2] == 1)&&(SensorValue[forkLiftPot] < 1500))
 			{
-				clawDrive = 60;
-				clawHold = false;
+		    clawDrive = 60;
+		    clawHold = false;
 			}
 			else if (vexRT[Btn8DXmtr2] == 1)
 			{
@@ -298,7 +301,15 @@ task user_c_bot()
 					clawDrive = 0;
 				}
 			}
-			motor[claw] = clawDrive;
+			//if((SensorValue[forkLiftPot] < 1500)&&(SensorValue[forkLiftPot] > 0))
+			//{
+				motor[claw] = clawDrive;
+			//}
+			//else
+		  //{
+		  //	motor[claw] = 0;
+		  //}
+
 		}
 		/////////////////////////////////////////////////////////////////////////////
 		//Single user mode
@@ -375,12 +386,12 @@ task user_c_bot()
 			}
 
 			//claw
-			if (vexRT[Btn6D] == 1)
+			if ((vexRT[Btn6D] == 1)&&(SensorValue[forkLiftPot] > 20))
 			{
 				clawDrive = -60;
 				clawHold = false;
 			}
-			else if (vexRT[Btn6U] == 1)	 /* manual drive open 6U */
+			else if ((vexRT[Btn6U] == 1)&&(SensorValue[forkLiftPot] < 1500))
 			{
 				clawDrive = 60;
 				clawHold = false;
