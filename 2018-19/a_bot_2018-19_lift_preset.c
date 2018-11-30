@@ -21,8 +21,9 @@
 
 #define HOLD_POWER 30
 #define LIFT_PRESET_HEIGHT_LOW 0
-#define LIFT_PRESET_HEIGHT_MID 50
-#define LIFT_PRESET_HEIGHT_HIGH 100
+#define LIFT_PRESET_HEIGHT_MID 100
+#define LIFT_PRESET_HEIGHT_HIGH 200
+#define LIFT_PRESET_HEIGHT_MAX 600
 
 enum preset{low, mid, high};
 enum direction{up, down};
@@ -169,7 +170,7 @@ void initLiftHeight()
 	{
 		previous_position = SensorValue[liftHeight];
 
-		liftPower = 25;
+		liftPower = 20;
 		motor[liftPair1] = liftPower;
 		motor[liftPair2] = liftPower;
 		sleep(250);
@@ -201,14 +202,11 @@ void moveLiftToPreset(enum preset liftPreset,enum direction dir)
 {
 	writeDebugStreamLine("moveLiftToPreset");
 	writeDebugStreamLine("height value: %d - %d", SensorValue[liftHeight], liftPreset);
-//#define LIFT_PRESET_HEIGHT_LOW 0
-//#define LIFT_PRESET_HEIGHT_MID 50
-//#define LIFT_PRESET_HEIGHT_HIGH 100
 	int heightValue;
 
 	switch (liftPreset)
 	{
-		case low: 	heightValue = LIFT_PRESET_HEIGHT_LOW;
+		case low: 	heightValue = LIFT_PRESET_HEIGHT_LOW+5;
                	break;
 		case mid: 	heightValue = LIFT_PRESET_HEIGHT_MID;
                	break;
@@ -223,11 +221,19 @@ void moveLiftToPreset(enum preset liftPreset,enum direction dir)
 		while(SensorValue[liftHeight] < heightValue)
 		{
 			writeDebugStreamLine("height value: %d - %d", SensorValue[liftHeight], heightValue);
-			//motor[liftPair1] = liftValue;
-			//motor[liftPair2] = liftValue;
+			motor[liftPair1] = -40;
+			motor[liftPair2] = -40;
 		}
 	}
-}
+	else //down
+	{
+		while(SensorValue[liftHeight] > heightValue)
+		{
+			writeDebugStreamLine("height value: %d - %d", SensorValue[liftHeight], heightValue);
+			motor[liftPair1] = 20;
+			motor[liftPair2] = 20;
+		}
+	}}
 /////////////////////////////////////////////////////////////////////////////////////////
 //
 //																 User Control Task
@@ -336,7 +342,6 @@ task usercontrol()
 			{
 				liftPreset = mid;
 				liftDirection = up;
-				sleep(250);
 				writeDebugStreamLine("liftPreset %d", liftPreset);
 				moveLiftToPreset(liftPreset,liftDirection);
 			}
@@ -344,22 +349,25 @@ task usercontrol()
 			if((vexRT[Btn7UXmtr2] == 1)&&(liftPreset == mid))
 			{
 				liftPreset = high;
-				sleep(250);
+				liftDirection = up;
 				writeDebugStreamLine("liftPreset %d", liftPreset);
+				moveLiftToPreset(liftPreset,liftDirection);
 			}
 			//high to mid
 			if((vexRT[Btn7DXmtr2] == 1)&&(liftPreset == high))
 			{
 				liftPreset = mid;
-				sleep(250);
+				liftDirection = down;
 				writeDebugStreamLine("liftPreset %d", liftPreset);
+				moveLiftToPreset(liftPreset,liftDirection);
 			}
 			//mid to low
 			if((vexRT[Btn7DXmtr2] == 1)&&(liftPreset == mid))
 			{
 				liftPreset = low;
-				sleep(250);
+				liftDirection = down;
 				writeDebugStreamLine("liftPreset %d", liftPreset);
+				moveLiftToPreset(liftPreset,liftDirection);
 			}
 
 
