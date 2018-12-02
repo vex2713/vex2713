@@ -46,6 +46,13 @@ void initLiftHeight();
 
 //globals
 bool teamSwitch;
+enum preset liftPreset;
+enum mode liftMode; //{manual,preset}
+int g_liftValue = 0;
+int g_liftPower = 0;
+bool upLiftPresetLock = false;
+bool downLiftPresetLock = false;
+
 
 //teamSwitch = true;
 void pre_auton()
@@ -218,7 +225,7 @@ enum preset getPresetLiftValue(int sensor)
 	*/
 	if(sensor < (LIFT_PRESET_HEIGHT_MID/2))
 	{
-		writeDebugStreamLine("reading low");
+		//writeDebugStreamLine("reading low");
 		preset = low;
 	}
 	else if(
@@ -226,22 +233,158 @@ enum preset getPresetLiftValue(int sensor)
 					(sensor < ((LIFT_PRESET_HEIGHT_HIGH-LIFT_PRESET_HEIGHT_MID)/2)+LIFT_PRESET_HEIGHT_MID)
 				 )
 	{
-		writeDebugStreamLine("reading mid");
+		//writeDebugStreamLine("reading mid");
 		preset = mid;
 	}
 	else if(sensor > ((LIFT_PRESET_HEIGHT_HIGH-LIFT_PRESET_HEIGHT_MID)/2)+LIFT_PRESET_HEIGHT_MID)
 	{
-		writeDebugStreamLine("reading high");
+		//writeDebugStreamLine("reading high");
 		preset = high;
 	}
 	else
 	{
-		writeDebugStreamLine("reading default");
+		//writeDebugStreamLine("reading default");
 		preset = low;
 	}
 
 	//writeDebugStreamLine("getPresetLiftValue- sensor:%d preset:%d", sensor, preset);
 	return preset;
+}
+
+int getLiftValue(int btnFiveUp,int btnFiveDown,int btnSevenUp,int btnSevenDown)
+{
+	//bool upLiftPresetLock = false;
+	//bool downLiftPresetLock = false;
+	int diff;
+	int targetHeightValue = 0;
+	int liftValue;
+
+
+	if((btnFiveUp == 1)||(btnFiveDown == 1))
+	{
+		//writeDebugStreamLine("button 5");
+		liftMode = manual;
+		if(g_liftPower < 90)
+		{
+			g_liftPower = g_liftPower + 2;
+		}
+	}
+	//writeDebugStreamLine("g_liftPower %d", g_liftPower);
+
+	//lift
+	if((btnFiveUp == 1)&&(liftMode == manual))
+	{
+		liftValue = g_liftPower * -1;
+	}
+	else if((btnFiveDown == 1)&&(liftMode == manual))
+	{
+		liftValue = g_liftPower;
+	}
+	else
+	{
+		liftValue = 0;
+		g_liftPower = 0;
+	}
+
+	//Maintain lift preset values in manual lift mode
+	if(liftMode == manual)
+	{
+		liftPreset = getPresetLiftValue(SensorValue[liftHeight]);
+	}
+
+	//##################################################################################
+	//lift preset
+	//writeDebugStreamLine("liftPreset %d", liftPreset);
+	if(btnSevenUp == 0)
+	{
+		upLiftPresetLock = false;
+	}
+	if(btnSevenDown == 0)
+	{
+		downLiftPresetLock = false;
+	}
+
+	//lift mode
+	if((btnSevenUp == 1)||(btnSevenDown == 1))
+	{
+		liftMode = automatic;
+	}
+	//low to mid
+	if((btnSevenUp == 1)&&(liftPreset == low)&&(upLiftPresetLock == false))
+	{
+		liftPreset = mid;
+		upLiftPresetLock = true;
+	}
+	//mid to high
+	else if((btnSevenUp == 1)&&(liftPreset == mid)&&(upLiftPresetLock == false))
+	{
+		liftPreset = high;
+		upLiftPresetLock = true;
+	}
+	//high to mid
+	else if((btnSevenDown == 1)&&(liftPreset == high)&&(downLiftPresetLock == false))
+	{
+		liftPreset = mid;
+		downLiftPresetLock = true;
+	}
+	//mid to low
+	else if((btnSevenDown == 1)&&(liftPreset == mid)&&(downLiftPresetLock == false))
+	{
+		liftPreset = low;
+		downLiftPresetLock = true;
+	}
+
+	//set lift motor values
+	switch (liftPreset)
+	{
+		case low: 	targetHeightValue = LIFT_PRESET_HEIGHT_LOW;
+               	break;
+		case mid: 	targetHeightValue = LIFT_PRESET_HEIGHT_MID;
+               	break;
+		case high: 	targetHeightValue = LIFT_PRESET_HEIGHT_HIGH;
+               	break;
+		default:		targetHeightValue = LIFT_PRESET_HEIGHT_LOW;
+               	break;
+	}
+	//compare sensor value with preset value
+	diff = targetHeightValue - SensorValue[liftHeight];
+	//writeDebugStreamLine("diff:%d target:%d sensor:%d presetv:%d liftMode:%d", diff,targetHeightValue,SensorValue[liftHeight],liftPreset,liftMode);
+	//sleep(100);
+	//if sensor show lift is lower by more than 50, go up fast
+	if((diff > 50)&&(liftMode == automatic))
+	{
+		liftValue = -45;
+	}
+	//if sensor show lift is lower by less than 50, go up slow
+	else if((diff < 50)&&(diff > 10)&&(liftMode == automatic))
+	{
+		liftValue = -25;
+	}
+	//if sensor show lift is high by more than 50, go down fast
+	else if((diff < -50)&&(liftMode == automatic))
+	{
+		if(SensorValue[liftHeight] < LIFT_PRESET_HEIGHT_MID)
+		{
+			liftValue = 38;
+		}
+		else
+		{
+			liftValue = 30;
+		}
+	}
+	//if sensor show lift is lower by less than 50, go down slow
+	else if((diff > -50)&&(diff < -10)&&(liftMode == automatic))
+	{
+		if(SensorValue[liftHeight] < LIFT_PRESET_HEIGHT_MID)
+		{
+			liftValue = 26;
+		}
+		else
+		{
+			liftValue = 18;
+		}
+	}
+	return liftValue;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -255,16 +398,8 @@ enum preset getPresetLiftValue(int sensor)
 task usercontrol()
 {
 	bool partnerMode = true;
-	int power = 0;
-	int liftValue = 0;
 	int clawDrive = 0;
 	int count = 0;
-	int targetHeightValue = 0;
-	bool upLiftPresetLock = false;
-	bool downLiftPresetLock = false;
-	int diff;
-	enum preset liftPreset;
-	enum mode liftMode; //{manual,preset}
 
 	//init lift height
 	initLiftHeight();
@@ -322,135 +457,12 @@ task usercontrol()
 
 			////////////////////////////////////////////////////
 
-			//lift progressive power
-			if((vexRT[Btn5UXmtr2] == 1)||(vexRT[Btn5DXmtr2] == 1))
-			{
-				liftMode = manual;
-				if(power < 90)
-				{
-					power = power + 2;
-				}
-			}
-			//writeDebugStreamLine("power %d", power);
-
-			//lift
-			if((vexRT[Btn5UXmtr2] == 1)&&(liftMode == manual))
-			{
-				liftValue = power * -1;
-			}
-			else if((vexRT[Btn5DXmtr2] == 1)&&(liftMode == manual))
-			{
-				liftValue = power;
-			}
-			else
-			{
-				liftValue = 0;
-				power = 0;
-			}
-
-			//Maintain lift preset values in manual lift mode
-			if(liftMode == manual)
-			{
-				liftPreset = getPresetLiftValue(SensorValue[liftHeight]);
-			}
-
-			//##################################################################################
-			//lift preset
-			//writeDebugStreamLine("liftPreset %d", liftPreset);
-			if(vexRT[Btn7UXmtr2] == 0)
-			{
-				upLiftPresetLock = false;
-			}
-			if(vexRT[Btn7DXmtr2] == 0)
-			{
-				downLiftPresetLock = false;
-			}
-
-			//lift mode
-			if((vexRT[Btn7UXmtr2] == 1)||(vexRT[Btn7DXmtr2] == 1))
-			{
-				liftMode = automatic;
-			}
-			//low to mid
-			if((vexRT[Btn7UXmtr2] == 1)&&(liftPreset == low)&&(upLiftPresetLock == false))
-			{
-				liftPreset = mid;
-				upLiftPresetLock = true;
-			}
-			//mid to high
-			else if((vexRT[Btn7UXmtr2] == 1)&&(liftPreset == mid)&&(upLiftPresetLock == false))
-			{
-				liftPreset = high;
-				upLiftPresetLock = true;
-			}
-			//high to mid
-			else if((vexRT[Btn7DXmtr2] == 1)&&(liftPreset == high)&&(downLiftPresetLock == false))
-			{
-				liftPreset = mid;
-				downLiftPresetLock = true;
-			}
-			//mid to low
-			else if((vexRT[Btn7DXmtr2] == 1)&&(liftPreset == mid)&&(downLiftPresetLock == false))
-			{
-				liftPreset = low;
-				downLiftPresetLock = true;
-			}
-
-			//set lift motor values
-			switch (liftPreset)
-			{
-				case low: 	targetHeightValue = LIFT_PRESET_HEIGHT_LOW;
-		               	break;
-				case mid: 	targetHeightValue = LIFT_PRESET_HEIGHT_MID;
-		               	break;
-				case high: 	targetHeightValue = LIFT_PRESET_HEIGHT_HIGH;
-		               	break;
-				default:		targetHeightValue = LIFT_PRESET_HEIGHT_LOW;
-		               	break;
-			}
-			//compare sensor value with preset value
-			diff = targetHeightValue - SensorValue[liftHeight];
-			//writeDebugStreamLine("diff:%d target:%d sensor:%d presetv:%d liftMode:%d", diff,targetHeightValue,SensorValue[liftHeight],liftPreset,liftMode);
-			//sleep(100);
-			//if sensor show lift is lower by more than 50, go up fast
-			if((diff > 50)&&(liftMode == automatic))
-			{
-				liftValue = -45;
-			}
-			//if sensor show lift is lower by less than 50, go up slow
-			else if((diff < 50)&&(diff > 10)&&(liftMode == automatic))
-			{
-				liftValue = -25;
-			}
-			//if sensor show lift is high by more than 50, go down fast
-			else if((diff < -50)&&(liftMode == automatic))
-			{
-				if(SensorValue[liftHeight] < LIFT_PRESET_HEIGHT_MID)
-				{
-					liftValue = 38;
-				}
-				else
-				{
-					liftValue = 30;
-				}
-			}
-			//if sensor show lift is lower by less than 50, go down slow
-			else if((diff > -50)&&(diff < -10)&&(liftMode == automatic))
-			{
-				if(SensorValue[liftHeight] < LIFT_PRESET_HEIGHT_MID)
-				{
-					liftValue = 26;
-				}
-				else
-				{
-					liftValue = 18;
-				}
-			}
-
+			//lift progressive g_liftPower
+			g_liftValue = getLiftValue(vexRT[Btn5UXmtr2],vexRT[Btn5DXmtr2],vexRT[Btn7UXmtr2],vexRT[Btn7DXmtr2]);
 			//writeDebugStreamLine("liftValue %d", liftValue);
 			//sleep(25);
-			motor[liftPair1] = liftValue;
-			motor[liftPair2] = liftValue;
+			motor[liftPair1] = g_liftValue;
+			motor[liftPair2] = g_liftValue;
 			//##################################################################################
 
 			//claw
@@ -478,35 +490,11 @@ task usercontrol()
 
 			////////////////////////////////////////////////////
 
-			//lift progressive power
-			if((vexRT[Btn5U] == 1)||(vexRT[Btn5D] == 1))
-			{
-				if(power < 126)
-				{
-					power = power + 1;
-				}
-			}
-			//writeDebugStreamLine("power %d", power);
-
-			//lift
-			if(vexRT[Btn5U] == 1)
-			{
-				liftValue = power * -1;
-			}
-			else if(vexRT[Btn5D] == 1)
-			{
-				liftValue = power;
-
-			}
-			else
-			{
-				liftValue = 0;
-				power = 0;
-			}
-
+			//lift progressive g_liftPower
+			g_liftValue = getLiftValue(vexRT[Btn5U],vexRT[Btn5D],vexRT[Btn7U],vexRT[Btn7D]);
 			//writeDebugStreamLine("liftValue %d", liftValue);
-			motor[liftPair1] = liftValue;
-			motor[liftPair2] = liftValue;
+			motor[liftPair1] = g_liftValue;
+			motor[liftPair2] = g_liftValue;
 
 			//claw
 			if ((vexRT[Btn6D] == 1)&&(SensorValue[forkLiftPot] > 20))
