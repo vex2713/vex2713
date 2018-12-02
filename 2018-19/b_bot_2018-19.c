@@ -1,7 +1,7 @@
 #pragma config(I2C_Usage, I2C1, i2cSensors)
 #pragma config(Sensor, in1,    teamSwitchPot,  sensorPotentiometer)
-#pragma config(Sensor, I2C_1,  ,               sensorQuadEncoderOnI2CPort,    , AutoAssign )
-#pragma config(Sensor, I2C_2,  ,               sensorQuadEncoderOnI2CPort,    , AutoAssign )
+#pragma config(Sensor, I2C_1,  leftEncoder,    sensorQuadEncoderOnI2CPort,    , AutoAssign )
+#pragma config(Sensor, I2C_2,  rightEncoder,   sensorQuadEncoderOnI2CPort,    , AutoAssign )
 #pragma config(Motor,  port1,           frontLeft,     tmotorVex393_HBridge, openLoop)
 #pragma config(Motor,  port2,           rearLeft,      tmotorVex393_MC29, openLoop, encoderPort, I2C_1)
 #pragma config(Motor,  port3,           midLeft,       tmotorVex393_MC29, openLoop)
@@ -22,8 +22,13 @@
 
 //DL force sensor debugging
 
- #pragma DebuggerWindows("Sensors")
+//#pragma DebuggerWindows("Sensors")
+//#pragma DebuggerWindows("Globals")
+//#pragma DebuggerWindows("Locals")
 
+
+
+//DL 11/25/17
 
 
 #include "Vex_Competition_Includes.c"   //Main competition background code...do not modify!
@@ -50,9 +55,9 @@ void stopMotor()
 
 void turnLeft (int power, int duration)
 {
-		motor[frontRight] = -power;
-		motor[midRight] = -power;
-		motor[rearRight] = -power;
+		motor[frontRight] = -1*power;
+		motor[midRight] = -1*power;
+		motor[rearRight] = -1*power;
 		motor[frontLeft] = power;
 		motor[midLeft] = power;
 		motor[rearLeft] = power;
@@ -60,7 +65,6 @@ void turnLeft (int power, int duration)
 
 
 		sleep(duration);
-		stopMotor();
 }
 
 void turnRight(int power, int duration)
@@ -68,11 +72,10 @@ void turnRight(int power, int duration)
 		motor[frontRight] = power;
 		motor[midRight] = power;
 		motor[rearRight] = power;
-		motor[frontLeft] = -power;
-		motor[midLeft] = -power;
-		motor[rearLeft] = -power;
+		motor[frontLeft] = -1*power;
+		motor[midLeft] = -1*power;
+		motor[rearLeft] = -1*power;
 				sleep(duration);
-	stopMotor();
 }
 
 void goForward(int power, int duration)
@@ -89,23 +92,21 @@ void goForward(int power, int duration)
 		//sleep is in msec
 		sleep(duration);
 
-		stopMotor();
 }
 
 void goBack(int power, int duration)
 {
 
-		motor[frontRight] = -power;
-		motor[midRight] = -power;
-		motor[rearRight] = -power;
-		motor[frontLeft] = -power;
-		motor[midLeft] = -power;
-		motor[rearLeft] = -power;
+		motor[frontRight] = -1*power;
+		motor[midRight] = -1*power;
+		motor[rearRight] = -1*power;
+		motor[frontLeft] = -1*power;
+		motor[midLeft] = -1*power;
+		motor[rearLeft] = -1*power;
 
 
 
 		sleep(duration);
-		stopMotor();
 }
 
 
@@ -138,24 +139,56 @@ motor[midLeft] = -vexRT[Ch3];
 motor[rearLeft] = -vexRT[Ch3];
 }
 
+task autonomous_A()
+{
+writeDebugStreamLine("starting autonomous_A");
+
+SensorValue[leftEncoder]=0;
+
+while	(SensorValue[leftEncoder]<1000)
+{
+	//go forward for 1 second
+		goForward(60,100);
+
+}
+stopMotor();
+
+}
+
+task  autonomous_B()
+{
+	writeDebugStreamLine("starting autonomous_B");
+
+SensorValue[leftEncoder]=0;
+
+
+if	(SensorValue[leftEncoder]>-500)
+	//go backwards for 1 second
+{
+	goBack(60,1000);
+}
+else
+{
+stopMotor();
+}
+}
+
 
 task autonomous()
 {
 	//need to check for potentiomter then reverse commands if necessary
-if (teamSwitchPot < 2047)
+	if (SensorValue[teamSwitchPot] < 2047)
 	{
-	turnLeft(60,700);
-	goForward(60,2000);
+		startTask(autonomous_A)
 	}
-
-if (teamSwitchPot > 2047)
+	else
 	{
-		turnRight(60,700);
-		goForward(60,2000);
+		startTask(autonomous_B)
 	}
 
 
 
+writeDebugStreamLine("enc left:%d",SensorValue[leftEncoder]);
 
 }
  //end autonomous
@@ -178,7 +211,10 @@ ControllerDirection=1;
 
 	while(1)
 	{
-		writeDebugStreamLine("pot value: %d", SensorValue[teamSwitchPot]);
+//		writeDebugStreamLine("pot value: %d", SensorValue[teamSwitchPot]);
+		writeDebugStreamLine("enc left:%d",SensorValue[leftEncoder]);
+		sleep(50);
+
 
 
 
@@ -194,6 +230,21 @@ ControllerDirection=1;
 			}
 
 //set motor speed based on controllers
+
+//	motor[frontRight] = ControllerDirection*vexRT[Ch2];
+//	motor[midRight]   = ControllerDirection*vexRT[Ch2];
+//	motor[rearRight]  = ControllerDirection*vexRT[Ch2];
+
+//	motor[frontLeft] = ControllerDirection*vexRT[Ch3];
+//	motor[midLeft] = ControllerDirection*vexRT[Ch3];
+//	motor[rearLeft] = ControllerDirection*vexRT[Ch3];
+//end set motor speed based on controllers
+
+
+if (ControllerDirection==1)
+{
+	//set motor speed based on controller direction
+
 	motor[frontRight] = ControllerDirection*vexRT[Ch2];
 	motor[midRight]   = ControllerDirection*vexRT[Ch2];
 	motor[rearRight]  = ControllerDirection*vexRT[Ch2];
@@ -202,6 +253,25 @@ ControllerDirection=1;
 	motor[midLeft] = ControllerDirection*vexRT[Ch3];
 	motor[rearLeft] = ControllerDirection*vexRT[Ch3];
 //end set motor speed based on controllers
+
+}
+
+
+if (ControllerDirection==-1)
+{
+	//set motor speed based on controller direction but flip left and right
+
+	motor[frontRight] = ControllerDirection*vexRT[Ch3];
+	motor[midRight]   = ControllerDirection*vexRT[Ch3];
+	motor[rearRight]  = ControllerDirection*vexRT[Ch3];
+
+	motor[frontLeft] = ControllerDirection*vexRT[Ch2];
+	motor[midLeft] = ControllerDirection*vexRT[Ch2];
+	motor[rearLeft] = ControllerDirection*vexRT[Ch2];
+//end set motor speed based on controllers
+
+}
+
 
 		if(vexRT[Btn5U] == 1)
 		{
