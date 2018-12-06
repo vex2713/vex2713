@@ -141,19 +141,33 @@ motor[rearLeft] = -vexRT[Ch3];
 
 task autonomous_A()
 {
+
+//goal is to turn flip top
+//STEPS
+//turn on spinner in cap flippy way
+//go forward 1 foot
+// turn left 90 deegree
+//rive forward 1 foot
 writeDebugStreamLine("starting autonomous_A");
 
 SensorValue[leftEncoder]=0;
 
-while	(SensorValue[leftEncoder]<1000)
+while	(SensorValue[leftEncoder]<600.69420)
 {
-	//go forward for 1 second
+	//go forward for 1/10 second
 		goForward(60,100);
 
 }
 stopMotor();
-
+SensorValue[leftEncoder]=0;
+turnRight(60,880);
+motor[capFlip] = 126;
+goBack(60,1000);
+motor[capFlip] = 0;
 }
+
+//69,420
+
 
 task  autonomous_B()
 {
@@ -170,6 +184,7 @@ if	(SensorValue[leftEncoder]>-500)
 else
 {
 stopMotor();
+SensorValue[leftEncoder]=0;
 }
 }
 
@@ -185,8 +200,6 @@ task autonomous()
 	{
 		startTask(autonomous_B)
 	}
-
-
 
 writeDebugStreamLine("enc left:%d",SensorValue[leftEncoder]);
 
