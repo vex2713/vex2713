@@ -55,12 +55,12 @@ void stopMotor()
 
 void turnLeft (int power, int duration)
 {
-		motor[frontRight] = -1*power;
-		motor[midRight] = -1*power;
-		motor[rearRight] = -1*power;
-		motor[frontLeft] = power;
-		motor[midLeft] = power;
-		motor[rearLeft] = power;
+		motor[frontRight] = power;
+		motor[midRight] = power;
+		motor[rearRight] = power;
+		motor[frontLeft] = -1*power;
+		motor[midLeft] = -1*power;
+		motor[rearLeft] = -1*power;
 
 
 
@@ -69,12 +69,12 @@ void turnLeft (int power, int duration)
 
 void turnRight(int power, int duration)
 {
-		motor[frontRight] = power;
-		motor[midRight] = power;
-		motor[rearRight] = power;
-		motor[frontLeft] = -1*power;
-		motor[midLeft] = -1*power;
-		motor[rearLeft] = -1*power;
+		motor[frontRight] = -1*power;
+		motor[midRight] = -1*power;
+		motor[rearRight] = -1*power;
+		motor[frontLeft] = power;
+		motor[midLeft] = power;
+		motor[rearLeft] = power;
 				sleep(duration);
 }
 
@@ -146,13 +146,15 @@ task autonomous_A()
 //STEPS
 //turn on spinner in cap flippy way
 //go forward 1 foot
-// turn left 90 deegree
-//rive forward 1 foot
+// turn rt 90 deegree
+//drive forward 1 foot
+
+//place on the spots near the flags
 writeDebugStreamLine("starting autonomous_A");
 
 SensorValue[leftEncoder]=0;
 
-while	(SensorValue[leftEncoder]<600.69420)
+while	(SensorValue[leftEncoder]<600)
 {
 	//go forward for 1/10 second
 		goForward(60,100);
@@ -160,9 +162,11 @@ while	(SensorValue[leftEncoder]<600.69420)
 }
 stopMotor();
 SensorValue[leftEncoder]=0;
-turnRight(60,880);
+//turnRight(60,880);
+turnLeft(60,660);
 motor[capFlip] = 126;
-goBack(60,1000);
+goBack(60,2000);
+stopMotor();
 motor[capFlip] = 0;
 }
 
@@ -170,6 +174,7 @@ motor[capFlip] = 0;
 
 
 task  autonomous_B()
+//place on the spots near the flags
 {
 	writeDebugStreamLine("starting autonomous_B");
 
@@ -177,15 +182,22 @@ SensorValue[leftEncoder]=0;
 
 
 if	(SensorValue[leftEncoder]>-500)
-	//go backwards for 1 second
+	//go fwd for 1 second
 {
-	goBack(60,1000);
+	goForward(60,1000);
 }
 else
 {
 stopMotor();
 SensorValue[leftEncoder]=0;
 }
+//turns left, goes back, and flips cap
+//turnLeft(60,880);
+turnRight(60,660);
+motor[capFlip] = 126;
+goBack(60,1500);
+stopMotor();
+motor[capFlip] = 0;
 }
 
 
@@ -321,7 +333,7 @@ task usercontrol()
 	// your program should update motor + servo values based on feedback from the joysticks.
 
 	// .....................................................................................
-	// Insert user code here. This is where you use the joystick values to update your motors, etc.
+	// Insert user code here. This is where you use the joystick values to update your motors, etc.                                                                                                                    h
 	// .....................................................................................
 
 	startTask(user_b_bot);

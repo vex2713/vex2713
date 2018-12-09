@@ -104,21 +104,21 @@ if(SensorValue[teamSwitchPot] > 2350)
   	//move forward
 		motor[rightTrack] = 60;
 		motor[leftTrack] = 60;
-		sleep(2100);
+		sleep(1500);
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
 
 		//turn right
 		motor[rightTrack] = -60;
 		motor[leftTrack] = 60;
-		sleep(1800);
+		sleep(900);
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
 
 		//to flag
 		motor[rightTrack] = 60;
 		motor[leftTrack] = 60;
-		sleep(2800);
+		sleep(1000);
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
 	}
@@ -147,7 +147,7 @@ if(SensorValue[teamSwitchPot] > 2350)
 	  //move forward
 		motor[rightTrack] = 60;
 		motor[leftTrack] = 60;
-		sleep(2050);
+		sleep(1500);
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
 
@@ -161,7 +161,7 @@ if(SensorValue[teamSwitchPot] > 2350)
 		//to flag
 		motor[rightTrack] = 60;
 		motor[leftTrack] = 60;
-		sleep(2900);
+		sleep(1000);
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
 
