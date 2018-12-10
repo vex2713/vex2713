@@ -82,7 +82,103 @@ if(SensorValue[teamSwitchPot] > 2350)
 
 //auto Blue
 	if( teamSwitch == true){
- 		//lift up body
+ 	//cap autonomus
+
+	  //lift up body
+		motor[liftPair1] = -40;
+  	motor[liftPair2] = -40;
+  	sleep(750);
+		motor[liftPair1] = 0;
+  	motor[liftPair2] = 0;
+
+		//deploy claw
+  	motor[claw] = -127;
+  	sleep(3000);
+  	motor[claw] = 0;
+
+ 		//lower body
+ 		motor[liftPair1] = 40;
+ 		motor[liftPair2] = 40;
+ 		sleep(900);
+ 		motor[liftPair1] = 0;
+ 		motor[liftPair2] = 0;
+
+ 		//foward
+ 		motor[rightTrack] = 60;
+		motor[leftTrack] = 60;
+		sleep(1800);
+		motor[rightTrack] = 0;
+		motor[leftTrack] = 0;
+
+		//turn right
+		motor[rightTrack] = -60;
+		motor[leftTrack] = 60;
+		sleep(900);
+		motor[rightTrack] = 0;
+		motor[leftTrack] = 0;
+
+		//to cap
+		motor[rightTrack] = 60;
+		motor[leftTrack] = 60;
+		sleep(300);
+		motor[rightTrack] = 0;
+		motor[leftTrack] = 0;
+
+		//get cap
+  	motor[claw] = 127;
+  	sleep(1000);
+  	motor[claw] = 0;
+
+  /*	else{
+
+  	//lift up body
+		motor[liftPair1] = -40;
+  	motor[liftPair2] = -40;
+  	sleep(750);
+		motor[liftPair1] = 0;
+  	motor[liftPair2] = 0;
+
+		//deploy claw
+  	motor[claw] = -127;
+  	sleep(3000);
+  	motor[claw] = 0;
+
+ 		//lower body
+ 		motor[liftPair1] = 40;
+ 		motor[liftPair2] = 40;
+ 		sleep(900);
+ 		motor[liftPair1] = 0;
+ 		motor[liftPair2] = 0;
+
+ 		//foward
+ 		motor[rightTrack] = 60;
+		motor[leftTrack] = 60;
+		sleep(1500);
+		motor[rightTrack] = 0;
+		motor[leftTrack] = 0;
+
+		//turn right
+		motor[rightTrack] = -60;
+		motor[leftTrack] = 60;
+		sleep(900);
+		motor[rightTrack] = 0;
+		motor[leftTrack] = 0;
+
+		//to cap
+		motor[rightTrack] = 60;
+		motor[leftTrack] = 60;
+		sleep(300);
+		motor[rightTrack] = 0;
+		motor[leftTrack] = 0;
+
+		//get cap
+  	motor[claw] = 127;
+  	sleep(1000);
+  	motor[claw] = 0;
+  	*/
+
+	/* flag autonomus
+	//lift up body
 		motor[liftPair1] = -40;
   	motor[liftPair2] = -40;
   	sleep(750);
@@ -164,7 +260,7 @@ if(SensorValue[teamSwitchPot] > 2350)
 		sleep(1000);
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
-
+ */
 	}
 }
  //end autonomous
