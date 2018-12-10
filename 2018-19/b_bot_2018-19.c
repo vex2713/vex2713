@@ -163,7 +163,7 @@ while	(SensorValue[leftEncoder]<600)
 stopMotor();
 SensorValue[leftEncoder]=0;
 //turnRight(60,880);
-turnLeft(60,660);
+turnLeft(60,700);
 motor[capFlip] = 126;
 goBack(60,2000);
 stopMotor();
@@ -193,9 +193,9 @@ SensorValue[leftEncoder]=0;
 }
 //turns left, goes back, and flips cap
 //turnLeft(60,880);
-turnRight(60,660);
+turnRight(60,700);
 motor[capFlip] = 126;
-goBack(60,1500);
+goBack(60,2000);
 stopMotor();
 motor[capFlip] = 0;
 }
