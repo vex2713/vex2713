@@ -94,6 +94,34 @@ void goForward(int power, int duration)
 
 }
 
+void goForwardDistance(int clicks)
+{
+	int power;
+
+			writeDebugStreamLine("starting goForwardDistance");
+	writeDebugStreamLine("enc left:%d",SensorValue[leftEncoder]);
+writeDebugStreamLine("enc left:%d",clicks);
+
+	power=60;
+		SensorValue[leftEncoder]=0;
+
+
+
+	while	(SensorValue[leftEncoder]<clicks)
+	{
+			//go forward for 1/10 second
+		motor[frontRight] = power;
+		motor[midRight] = power;
+		motor[rearRight] = power;
+		motor[frontLeft] = power;
+		motor[midLeft] = power;
+		motor[rearLeft] = power;
+		sleep(100);
+
+		}
+			writeDebugStreamLine("ending goForwardDistance");
+}
+
 void goBack(int power, int duration)
 {
 
@@ -107,6 +135,28 @@ void goBack(int power, int duration)
 
 
 		sleep(duration);
+}
+
+void goBackDistance(int clicks)
+{
+	int power;
+	power=60;
+		writeDebugStreamLine("starting goBackDistance");
+	SensorValue[leftEncoder]=0;
+	while	(SensorValue[leftEncoder]<clicks)
+	{
+			//go back for 1/10 second
+		motor[frontRight] = -1*power;
+		motor[midRight] = -1*power;
+		motor[rearRight] = -1*power;
+		motor[frontLeft] = -1*power;
+		motor[midLeft] = -1*power;
+		motor[rearLeft] = -1*power;
+		sleep(100);
+
+		}
+		writeDebugStreamLine("ending goBackDistance");
+
 }
 
 
@@ -142,32 +192,41 @@ motor[rearLeft] = -vexRT[Ch3];
 task autonomous_A()
 {
 
-//goal is to turn flip top
+//goal is to turn flip tops and land on platform
 //STEPS
-//turn on spinner in cap flippy way
-//go forward 1 foot
-// turn rt 90 deegree
-//drive forward 1 foot
+//start facing backwares
+//turn on flipper
+//drive backwars 4 ft
+//hopefully will knock ball from 1st cap
+//go forward 2 feet
+//turn 90 degrees left
+//go back 2 feet and hit the 2nd cap
+//turn 180 degrees
+//start heading for platform
+
 
 //place on the spots near the flags
 writeDebugStreamLine("starting autonomous_A");
 
-SensorValue[leftEncoder]=0;
+//SensorValue[leftEncoder]=0;
 
-while	(SensorValue[leftEncoder]<600)
-{
+//while	(SensorValue[leftEncoder]<600)
+//{
 	//go forward for 1/10 second
-		goForward(60,100);
+//		goForward(60,100);
 
-}
+//}
+motor[capFlip] = -126;
+goBackDistance(1200);
 stopMotor();
+/** temporarily disable next steps during debuging
 SensorValue[leftEncoder]=0;
-//turnRight(60,880);
 turnLeft(60,660);
 motor[capFlip] = 126;
-goBack(60,2000);
+goBackDistance(1200);
 stopMotor();
 motor[capFlip] = 0;
+**/
 }
 
 //69,420
