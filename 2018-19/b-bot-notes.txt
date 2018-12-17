@@ -1,0 +1,46 @@
+last update: 12/16/18
+
+By: Damian 
+
+HARDWARE OVERVIEW
+
+6 wheels, each with own motor (leftFront, LeftRear etc.)
+1 additional motor to drive the cap flipper
+Analog 1 connects to potentionmeter used to provide "course selection" choice in autonomous.
+Analog 2 connects to gyro 
+ISC connects to encoder on one of the left moters and an encoder on one of the right models.
+
+
+
+#pragma config(Sensor, in1,    teamSwitchPot,  sensorPotentiometer)
+#pragma config(Sensor, in2,    gyro1,          sensorGyro)
+#pragma config(Sensor, I2C_1,  leftEncoder,    sensorQuadEncoderOnI2CPort,    , AutoAssign )
+#pragma config(Sensor, I2C_2,  rightEncoder,   sensorQuadEncoderOnI2CPort,    , AutoAssign )
+#pragma config(Motor,  port1,           frontLeft,     tmotorVex393_HBridge, openLoop)
+#pragma config(Motor,  port2,           rearLeft,      tmotorVex393_MC29, openLoop, encoderPort, I2C_1)
+#pragma config(Motor,  port3,           midLeft,       tmotorVex393_MC29, openLoop)
+#pragma config(Motor,  port7,           capFlip,       tmotorVex393_MC29, openLoop)
+#pragma config(Motor,  port8,           midRight,      tmotorVex393_MC29, openLoop, reversed)
+#pragma config(Motor,  port9,           rearRight,     tmotorVex393_MC29, openLoop, reversed, encoderPort, I2C_2)
+#pragma config(Motor,  port10,          frontRight,    tmotorVex393_HBridge, openLoop, reversed)
+
+
+Potentiometer range:     
+
+Gryo output: 
+
+
+CODING OVERVIEW
+
+Where possible, repeated code (e.g. for direction or turning control) will be in own function.    This is to minimize the amount of duplicated code in the autonomous loops.
+
+User Control Loop -   used to set remote control functions 
+Autonomous Loop -   based to POT position will call either AutonomousA or AutonomousB 
+
+
+The cap flipper is on the back end of the robot.  This means in many cases robot will be driving in reverse.  
+The original design plans had called for the front end to have the ball launcher,
+while the backend would include the intial scoop mechanism.  
+
+
+Clicks and distance 
