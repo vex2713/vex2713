@@ -1,5 +1,6 @@
 #pragma config(I2C_Usage, I2C1, i2cSensors)
 #pragma config(Sensor, in1,    teamSwitchPot,  sensorPotentiometer)
+#pragma config(Sensor, in2,    gyro1,          sensorGyro)
 #pragma config(Sensor, I2C_1,  leftEncoder,    sensorQuadEncoderOnI2CPort,    , AutoAssign )
 #pragma config(Sensor, I2C_2,  rightEncoder,   sensorQuadEncoderOnI2CPort,    , AutoAssign )
 #pragma config(Motor,  port1,           frontLeft,     tmotorVex393_HBridge, openLoop)
@@ -34,6 +35,7 @@
 #include "Vex_Competition_Includes.c"   //Main competition background code...do not modify!
 
 //teamSwitch = true;
+int defaultMotorSpeed;
 void pre_auton()
 {
 }
@@ -44,7 +46,7 @@ void pre_auton()
 
 void stopMotor()
 {
-			motor[frontRight] = 0;
+		motor[frontRight] = 0;
 		motor[midRight] = 0;
 		motor[rearRight] = 0;
 		motor[frontLeft] = 0;
@@ -53,8 +55,9 @@ void stopMotor()
 	}
 
 
-void turnLeft (int power, int duration)
+void turnLeftByTime(int power, int duration)
 {
+
 		motor[frontRight] = power;
 		motor[midRight] = power;
 		motor[rearRight] = power;
@@ -67,7 +70,7 @@ void turnLeft (int power, int duration)
 		sleep(duration);
 }
 
-void turnRight(int power, int duration)
+void turnRightByTime(int power, int duration)
 {
 		motor[frontRight] = -1*power;
 		motor[midRight] = -1*power;
@@ -78,7 +81,7 @@ void turnRight(int power, int duration)
 				sleep(duration);
 }
 
-void goForward(int power, int duration)
+void goForwardByTime(int power, int duration)
 {
 
 		motor[frontRight] = power;
@@ -97,13 +100,13 @@ void goForward(int power, int duration)
 void goForwardDistance(int clicks)
 {
 	int power;
-
+	power=defaultMotorSpeed;
 			writeDebugStreamLine("starting goForwardDistance");
-	writeDebugStreamLine("enc left:%d",SensorValue[leftEncoder]);
-writeDebugStreamLine("enc left:%d",clicks);
+//	writeDebugStreamLine("enc left:%d",SensorValue[leftEncoder]);
+//  writeDebugStreamLine("enc left:%d",clicks);
 
-	power=60;
-		SensorValue[leftEncoder]=0;
+
+			SensorValue[leftEncoder]=0;
 
 
 
@@ -122,7 +125,7 @@ writeDebugStreamLine("enc left:%d",clicks);
 			writeDebugStreamLine("ending goForwardDistance");
 }
 
-void goBack(int power, int duration)
+void goBackByTime(int power, int duration)
 {
 
 		motor[frontRight] = -1*power;
@@ -140,10 +143,10 @@ void goBack(int power, int duration)
 void goBackDistance(int clicks)
 {
 	int power;
-	power=60;
-		writeDebugStreamLine("starting goBackDistance");
+	power=defaultMotorSpeed;
+	writeDebugStreamLine("starting goBackDistance");
 	SensorValue[leftEncoder]=0;
-	while	(SensorValue[leftEncoder]<clicks)
+	while	(SensorValue[leftEncoder]>=-1*clicks)
 	{
 			//go back for 1/10 second
 		motor[frontRight] = -1*power;
@@ -189,10 +192,50 @@ motor[midLeft] = -vexRT[Ch3];
 motor[rearLeft] = -vexRT[Ch3];
 }
 
+
+void turnLeftByDegrees(int targetDegrees)
+{
+	int power=60;
+		power=defaultMotorSpeed;
+	SensorValue[gyro1]=0;
+	while (abs(SensorValue[gyro1])<(targetDegrees*10))
+	{
+					//go forward for 1/10 second
+		motor[frontRight] = power;
+		motor[midRight] = power;
+		motor[rearRight] = power;
+		motor[frontLeft] = -1*power;
+		motor[midLeft] =  -1*power;
+		motor[rearLeft] =  -1*power;
+		sleep(100);
+	}
+}
+
+void turnRightByDegrees(int targetDegrees)
+{
+	int power=60;
+			power=defaultMotorSpeed;
+		SensorValue[gyro1]=0;
+	while (abs(SensorValue[gyro1])<(targetDegrees*10))
+	{
+					//go forward for 1/10 second
+		motor[frontRight] = -1*power;
+		motor[midRight] = -1*power;
+		motor[rearRight] = -1*power;
+		motor[frontLeft] = power;
+		motor[midLeft] =  power;
+		motor[rearLeft] =  power;
+		sleep(100);
+	}
+}
+
+
 task autonomous_A()
 {
+	//for compitition
+defaultMotorSpeed=126;
 
-//goal is to turn flip tops and land on platform
+//goal is to turn flip CAPS and land on platform
 //STEPS
 //start facing backwares
 //turn on flipper
@@ -207,32 +250,54 @@ task autonomous_A()
 
 //place on the spots near the flags
 writeDebugStreamLine("starting autonomous_A");
+//turnLeftByDegrees(270);
 
-//SensorValue[leftEncoder]=0;
 
-//while	(SensorValue[leftEncoder]<600)
-//{
-	//go forward for 1/10 second
-//		goForward(60,100);
 
-//}
+
 motor[capFlip] = -126;
-goBackDistance(1200);
-stopMotor();
-/** temporarily disable next steps during debuging
-SensorValue[leftEncoder]=0;
-turnLeft(60,660);
-motor[capFlip] = 126;
-goBackDistance(1200);
+goBackDistance(2050);
+//this should have grabbed ball from 1st cap
 stopMotor();
 motor[capFlip] = 0;
-**/
+turnLeftByDegrees(70);
+stopMotor();
+motor[capFlip] = 126;
+goBackDistance(1150);
+stopMotor();
+motor[capFlip] = 0;
+//this shd have flipped 2nd cap
+
+
+//now start heading for the platform
+goForwardDistance(1150);
+turnRightByDegrees(90);
+goForwardDistance(2050);
+turnLeftByDegrees(90);
+//then go fwd short distance
+motor[capFlip] = 126;
+goForwardDistance(1300);
+motor[capFlip] = 0;
+//then turn left
+turnRightByDegrees(90);
+//then go fwd longer distance
+goBackDistance(2050);
+sleep(1000);
+//shd now be on the platform
+
+
+
+
+stopMotor();
 }
 
-//69,420
+
+
 
 
 task  autonomous_B()
+
+//for simple testing
 //place on the spots near the flags
 {
 	writeDebugStreamLine("starting autonomous_B");
@@ -243,7 +308,7 @@ SensorValue[leftEncoder]=0;
 if	(SensorValue[leftEncoder]>-500)
 	//go fwd for 1 second
 {
-	goForward(60,1000);
+	goForwardByTime(60,1000);
 }
 else
 {
@@ -251,10 +316,10 @@ stopMotor();
 SensorValue[leftEncoder]=0;
 }
 //turns left, goes back, and flips cap
-//turnLeft(60,880);
-turnRight(60,660);
+//turnLeftByTime(60,880);
+turnRightByTime(60,660);
 motor[capFlip] = 126;
-goBack(60,1500);
+goBackByTime(60,1500);
 stopMotor();
 motor[capFlip] = 0;
 }
@@ -265,11 +330,11 @@ task autonomous()
 	//need to check for potentiomter then reverse commands if necessary
 	if (SensorValue[teamSwitchPot] < 2047)
 	{
-		startTask(autonomous_A)
+		startTask(autonomous_A);
 	}
 	else
 	{
-		startTask(autonomous_B)
+		startTask(autonomous_B);
 	}
 
 writeDebugStreamLine("enc left:%d",SensorValue[leftEncoder]);
@@ -292,11 +357,14 @@ task user_b_bot()
 //set controls in forward driving mode by default
 int ControllerDirection;
 ControllerDirection=1;
+//writeDebugStreamLine("enc left:%d",clicks);
 
 	while(1)
 	{
 //		writeDebugStreamLine("pot value: %d", SensorValue[teamSwitchPot]);
 		writeDebugStreamLine("enc left:%d",SensorValue[leftEncoder]);
+		writeDebugStreamLine("gyro:%d",SensorValue[gyro1]);
+
 		sleep(50);
 
 
