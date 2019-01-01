@@ -110,17 +110,17 @@ if(SensorValue[teamSwitchPot] > 2350)
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
 
-		//turn right
+		//turn left
 		motor[rightTrack] = -60;
 		motor[leftTrack] = 60;
-		sleep(900);
+		sleep(1000);
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
 
 		//to cap
 		motor[rightTrack] = 60;
 		motor[leftTrack] = 60;
-		sleep(300);
+		sleep(400);
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
 
@@ -128,6 +128,27 @@ if(SensorValue[teamSwitchPot] > 2350)
   	motor[claw] = 127;
   	sleep(1000);
   	motor[claw] = 0;
+
+  	//turn to pole
+  	motor[rightTrack] = -60;
+		motor[leftTrack] = 60;
+		sleep(900);
+		motor[rightTrack] = 0;
+		motor[leftTrack] = 0;
+
+		//up to pole
+		motor[liftPair1] = -40;
+  	motor[liftPair2] = -40;
+  	sleep(800);
+		motor[liftPair1] = 0;
+  	motor[liftPair2] = 0;
+
+		//on top
+		motor[rightTrack] = 60;
+		motor[leftTrack] = 60;
+		sleep(300);
+		motor[rightTrack] = 0;
+		motor[leftTrack] = 0;
 
   /*	else{
 
