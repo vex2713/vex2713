@@ -1,17 +1,28 @@
-last update: 12/16/18
+last update: 1/1/19
 
 By: Damian 
 
 HARDWARE OVERVIEW
 
-6 wheels, each with own motor (leftFront, LeftRear etc.)
+6 wheels, each with own motor (leftFront, LeftRear etc.)   - digital motor ports 1-3 and 8-10
 1 additional motor to drive the cap flipper
+
+FOR THE BALL LAUNCHER
+
+	2 motors for right fly wheels, with splitter cable.   - digital motor port 6
+	2 motors for left fly wheels, with splitter cable.   - digital motor port 5
+	1 motor for conveyor, digital port 4
+
+
+All motors so far are 2-wire so require D/A adapter to connect to digital motor ports
+
+
+
 Analog 1 connects to potentionmeter used to provide "course selection" choice in autonomous.
 Analog 2 connects to gyro 
 ISC connects to encoder on one of the left moters and an encoder on one of the right models.
 
-
-
+#pragma config(I2C_Usage, I2C1, i2cSensors)
 #pragma config(Sensor, in1,    teamSwitchPot,  sensorPotentiometer)
 #pragma config(Sensor, in2,    gyro1,          sensorGyro)
 #pragma config(Sensor, I2C_1,  leftEncoder,    sensorQuadEncoderOnI2CPort,    , AutoAssign )
@@ -19,10 +30,14 @@ ISC connects to encoder on one of the left moters and an encoder on one of the r
 #pragma config(Motor,  port1,           frontLeft,     tmotorVex393_HBridge, openLoop)
 #pragma config(Motor,  port2,           rearLeft,      tmotorVex393_MC29, openLoop, encoderPort, I2C_1)
 #pragma config(Motor,  port3,           midLeft,       tmotorVex393_MC29, openLoop)
+#pragma config(Motor,  port4,           conveyor,      tmotorNone, openLoop)
+#pragma config(Motor,  port5,           leftFlyWheels, tmotorNone, openLoop)
+#pragma config(Motor,  port6,           rightFlyWheels, tmotorNone, openLoop)
 #pragma config(Motor,  port7,           capFlip,       tmotorVex393_MC29, openLoop)
 #pragma config(Motor,  port8,           midRight,      tmotorVex393_MC29, openLoop, reversed)
 #pragma config(Motor,  port9,           rearRight,     tmotorVex393_MC29, openLoop, reversed, encoderPort, I2C_2)
 #pragma config(Motor,  port10,          frontRight,    tmotorVex393_HBridge, openLoop, reversed)
+
 
 
 Potentiometer range:     

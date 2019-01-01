@@ -6,6 +6,9 @@
 #pragma config(Motor,  port1,           frontLeft,     tmotorVex393_HBridge, openLoop)
 #pragma config(Motor,  port2,           rearLeft,      tmotorVex393_MC29, openLoop, encoderPort, I2C_1)
 #pragma config(Motor,  port3,           midLeft,       tmotorVex393_MC29, openLoop)
+#pragma config(Motor,  port4,           conveyor,      tmotorNone, openLoop)
+#pragma config(Motor,  port5,           leftFlyWheels, tmotorNone, openLoop)
+#pragma config(Motor,  port6,           rightFlyWheels, tmotorNone, openLoop)
 #pragma config(Motor,  port7,           capFlip,       tmotorVex393_MC29, openLoop)
 #pragma config(Motor,  port8,           midRight,      tmotorVex393_MC29, openLoop, reversed)
 #pragma config(Motor,  port9,           rearRight,     tmotorVex393_MC29, openLoop, reversed, encoderPort, I2C_2)
@@ -29,13 +32,14 @@
 
 
 
-//DL 11/25/17
+//DL 01/01/19
 
 
 #include "Vex_Competition_Includes.c"   //Main competition background code...do not modify!
 
 //teamSwitch = true;
 int defaultMotorSpeed;
+float gyroCorrection;
 void pre_auton()
 {
 }
@@ -233,7 +237,7 @@ void turnRightByDegrees(int targetDegrees)
 task autonomous_A()
 {
 	//for compitition
-defaultMotorSpeed=126;
+
 
 //goal is to turn flip CAPS and land on platform
 //STEPS
@@ -264,7 +268,7 @@ turnLeftByDegrees(70);
 stopMotor();
 SensorValue[leftEncoder]=0;
 //turnRight(60,880);
-turnLeft(60,700);
+// ---  turnLeft(60,700);
 motor[capFlip] = 126;
 goBackDistance(1150);
 stopMotor();
@@ -320,9 +324,9 @@ SensorValue[leftEncoder]=0;
 }
 //turns left, goes back, and flips cap
 //turnLeft(60,880);
-turnRight(60,700);
+//turnRight(60,700);
 motor[capFlip] = 126;
-goBack(60,2000);
+goBackDistance(2000);
 stopMotor();
 motor[capFlip] = 0;
 }
@@ -330,14 +334,18 @@ motor[capFlip] = 0;
 
 task autonomous()
 {
+defaultMotorSpeed=126;
+gyroCorrection=1.1;
 	//need to check for potentiomter then reverse commands if necessary
 	if (SensorValue[teamSwitchPot] < 2047)
 	{
 		startTask(autonomous_A);
+		//autonomous_A has is to flip caps then go to central pad
 	}
 	else
 	{
 		startTask(autonomous_B);
+		//could use this for testing auto with ball launcher
 	}
 
 writeDebugStreamLine("enc left:%d",SensorValue[leftEncoder]);
@@ -384,16 +392,7 @@ ControllerDirection=1;
 			   ControllerDirection=-1;
 			}
 
-//set motor speed based on controllers
 
-//	motor[frontRight] = ControllerDirection*vexRT[Ch2];
-//	motor[midRight]   = ControllerDirection*vexRT[Ch2];
-//	motor[rearRight]  = ControllerDirection*vexRT[Ch2];
-
-//	motor[frontLeft] = ControllerDirection*vexRT[Ch3];
-//	motor[midLeft] = ControllerDirection*vexRT[Ch3];
-//	motor[rearLeft] = ControllerDirection*vexRT[Ch3];
-//end set motor speed based on controllers
 
 
 if (ControllerDirection==1)
@@ -427,7 +426,7 @@ if (ControllerDirection==-1)
 
 }
 
-
+//check for cap  flipping controls
 		if(vexRT[Btn5U] == 1)
 		{
 			// start the cap flipping motor
@@ -442,12 +441,54 @@ if (ControllerDirection==-1)
 		{
 		// start the cap flipping motor in reverse
 			motor[capFlip] = -126;
+
 		}
 		if(vexRT[Btn6D] == 1)
 		{
 			// stop the cap flipping motor
 			motor[capFlip] = 0;
+
 		}
+
+
+//check for cap+converyoe  flipping controls
+		if(vexRT[Btn7U] == 1)
+		{
+			// start the cap flipping motor and conveyor
+			motor[capFlip] = -126;
+			motor[conveyor] = 126;
+		}
+		if(vexRT[Btn7D] == 1)
+		{
+			// stop the cap and conveyor motor
+			motor[capFlip] = 0;
+			motor[conveyor] = 0;
+		}
+		if(vexRT[Btn7L] == 1)
+		{
+		// start the cap flipping motor in reverse
+			motor[capFlip] = 0;
+			motor[conveyor] = -126;
+
+		}
+
+
+
+//check for flywheel constrol belt control.
+//Need to assign a button.
+// run leftFLyWheels in one direction
+//  run rightFlyWheens in other direction
+			if(vexRT[Btn7R] == 1)
+			{
+			motor[leftFlyWheels] = 126;
+			motor[rightFlyWheels] = -126;
+			}
+				else
+			{
+			motor[leftFlyWheels] = 0;
+			motor[rightFlyWheels] = 0;
+			}
+
 
 		sleep(10);
 	}
