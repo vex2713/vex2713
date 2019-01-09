@@ -39,7 +39,8 @@
 
 //teamSwitch = true;
 int defaultMotorSpeed;
-float gyroCorrection;
+float gyroCorrection = 0.5;
+
 void pre_auton()
 {
 }
@@ -58,6 +59,8 @@ void stopMotor()
 		motor[rearLeft] = 0;
 	}
 
+
+/**
 
 void turnLeftByTime(int power, int duration)
 {
@@ -85,6 +88,7 @@ void turnRightByTime(int power, int duration)
 				sleep(duration);
 }
 
+
 void goForwardByTime(int power, int duration)
 {
 
@@ -100,6 +104,28 @@ void goForwardByTime(int power, int duration)
 		sleep(duration);
 
 }
+
+
+
+
+
+void goBackByTime(int power, int duration)
+{
+
+		motor[frontRight] = -1*power;
+		motor[midRight] = -1*power;
+		motor[rearRight] = -1*power;
+		motor[frontLeft] = -1*power;
+		motor[midLeft] = -1*power;
+		motor[rearLeft] = -1*power;
+
+
+
+		sleep(duration);
+}
+
+**/
+
 
 void goForwardDistance(int clicks)
 {
@@ -129,20 +155,6 @@ void goForwardDistance(int clicks)
 			writeDebugStreamLine("ending goForwardDistance");
 }
 
-void goBackByTime(int power, int duration)
-{
-
-		motor[frontRight] = -1*power;
-		motor[midRight] = -1*power;
-		motor[rearRight] = -1*power;
-		motor[frontLeft] = -1*power;
-		motor[midLeft] = -1*power;
-		motor[rearLeft] = -1*power;
-
-
-
-		sleep(duration);
-}
 
 void goBackDistance(int clicks)
 {
@@ -167,8 +179,22 @@ void goBackDistance(int clicks)
 }
 
 
-void fireRockets(int numberOfRockets)
+void fireRockets()
 {
+			motor[leftFlyWheels] = 126;
+			motor[rightFlyWheels] = -126;
+
+
+			sleep(500);
+
+			motor[conveyor] = 126;
+
+			sleep(1000);
+
+
+			motor[leftFlyWheels] = 0;
+			motor[rightFlyWheels] = 0;
+			motor[conveyor] = 0;
 }
 void launchBall(int power, int duration)
 {
@@ -202,9 +228,9 @@ void turnLeftByDegrees(int targetDegrees)
 	int power=60;
 		power=defaultMotorSpeed;
 	SensorValue[gyro1]=0;
-	while (abs(SensorValue[gyro1])<(targetDegrees*10))
+	sleep(500);
+	while (abs(SensorValue[gyro1])<(targetDegrees*10*gyroCorrection))
 	{
-					//go forward for 1/10 second
 		motor[frontRight] = power;
 		motor[midRight] = power;
 		motor[rearRight] = power;
@@ -220,9 +246,9 @@ void turnRightByDegrees(int targetDegrees)
 	int power=60;
 			power=defaultMotorSpeed;
 		SensorValue[gyro1]=0;
-	while (abs(SensorValue[gyro1])<(targetDegrees*10))
+			sleep(500);
+	while (abs(SensorValue[gyro1])<(targetDegrees*10*gyroCorrection))
 	{
-					//go forward for 1/10 second
 		motor[frontRight] = -1*power;
 		motor[midRight] = -1*power;
 		motor[rearRight] = -1*power;
@@ -236,7 +262,7 @@ void turnRightByDegrees(int targetDegrees)
 
 task autonomous_A()
 {
-	//for compitition
+//for competition
 
 
 //goal is to turn flip CAPS and land on platform
@@ -309,34 +335,61 @@ task  autonomous_B()
 {
 	writeDebugStreamLine("starting autonomous_B");
 
-SensorValue[leftEncoder]=0;
 
 
-if	(SensorValue[leftEncoder]>-500)
-	//go fwd for 1 second
-{
-	goForwardByTime(60,1000);
-}
-else
-{
+
+turnLeftByDegrees(90);
 stopMotor();
-SensorValue[leftEncoder]=0;
-}
-//turns left, goes back, and flips cap
-//turnLeft(60,880);
-//turnRight(60,700);
-motor[capFlip] = 126;
-goBackDistance(2000);
+sleep(5000);
+
+
+turnLeftByDegrees(90);
 stopMotor();
-motor[capFlip] = 0;
+sleep(5000);
+
+
+/**
+
+turnLeftByDegrees(90);
+sleep(3000);
+stopMotor();
+
+turnRightByDegrees(90);
+sleep(1000);
+stopMotor();
+
+turnRightByDegrees(90);
+sleep(1000);
+stopMotor();
+
+turnRightByDegrees(90);
+sleep(1000);
+stopMotor();
+
+turnRightByDegrees(90);
+sleep(1000);
+stopMotor();
+**/
+
+
+fireRockets();
+
+turnRightByDegrees(90);
+stopMotor();
+sleep(5000);
+
+turnRightByDegrees(90);
+stopMotor();
+sleep(5000);
+
 }
 
 
 task autonomous()
 {
 defaultMotorSpeed=126;
-gyroCorrection=1.1;
-	//need to check for potentiomter then reverse commands if necessary
+
+//need to check for potentiomter then reverse commands if necessary
 	if (SensorValue[teamSwitchPot] < 2047)
 	{
 		startTask(autonomous_A);
@@ -366,8 +419,10 @@ writeDebugStreamLine("enc left:%d",SensorValue[leftEncoder]);
 task user_b_bot()
 {
 //set controls in forward driving mode by default
+
 int ControllerDirection;
 ControllerDirection=1;
+	SensorValue[gyro1]=0;
 //writeDebugStreamLine("enc left:%d",clicks);
 
 	while(1)
@@ -381,13 +436,13 @@ ControllerDirection=1;
 
 
 
-//		Bnt8R and Bnt8L shd toggle controller direction.   You should NOT have to hold down button
-		if(vexRT[Btn8R] == 1)
+//		Bnt8U and Bnt8U shd toggle controller direction.   You should NOT have to hold down button
+		if(vexRT[Btn8U] == 1)
 			{
 				ControllerDirection=1;
 			}
 
-			if(vexRT[Btn8L] == 1)
+			if(vexRT[Btn8D] == 1)
 			{
 			   ControllerDirection=-1;
 			}
@@ -456,7 +511,8 @@ if (ControllerDirection==-1)
 		{
 			// start the cap flipping motor and conveyor
 			motor[capFlip] = -126;
-			motor[conveyor] = 126;
+			//motor[conveyor] = 126;
+			motor[conveyor] = 90;
 		}
 		if(vexRT[Btn7D] == 1)
 		{
@@ -468,29 +524,37 @@ if (ControllerDirection==-1)
 		{
 		// start the cap flipping motor in reverse
 			motor[capFlip] = 0;
-			motor[conveyor] = -126;
-
+		//	motor[conveyor] = -126;
+			motor[conveyor] = -90;
 		}
 
 
 
 //check for flywheel constrol belt control.
-//Need to assign a button.
 // run leftFLyWheels in one direction
 //  run rightFlyWheens in other direction
-			if(vexRT[Btn7R] == 1)
+//  want to spin up then run conveyor for 1 sec
+			if(vexRT[Btn8R] == 1)
 			{
+				fireRockets();
+			/**
 			motor[leftFlyWheels] = 126;
 			motor[rightFlyWheels] = -126;
-			}
-				else
-			{
+
+
+			sleep(500);
+
+			motor[conveyor] = 126;
+
+			sleep(1000);
+
+
 			motor[leftFlyWheels] = 0;
 			motor[rightFlyWheels] = 0;
-			}
+			motor[conveyor] = 0;
+			**/
+		}
 
-
-		sleep(10);
 	}
 }
 
