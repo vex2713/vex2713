@@ -1,0 +1,5 @@
+The .vex file in this folder are tar archive containing the files and folders required for v5 vcs project in binary form.  
+This is not very source control friendly but file management will apparently be added to vcs in the future so that files will be saved in text 
+form to support source control features.
+https://www.vexforum.com/index.php/34394-vex-coding-studio-and-v5-updates/30
+
