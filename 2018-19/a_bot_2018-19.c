@@ -106,27 +106,27 @@ if(SensorValue[teamSwitchPot] > 2350)
  		//foward
  		motor[rightTrack] = 60;
 		motor[leftTrack] = 60;
-		sleep(1800);
+		sleep(2000);
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
 
-		//turn left
+		//turn right
 		motor[rightTrack] = -60;
 		motor[leftTrack] = 60;
-		sleep(1000);
+		sleep(900);
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
 
 		//to cap
 		motor[rightTrack] = 60;
 		motor[leftTrack] = 60;
-		sleep(400);
+		sleep(600);
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
 
 		//get cap
   	motor[claw] = 127;
-  	sleep(1000);
+  	sleep(2000);
   	motor[claw] = 0;
 
   	//turn to pole
@@ -139,16 +139,31 @@ if(SensorValue[teamSwitchPot] > 2350)
 		//up to pole
 		motor[liftPair1] = -40;
   	motor[liftPair2] = -40;
-  	sleep(800);
+  	sleep(1000);
 		motor[liftPair1] = 0;
   	motor[liftPair2] = 0;
 
 		//on top
 		motor[rightTrack] = 60;
 		motor[leftTrack] = 60;
-		sleep(300);
+		sleep(1200);
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
+
+		//turn right
+		motor[rightTrack] = -60;
+		motor[leftTrack] = 60;
+		sleep(900);
+		motor[rightTrack] = 0;
+		motor[leftTrack] = 0;
+
+		//foward
+ 		motor[rightTrack] = 60;
+		motor[leftTrack] = 60;
+		sleep(1000);
+		motor[rightTrack] = 0;
+		motor[leftTrack] = 0;
+
 
   /*	else{
 
