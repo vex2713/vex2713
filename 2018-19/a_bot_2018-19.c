@@ -34,11 +34,11 @@
 #define LIFT_PRESET_HEIGHT_HIGH_FORK_UP 444
 #define LIFT_PRESET_HEIGHT_HIGH_FORK_DOWN 500
 
-#define FORK_PRESET_UP 500
-#define FORK_PRESET_DOWN 500
+#define CLAW_PRESET_HEIGHT_LOW 10
+#define CLAW_PRESET_HEIGHT_HIGH 1550
+#define CLAW_MOTOR_POWER 60
 
 enum preset{low, mid, high};
-enum position{up, down};
 enum mode{manual, automatic};
 
 //prototypes
@@ -47,13 +47,16 @@ void initLiftHeight();
 //globals
 bool teamSwitch;
 enum preset liftPreset;
-enum mode liftMode; //{manual,preset}
+enum preset clawPreset;
 int g_liftValue = 0;
 int g_liftPower = 0;
 bool upLiftPresetLock = false;
 bool downLiftPresetLock = false;
-
-
+bool upClawPresetLock = false;
+bool downClawPresetLock = false;
+enum mode clawMode = manual;
+enum mode liftMode = manual;
+int clawValue = 0;
 //teamSwitch = true;
 void pre_auton()
 {
@@ -76,9 +79,6 @@ if(SensorValue[teamSwitchPot] > 2350)
 {
 		teamSwitch = false;
 }
-
-
-
 
 //auto Blue
 	if( teamSwitch == true){
@@ -106,27 +106,27 @@ if(SensorValue[teamSwitchPot] > 2350)
  		//foward
  		motor[rightTrack] = 60;
 		motor[leftTrack] = 60;
-		sleep(1800);
+		sleep(2000);
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
 
-		//turn left
+		//turn right
 		motor[rightTrack] = -60;
 		motor[leftTrack] = 60;
-		sleep(1000);
+		sleep(900);
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
 
 		//to cap
 		motor[rightTrack] = 60;
 		motor[leftTrack] = 60;
-		sleep(400);
+		sleep(600);
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
 
 		//get cap
   	motor[claw] = 127;
-  	sleep(1000);
+  	sleep(2000);
   	motor[claw] = 0;
 
   	//turn to pole
@@ -139,16 +139,31 @@ if(SensorValue[teamSwitchPot] > 2350)
 		//up to pole
 		motor[liftPair1] = -40;
   	motor[liftPair2] = -40;
-  	sleep(800);
+  	sleep(1000);
 		motor[liftPair1] = 0;
   	motor[liftPair2] = 0;
 
 		//on top
 		motor[rightTrack] = 60;
 		motor[leftTrack] = 60;
-		sleep(300);
+		sleep(1200);
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
+
+		//turn right
+		motor[rightTrack] = -60;
+		motor[leftTrack] = 60;
+		sleep(900);
+		motor[rightTrack] = 0;
+		motor[leftTrack] = 0;
+
+		//foward
+ 		motor[rightTrack] = 60;
+		motor[leftTrack] = 60;
+		sleep(1000);
+		motor[rightTrack] = 0;
+		motor[leftTrack] = 0;
+
 
   /*	else{
 
@@ -370,12 +385,9 @@ enum preset getPresetLiftValue(int sensor)
 
 int getLiftValue(int btnFiveUp,int btnFiveDown,int btnSevenUp,int btnSevenDown)
 {
-	//bool upLiftPresetLock = false;
-	//bool downLiftPresetLock = false;
 	int diff;
-	int targetHeightValue = 0;
+	int targetHeightValue;
 	int liftValue;
-
 
 	if((btnFiveUp == 1)||(btnFiveDown == 1))
 	{
@@ -504,6 +516,105 @@ int getLiftValue(int btnFiveUp,int btnFiveDown,int btnSevenUp,int btnSevenDown)
 	return liftValue;
 }
 
+int getClawValue(int btnSixUp,int btnSixDown,int btnEightUp,int btnEightDown)
+{
+	int diff;
+	int targetValue;
+
+	if((btnSixUp == 1)||(btnSixDown == 1))
+	{
+		//writeDebugStreamLine("claw in manual mode");
+		clawMode = manual;
+	}
+
+	//claw manual mode
+	//up
+	if((btnSixUp == 1)&&(clawMode == manual)&&(SensorValue[forkLiftPot] < CLAW_PRESET_HEIGHT_HIGH))
+	{
+		clawValue = CLAW_MOTOR_POWER;
+	}
+	//down
+	else if((btnSixDown == 1)&&(clawMode == manual)&&(SensorValue[forkLiftPot] > CLAW_PRESET_HEIGHT_LOW))
+	{
+		clawValue = CLAW_MOTOR_POWER * -1;
+	}
+	//stop
+	else
+	{
+		clawValue = 0;
+	}
+
+	//##################################################################################
+	//claw preset
+	//writeDebugStreamLine("clawPreset %d", clawPreset);
+	if(btnEightUp == 0)
+	{
+		upClawPresetLock = false;
+	}
+	if(btnEightDown == 0)
+	{
+		downClawPresetLock = false;
+	}
+
+	//mode
+	if((btnEightUp == 1)||(btnEightDown == 1))
+	{
+		clawMode = automatic;
+	}
+	//low to high
+	if((btnEightUp == 1)&&(clawPreset == low)&&(upClawPresetLock == false))
+	{
+		clawPreset = high;
+		upClawPresetLock = true;
+	}
+	//high to low
+	if((btnEightDown == 1)&&(clawPreset == high)&&(downClawPresetLock == false))
+	{
+		clawPreset = low;
+		downClawPresetLock = true;
+	}
+
+	//set claw motor values
+	switch (clawPreset)
+	{
+		case low: 	targetValue = CLAW_PRESET_HEIGHT_LOW;
+		break;
+		case high: 	targetValue = CLAW_PRESET_HEIGHT_HIGH;
+		break;
+		default:	targetValue = CLAW_PRESET_HEIGHT_LOW;
+		break;
+	}
+
+	//compare sensor value with preset value
+	diff = targetValue - SensorValue[forkLiftPot];
+
+	//if diff is greater than 250 go up fast
+	if((diff > 250)&&(clawMode == automatic))
+	{
+		clawValue = CLAW_MOTOR_POWER;
+	}
+	//if diff is between 50 and 250 go up slow
+	if((diff < 250)&&(diff > 50)&&(clawMode == automatic))
+	{
+		clawValue = CLAW_MOTOR_POWER/2;
+	}
+	//down
+	//if diff is less than -250 go down fast
+	if((diff < -250)&&(clawMode == automatic))
+	{
+		clawValue = CLAW_MOTOR_POWER * -1;
+	}
+	//if diff is between -250 and -50 go down slow
+	if((diff > -250)&&(diff < -50)&&(clawMode == automatic))
+	{
+		clawValue = CLAW_MOTOR_POWER/2 * -1;
+	}
+
+//	writeDebugStreamLine("diff:%d target:%d sensor:%d presetv:%d clawMode:%d clawValue:%d", diff,targetValue,SensorValue[forkLiftPot],clawPreset,clawMode,clawValue);
+//	sleep(100);
+	return clawValue;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////
 //
 //																 User Control Task
@@ -583,18 +694,8 @@ task usercontrol()
 			//##################################################################################
 
 			//claw
-			if ((vexRT[Btn6DXmtr2] == 1)&&(SensorValue[forkLiftPot] > 20))
-			{
-				clawDrive = -60;
-			}
-			else if ((vexRT[Btn6UXmtr2] == 1)&&(SensorValue[forkLiftPot] < 1500))
-			{
-		    clawDrive = 60;
-			}
-			else //all controls released
-			{
-				clawDrive = 0;
-			}
+			clawDrive = getClawValue(vexRT[Btn6UXmtr2],vexRT[Btn6DXmtr2],vexRT[Btn8UXmtr2],vexRT[Btn8DXmtr2]);
+			//writeDebugStreamLine("clawDrive %d", clawDrive);
 			motor[claw] = clawDrive;
 		}
 		/////////////////////////////////////////////////////////////////////////////
@@ -614,19 +715,10 @@ task usercontrol()
 			motor[liftPair2] = g_liftValue;
 
 			//claw
-			if ((vexRT[Btn6D] == 1)&&(SensorValue[forkLiftPot] > 20))
-			{
-				clawDrive = -60;
-			}
-			else if ((vexRT[Btn6U] == 1)&&(SensorValue[forkLiftPot] < 1500))
-			{
-				clawDrive = 60;
-			}
-			else //all controls released
-			{
-				clawDrive = 0;
-			}
+			clawDrive = getClawValue(vexRT[Btn6U],vexRT[Btn6D],vexRT[Btn8U],vexRT[Btn8D]);
+			//writeDebugStreamLine("clawDrive %d", clawDrive);
 			motor[claw] = clawDrive;
+			//writeDebugStreamLine("clawDrive:[%d] g_liftValue:[%d]", clawDrive, g_liftValue);
 
 		}
 		sleep(10);
