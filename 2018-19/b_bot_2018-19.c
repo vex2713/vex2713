@@ -32,14 +32,14 @@
 
 
 
-//DL 01/01/19
+//DL 01/15/19
 
 
 #include "Vex_Competition_Includes.c"   //Main competition background code...do not modify!
 
 //teamSwitch = true;
 int defaultMotorSpeed;
-float gyroCorrection = 0.5;
+float gyroCorrection = 0.8;
 
 void pre_auton()
 {
@@ -177,16 +177,71 @@ void goBackDistance(int clicks)
 		writeDebugStreamLine("ending goBackDistance");
 
 }
+void goForwardInches(float inches)
+{
+	int power;
+		int clicks;
+	clicks=inches*50;
 
+	power=defaultMotorSpeed;
+			writeDebugStreamLine("starting goForwardDistance");
+//	writeDebugStreamLine("enc left:%d",SensorValue[leftEncoder]);
+//  writeDebugStreamLine("enc left:%d",clicks);
+
+
+			SensorValue[leftEncoder]=0;
+
+
+
+	while	(SensorValue[leftEncoder]<clicks)
+	{
+			//go forward for 1/10 second
+		motor[frontRight] = power;
+		motor[midRight] = power;
+		motor[rearRight] = power;
+		motor[frontLeft] = power;
+		motor[midLeft] = power;
+		motor[rearLeft] = power;
+		sleep(100);
+
+		}
+			writeDebugStreamLine("ending goForwardDistance");
+}
+
+
+void goBackInches(float inches)
+{
+	int power;
+	int clicks;
+	clicks=inches*50;
+	power=defaultMotorSpeed;
+	writeDebugStreamLine("starting goBackDistance");
+	SensorValue[leftEncoder]=0;
+	while	(SensorValue[leftEncoder]>=-1*clicks)
+	{
+			//go back for 1/10 second
+		motor[frontRight] = -1*power;
+		motor[midRight] = -1*power;
+		motor[rearRight] = -1*power;
+		motor[frontLeft] = -1*power;
+		motor[midLeft] = -1*power;
+		motor[rearLeft] = -1*power;
+		sleep(100);
+
+		}
+		writeDebugStreamLine("ending goBackDistance");
+
+}
+
+
+int inches2clicks()
+{
+}
 
 void fireRockets()
 {
 			motor[leftFlyWheels] = 126;
 			motor[rightFlyWheels] = -126;
-
-
-			sleep(500);
-
 			motor[conveyor] = 126;
 
 			sleep(1000);
@@ -225,10 +280,9 @@ motor[rearLeft] = -vexRT[Ch3];
 
 void turnLeftByDegrees(int targetDegrees)
 {
-	int power=60;
+	int power=128;
 		power=defaultMotorSpeed;
 	SensorValue[gyro1]=0;
-	sleep(500);
 	while (abs(SensorValue[gyro1])<(targetDegrees*10*gyroCorrection))
 	{
 		motor[frontRight] = power;
@@ -243,10 +297,9 @@ void turnLeftByDegrees(int targetDegrees)
 
 void turnRightByDegrees(int targetDegrees)
 {
-	int power=60;
+	int power=128;
 			power=defaultMotorSpeed;
 		SensorValue[gyro1]=0;
-			sleep(500);
 	while (abs(SensorValue[gyro1])<(targetDegrees*10*gyroCorrection))
 	{
 		motor[frontRight] = -1*power;
@@ -259,8 +312,17 @@ void turnRightByDegrees(int targetDegrees)
 	}
 }
 
+task autonomous_Blue_A()
+{
+}
 
-task autonomous_A()
+task autonomous_Blue_B()
+{
+}
+
+
+
+task autonomous_Red_A()
 {
 //for competition
 
@@ -286,7 +348,8 @@ writeDebugStreamLine("starting autonomous_A");
 
 
 motor[capFlip] = -126;
-goBackDistance(2050);
+//goBackDistance(2050);
+goBackInches(41);
 //this should have grabbed ball from 1st cap
 stopMotor();
 motor[capFlip] = 0;
@@ -296,14 +359,16 @@ SensorValue[leftEncoder]=0;
 //turnRight(60,880);
 // ---  turnLeft(60,700);
 motor[capFlip] = 126;
-goBackDistance(1150);
+//goBackDistance(1150);
+goBackInches(23);
 stopMotor();
 motor[capFlip] = 0;
 //this shd have flipped 2nd cap
 
 
 //now start heading for the platform
-goForwardDistance(1150);
+//goForwardDistance(1150);
+goForwardInches(23);
 turnRightByDegrees(90);
 goForwardDistance(2050);
 turnLeftByDegrees(90);
@@ -314,7 +379,8 @@ motor[capFlip] = 0;
 //then turn left
 turnRightByDegrees(90);
 //then go fwd longer distance
-goBackDistance(2050);
+//goBackDistance(2050);
+goForwardDistance(41);
 sleep(1000);
 //shd now be on the platform
 
@@ -328,60 +394,35 @@ stopMotor();
 
 
 
-task  autonomous_B()
+task  autonomous_Red_B()
 
-//for simple testing
-//place on the spots near the flags
+
+// firing ball
+
+
 {
-	writeDebugStreamLine("starting autonomous_B");
+	writeDebugStreamLine("starting autonomous_Red_B");
 
 
 
+//start facing toward the flag
+	// we are read tream
+	// will fire ball then go after caps
 
-turnLeftByDegrees(90);
-stopMotor();
-sleep(5000);
-
-
-turnLeftByDegrees(90);
-stopMotor();
-sleep(5000);
-
-
-/**
-
-turnLeftByDegrees(90);
-sleep(3000);
-stopMotor();
-
-turnRightByDegrees(90);
-sleep(1000);
-stopMotor();
-
-turnRightByDegrees(90);
-sleep(1000);
-stopMotor();
-
-turnRightByDegrees(90);
-sleep(1000);
-stopMotor();
-
-turnRightByDegrees(90);
-sleep(1000);
-stopMotor();
-**/
-
-
+//goBackDistance(100);
+//stopMotor();
+fireRockets();
 fireRockets();
 
-turnRightByDegrees(90);
-stopMotor();
-sleep(5000);
-
-turnRightByDegrees(90);
-stopMotor();
-sleep(5000);
-
+//goForwardDistance(100);
+//goForwardDistance(1200);
+goForwardInches(24);
+turnLeftByDegrees(90);
+motor[capFlip]=128;
+//goBackDistance(1800);
+goBackInches(36);
+motor[capFlip]=0;
+stopAllMotors();
 }
 
 
@@ -392,12 +433,12 @@ defaultMotorSpeed=126;
 //need to check for potentiomter then reverse commands if necessary
 	if (SensorValue[teamSwitchPot] < 2047)
 	{
-		startTask(autonomous_A);
+		startTask(autonomous_Red_A);
 		//autonomous_A has is to flip caps then go to central pad
 	}
 	else
 	{
-		startTask(autonomous_B);
+		startTask(autonomous_Red_B);
 		//could use this for testing auto with ball launcher
 	}
 
@@ -506,14 +547,17 @@ if (ControllerDirection==-1)
 		}
 
 
-//check for cap+converyoe  flipping controls
+//check for cap flipping+converyor controls
 		if(vexRT[Btn7U] == 1)
 		{
-			// start the cap flipping motor and conveyor
+					// start the cap flipping motor and conveyor
+
 			motor[capFlip] = -126;
-			//motor[conveyor] = 126;
-			motor[conveyor] = 90;
+			motor[conveyor] = 126;
+
 		}
+
+
 		if(vexRT[Btn7D] == 1)
 		{
 			// stop the cap and conveyor motor
