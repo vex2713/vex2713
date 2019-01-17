@@ -106,7 +106,28 @@ if(SensorValue[teamSwitchPot] > 2350)
  		//foward
  		motor[rightTrack] = 60;
 		motor[leftTrack] = 60;
-		sleep(2000);
+		sleep(1600);
+		motor[rightTrack] = 0;
+		motor[leftTrack] = 0;
+
+		//backwards
+		motor[rightTrack] = -60;
+		motor[leftTrack] = -60;
+		sleep(400);
+		motor[rightTrack] = 0;
+		motor[leftTrack] = 0;
+
+		//left
+		motor[rightTrack] = 60;
+		motor[leftTrack] = -60;
+		sleep(900);
+		motor[rightTrack] = 0;
+		motor[leftTrack] = 0;
+
+		//foward
+		motor[rightTrack] = 60;
+		motor[leftTrack] = 60;
+		sleep(600);
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
 
@@ -117,20 +138,34 @@ if(SensorValue[teamSwitchPot] > 2350)
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
 
-		//to cap
+		//foward
 		motor[rightTrack] = 60;
 		motor[leftTrack] = 60;
-		sleep(600);
+		sleep(500);
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
 
 		//get cap
   	motor[claw] = 127;
-  	sleep(2000);
+  	sleep(1000);
   	motor[claw] = 0;
 
-  	//turn to pole
+  	//turn right 180 degrees
   	motor[rightTrack] = -60;
+		motor[leftTrack] = 60;
+		sleep(1850);
+		motor[rightTrack] = 0;
+		motor[leftTrack] = 0;
+
+		//foward
+ 		motor[rightTrack] = 60;
+		motor[leftTrack] = 60;
+		sleep(800);
+		motor[rightTrack] = 0;
+		motor[leftTrack] = 0;
+
+		//turn right
+		motor[rightTrack] = -60;
 		motor[leftTrack] = 60;
 		sleep(900);
 		motor[rightTrack] = 0;
@@ -143,26 +178,19 @@ if(SensorValue[teamSwitchPot] > 2350)
 		motor[liftPair1] = 0;
   	motor[liftPair2] = 0;
 
-		//on top
-		motor[rightTrack] = 60;
-		motor[leftTrack] = 60;
-		sleep(1200);
-		motor[rightTrack] = 0;
-		motor[leftTrack] = 0;
-
-		//turn right
-		motor[rightTrack] = -60;
-		motor[leftTrack] = 60;
-		sleep(900);
-		motor[rightTrack] = 0;
-		motor[leftTrack] = 0;
-
 		//foward
  		motor[rightTrack] = 60;
 		motor[leftTrack] = 60;
-		sleep(1000);
+		sleep(500);
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
+
+		//down
+		motor[liftPair1] = 40;
+  	motor[liftPair2] = 40;
+  	sleep(600);
+		motor[liftPair1] = 0;
+  	motor[liftPair2] = 0;
 
 
   /*	else{
@@ -254,7 +282,7 @@ if(SensorValue[teamSwitchPot] > 2350)
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
 	}
-	//auto Red
+	//ahhhhhhhhhuto Red
 	//if( teamSwitch == false){
 	else{
 		//lift up
