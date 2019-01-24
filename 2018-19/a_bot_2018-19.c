@@ -205,68 +205,61 @@ if(SensorValue[teamSwitchPot] > 2350)
  		//foward
  		motor[rightTrack] = 60;
 		motor[leftTrack] = 60;
-		sleep(1600);
-		motor[rightTrack] = 0;
-		motor[leftTrack] = 0;
-
-		//backwards
-		motor[rightTrack] = -60;
-		motor[leftTrack] = -60;
-		sleep(400);
+		sleep(1700);
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
 
 		//left
 		motor[rightTrack] = 60;
 		motor[leftTrack] = -60;
-		sleep(900);
-		motor[rightTrack] = 0;
-		motor[leftTrack] = 0;
-
-		//foward
-		motor[rightTrack] = 60;
-		motor[leftTrack] = 60;
-		sleep(600);
+		sleep(400);
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
 
 		//turn right
 		motor[rightTrack] = -60;
 		motor[leftTrack] = 60;
-		sleep(900);
+		sleep(400);
+		motor[rightTrack] = 0;
+		motor[leftTrack] = 0;
+
+		//backwards
+		motor[rightTrack] = -60;
+		motor[leftTrack] = -60;
+		sleep(1000);
+		motor[rightTrack] = 0;
+		motor[leftTrack] = 0;
+
+		//left
+		motor[rightTrack] = 60;
+		motor[leftTrack] = -60;
+		sleep(350);
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
 
 		//foward
 		motor[rightTrack] = 60;
 		motor[leftTrack] = 60;
-		sleep(500);
+		sleep(1400);
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
 
-		//get cap
+		//get cap'd
   	motor[claw] = 127;
-  	sleep(1000);
+  	sleep(1500);
   	motor[claw] = 0;
 
-  	//turn right 180 degrees
-  	motor[rightTrack] = -60;
-		motor[leftTrack] = 60;
-		sleep(1850);
-		motor[rightTrack] = 0;
-		motor[leftTrack] = 0;
-
-		//foward
- 		motor[rightTrack] = 60;
-		motor[leftTrack] = 60;
-		sleep(800);
-		motor[rightTrack] = 0;
-		motor[leftTrack] = 0;
-
-		//turn right
+	  //backwards
 		motor[rightTrack] = -60;
-		motor[leftTrack] = 60;
+		motor[leftTrack] = -60;
 		sleep(900);
+		motor[rightTrack] = 0;
+		motor[leftTrack] = 0;
+
+		//turn left
+		motor[rightTrack] = 60;
+		motor[leftTrack] = -60;
+		sleep(460);
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
 
@@ -280,7 +273,7 @@ if(SensorValue[teamSwitchPot] > 2350)
 		//foward
  		motor[rightTrack] = 60;
 		motor[leftTrack] = 60;
-		sleep(500);
+		sleep(900);
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
 
