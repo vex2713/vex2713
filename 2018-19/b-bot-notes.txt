@@ -1,4 +1,4 @@
-last update: 1/1/19
+last update: 1/13/19
 
 By: Damian 
 
@@ -33,16 +33,24 @@ ISC connects to encoder on one of the left moters and an encoder on one of the r
 #pragma config(Motor,  port4,           conveyor,      tmotorNone, openLoop)
 #pragma config(Motor,  port5,           leftFlyWheels, tmotorNone, openLoop)
 #pragma config(Motor,  port6,           rightFlyWheels, tmotorNone, openLoop)
-#pragma config(Motor,  port7,           capFlip,       tmotorVex393_MC29, openLoop)
+#pragma config(Motor,  port722,           capFlip,       tmotorVex393_MC29, openLoop)
 #pragma config(Motor,  port8,           midRight,      tmotorVex393_MC29, openLoop, reversed)
 #pragma config(Motor,  port9,           rearRight,     tmotorVex393_MC29, openLoop, reversed, encoderPort, I2C_2)
 #pragma config(Motor,  port10,          frontRight,    tmotorVex393_HBridge, openLoop, reversed)
 
 
 
-Potentiometer range:     
 
-Gryo output: 
+
+SENSORS
+
+
+
+Sensor 1: Potentiometer:  range:     
+
+Sensor 2: Gryo output: 
+
+Sensor 3: limit switch
 
 
 CODING OVERVIEW

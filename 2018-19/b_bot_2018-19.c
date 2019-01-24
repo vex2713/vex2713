@@ -238,13 +238,30 @@ int inches2clicks()
 {
 }
 
+
+void startFlyWheels()
+{
+			motor[leftFlyWheels] = 126;
+			motor[rightFlyWheels] = -126;
+}
+
+void stopFlyWheels()
+{
+			motor[leftFlyWheels] = 0;
+			motor[rightFlyWheels] = 0;
+
+
+}
+
+
 void fireRockets()
 {
 			motor[leftFlyWheels] = 126;
 			motor[rightFlyWheels] = -126;
+			sleep(2000);
 			motor[conveyor] = 126;
 
-			sleep(1000);
+			sleep(3000);
 
 
 			motor[leftFlyWheels] = 0;
@@ -315,16 +332,35 @@ void turnRightByDegrees(int targetDegrees)
 task autonomous_Blue_A()
 {
 }
-
 task autonomous_Blue_B()
 {
+
+//assuming blue team, further from flag, want to hit the flag
+//start facing toward the flag
+	// we are red tream
+	// will fire ball then go after caps
+
+
+
+fireRockets();
+//fireRockets();
+
+
+goForwardInches(24);
+//turnLeftByDegrees(90);
+//motor[capFlip]=128;
+
+//goBackInches(36);
+
+
+stopAllMotors();
 }
 
-
+/**
 
 task autonomous_Red_A()
 {
-//for competition
+//for competition - flipping caps
 
 
 //goal is to turn flip CAPS and land on platform
@@ -391,13 +427,25 @@ stopMotor();
 }
 
 
+**/
 
 
+task  autonomous_Red_A()
+// firing ball assuming staring as red team with the point further from flag
+{
+	goForwardInches(24);
+turnLeftByDegrees(90);
+motor[capFlip]=128;
+//goBackDistance(1800);
+goBackInches(36);
+motor[capFlip]=0;
+stopAllMotors();
+}
 
 task  autonomous_Red_B()
 
 
-// firing ball
+// firing ball assuming staring pointing red and nearer flag
 
 
 {
@@ -406,22 +454,22 @@ task  autonomous_Red_B()
 
 
 //start facing toward the flag
-	// we are read tream
+	// we are red tream
 	// will fire ball then go after caps
 
-//goBackDistance(100);
-//stopMotor();
-fireRockets();
-fireRockets();
 
-//goForwardDistance(100);
-//goForwardDistance(1200);
+
+fireRockets();
+//fireRockets();
+
+
 goForwardInches(24);
-turnLeftByDegrees(90);
-motor[capFlip]=128;
-//goBackDistance(1800);
-goBackInches(36);
-motor[capFlip]=0;
+//turnLeftByDegrees(90);
+//motor[capFlip]=128;
+
+//goBackInches(36);
+
+
 stopAllMotors();
 }
 
@@ -433,13 +481,13 @@ defaultMotorSpeed=126;
 //need to check for potentiomter then reverse commands if necessary
 	if (SensorValue[teamSwitchPot] < 2047)
 	{
-		startTask(autonomous_Red_A);
+		startTask(autonomous_Blue_A);
 		//autonomous_A has is to flip caps then go to central pad
 	}
 	else
 	{
-		startTask(autonomous_Red_B);
-		//could use this for testing auto with ball launcher
+		startTask(autonomous_Blue_B);
+		//auto red b is assuming starting nearer flags, then firing the flags
 	}
 
 writeDebugStreamLine("enc left:%d",SensorValue[leftEncoder]);
@@ -542,10 +590,15 @@ if (ControllerDirection==-1)
 		if(vexRT[Btn6D] == 1)
 		{
 			// stop the cap flipping motor
-			motor[capFlip] = 0;
-
+		//	motor[capFlip] = 0;
+		startFlyWheels()
 		}
-
+	if(vexRT[Btn6D] == 0)
+		{
+			// stop the cap flipping motor
+		//	motor[capFlip] = 0;
+		stopFlyWheels()
+		}
 
 //check for cap flipping+converyor controls
 		if(vexRT[Btn7U] == 1)
@@ -578,26 +631,18 @@ if (ControllerDirection==-1)
 // run leftFLyWheels in one direction
 //  run rightFlyWheens in other direction
 //  want to spin up then run conveyor for 1 sec
-			if(vexRT[Btn8R] == 1)
+if(vexRT[Btn8R] == 1)
 			{
-				fireRockets();
-			/**
-			motor[leftFlyWheels] = 126;
-			motor[rightFlyWheels] = -126;
+		startFlyWheels();
 
-
-			sleep(500);
-
-			motor[conveyor] = 126;
-
-			sleep(1000);
-
-
-			motor[leftFlyWheels] = 0;
-			motor[rightFlyWheels] = 0;
-			motor[conveyor] = 0;
-			**/
 		}
+
+if(vexRT[Btn8L] == 1)
+			{
+		stopFlyWheels();
+
+		}
+
 
 	}
 }
