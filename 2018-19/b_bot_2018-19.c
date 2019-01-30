@@ -346,8 +346,10 @@ fireRockets();
 //fireRockets();
 
 
-goForwardInches(24);
-//turnLeftByDegrees(90);
+goForwardInches(28);
+goBackInches(36);
+turnLeftByDegrees(90);
+goForwardInches(36);
 //motor[capFlip]=128;
 
 //goBackInches(36);
@@ -445,27 +447,38 @@ stopAllMotors();
 task  autonomous_Red_B()
 
 
-// firing ball assuming staring pointing red and nearer flag
-
 
 {
-	writeDebugStreamLine("starting autonomous_Red_B");
 
 
-
+//assuming red team, further from flag, want to hit the flag
 //start facing toward the flag
 	// we are red tream
 	// will fire ball then go after caps
 
+	writeDebugStreamLine("starting autonomous_Red_B");
 
 
 fireRockets();
 //fireRockets();
 
 
-goForwardInches(24);
+//goForwardInches(46);
+//goBackInches(60);
 //turnLeftByDegrees(90);
-//motor[capFlip]=128;
+
+
+
+
+
+
+
+//goFo
+
+r
+
+swardInches(40);
+motor[capFlip]=128;
 
 //goBackInches(36);
 
@@ -481,13 +494,13 @@ defaultMotorSpeed=126;
 //need to check for potentiomter then reverse commands if necessary
 	if (SensorValue[teamSwitchPot] < 2047)
 	{
-		startTask(autonomous_Blue_A);
+		startTask(autonomous_Red_A);
 		//autonomous_A has is to flip caps then go to central pad
 	}
 	else
 	{
-		startTask(autonomous_Blue_B);
-		//auto red b is assuming starting nearer flags, then firing the flags
+		startTask(autonomous_Red_B);
+		//auto red b or blue b  is assuming starting nearer flags, then firing at the upper flag, then running down the lower flag, then head for platform
 	}
 
 writeDebugStreamLine("enc left:%d",SensorValue[leftEncoder]);
