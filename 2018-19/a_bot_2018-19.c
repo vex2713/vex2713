@@ -174,7 +174,7 @@ if(SensorValue[teamSwitchPot] > 2350)
 {
  	teamSwitch = true;
 }
-	else
+if(SensorValue[teamSwitchPot] < 2349)
 {
 		teamSwitch = false;
 }
@@ -183,7 +183,119 @@ if(SensorValue[teamSwitchPot] > 2350)
 	if( teamSwitch == true){
  	//cap autonomus
 
-	  //lift up body
+
+	//lift up body
+		motor[liftPair1] = -40;
+  	motor[liftPair2] = -40;
+  	sleep(750);
+		motor[liftPair1] = 0;
+  	motor[liftPair2] = 0;
+
+		//deploy claw
+  	motor[claw] = -127;
+  	sleep(3000);
+  	motor[claw] = 0;
+
+ 		//lower body
+ 		motor[liftPair1] = 40;
+ 		motor[liftPair2] = 40;
+ 		sleep(900);
+ 		motor[liftPair1] = 0;
+ 		motor[liftPair2] = 0;
+
+ 		//foward
+ 		motor[rightTrack] = 60;
+		motor[leftTrack] = 60;
+		sleep(1700);
+		motor[rightTrack] = 0;
+		motor[leftTrack] = 0;
+
+		//left
+		motor[rightTrack] = 60;
+		motor[leftTrack] = -60;
+		sleep(400);
+		motor[rightTrack] = 0;
+		motor[leftTrack] = 0;
+
+		//right
+		motor[rightTrack] = -60;
+		motor[leftTrack] = 60;
+		sleep(400);
+		motor[rightTrack] = 0;
+		motor[leftTrack] = 0;
+
+		//backwards
+		motor[rightTrack] = -60;
+		motor[leftTrack] = -60;
+		sleep(1000);
+		motor[rightTrack] = 0;
+		motor[leftTrack] = 0;
+
+		//left
+		motor[rightTrack] = 60;
+		motor[leftTrack] = -60;
+		sleep(350);
+		motor[rightTrack] = 0;
+		motor[leftTrack] = 0;
+
+		//foward
+		motor[rightTrack] = 60;
+		motor[leftTrack] = 60;
+		sleep(1400);
+		motor[rightTrack] = 0;
+		motor[leftTrack] = 0;
+
+		//get cap'd
+  	motor[claw] = 127;
+  	sleep(1400);
+  	motor[claw] = 0;
+
+	  //backwards
+		motor[rightTrack] = -60;
+		motor[leftTrack] = -60;
+		sleep(900);
+		motor[rightTrack] = 0;
+		motor[leftTrack] = 0;
+
+		//turn left
+		motor[rightTrack] = 60;
+		motor[leftTrack] = -60;
+		sleep(490);
+		motor[rightTrack] = 0;
+		motor[leftTrack] = 0;
+
+		//up to pole
+		motor[liftPair1] = -40;
+  	motor[liftPair2] = -40;
+  	sleep(1000);
+		motor[liftPair1] = 0;
+  	motor[liftPair2] = 0;
+
+		//foward
+ 		motor[rightTrack] = 60;
+		motor[leftTrack] = 60;
+		sleep(900);
+		motor[rightTrack] = 0;
+		motor[leftTrack] = 0;
+
+		//down
+		motor[liftPair1] = 40;
+  	motor[liftPair2] = 40;
+  	sleep(600);
+		motor[liftPair1] = 0;
+  	motor[liftPair2] = 0;
+
+  	//backwards
+ 		motor[rightTrack] = -60;
+		motor[leftTrack] = -60;
+		sleep(400);
+		motor[rightTrack] = 0;
+		motor[leftTrack] = 0;
+
+
+  	if( teamSwitch == false){
+
+  	 //lift up body
 		motor[liftPair1] = -40;
   	motor[liftPair2] = -40;
   	sleep(750);
@@ -230,9 +342,9 @@ if(SensorValue[teamSwitchPot] > 2350)
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
 
-		//left
-		motor[rightTrack] = 60;
-		motor[leftTrack] = -60;
+		//right
+		motor[rightTrack] = -60;
+		motor[leftTrack] = 60;
 		sleep(350);
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
@@ -246,7 +358,7 @@ if(SensorValue[teamSwitchPot] > 2350)
 
 		//get cap'd
   	motor[claw] = 127;
-  	sleep(1500);
+  	sleep(1400);
   	motor[claw] = 0;
 
 	  //backwards
@@ -256,10 +368,10 @@ if(SensorValue[teamSwitchPot] > 2350)
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
 
-		//turn left
-		motor[rightTrack] = 60;
-		motor[leftTrack] = -60;
-		sleep(460);
+		//turn right
+		motor[rightTrack] = -60;
+		motor[leftTrack] = 60;
+		sleep(490);
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
 
@@ -284,139 +396,15 @@ if(SensorValue[teamSwitchPot] > 2350)
 		motor[liftPair1] = 0;
   	motor[liftPair2] = 0;
 
-
-  /*	else{
-
-  	//lift up body
-		motor[liftPair1] = -40;
-  	motor[liftPair2] = -40;
-  	sleep(750);
-		motor[liftPair1] = 0;
-  	motor[liftPair2] = 0;
-
-		//deploy claw
-  	motor[claw] = -127;
-  	sleep(3000);
-  	motor[claw] = 0;
-
- 		//lower body
- 		motor[liftPair1] = 40;
- 		motor[liftPair2] = 40;
- 		sleep(900);
- 		motor[liftPair1] = 0;
- 		motor[liftPair2] = 0;
-
- 		//foward
- 		motor[rightTrack] = 60;
-		motor[leftTrack] = 60;
-		sleep(1500);
-		motor[rightTrack] = 0;
-		motor[leftTrack] = 0;
-
-		//turn right
-		motor[rightTrack] = -60;
-		motor[leftTrack] = 60;
-		sleep(900);
-		motor[rightTrack] = 0;
-		motor[leftTrack] = 0;
-
-		//to cap
-		motor[rightTrack] = 60;
-		motor[leftTrack] = 60;
-		sleep(300);
-		motor[rightTrack] = 0;
-		motor[leftTrack] = 0;
-
-		//get cap
-  	motor[claw] = 127;
-  	sleep(1000);
-  	motor[claw] = 0;
-  	*/
-
-	/* flag autonomus
-	//lift up body
-		motor[liftPair1] = -40;
-  	motor[liftPair2] = -40;
-  	sleep(750);
-		motor[liftPair1] = 0;
-  	motor[liftPair2] = 0;
-
-		//deploy claw
-  	motor[claw] = -127;
-  	sleep(3000);
-  	motor[claw] = 0;
-
- 		//lower body
- 		motor[liftPair1] = 40;
- 		motor[liftPair2] = 40;
- 		sleep(750);
- 		motor[liftPair1] = 0;
- 		motor[liftPair2] = 0;
-
-  	//move forward
-		motor[rightTrack] = 60;
-		motor[leftTrack] = 60;
-		sleep(1500);
-		motor[rightTrack] = 0;
-		motor[leftTrack] = 0;
-
-		//turn right
-		motor[rightTrack] = -60;
-		motor[leftTrack] = 60;
-		sleep(900);
-		motor[rightTrack] = 0;
-		motor[leftTrack] = 0;
-
-		//to flag
-		motor[rightTrack] = 60;
-		motor[leftTrack] = 60;
-		sleep(1000);
-		motor[rightTrack] = 0;
-		motor[leftTrack] = 0;
-	}
-	//ahhhhhhhhhuto Red
-	//if( teamSwitch == false){
-	else{
-		//lift up
-		motor[liftPair1] = -40;
-	  motor[liftPair2] = -40;
-	  sleep(750);
-		motor[liftPair1] = 0;
-	  motor[liftPair2] = 0;
-
-		//deploy claw
-	  motor[claw] = -127;
-	  sleep(3000);
-	  motor[claw] = 0;
-
-	 	//lower
-	 	motor[liftPair1] = 40;
-	 	motor[liftPair2] = 40;
-	 	sleep(700);
-	 	motor[liftPair1] = 0;
-	 	motor[liftPair2] = 0;
-
-	  //move forward
-		motor[rightTrack] = 60;
-		motor[leftTrack] = 60;
-		sleep(1500);
-		motor[rightTrack] = 0;
-		motor[leftTrack] = 0;
-
-		//turn left
-		motor[rightTrack] = 60;
+  	//backwards
+ 		motor[rightTrack] = -60;
 		motor[leftTrack] = -60;
-		sleep(900);
+		sleep(200);
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
 
-		//to flag
-		motor[rightTrack] = 60;
-		motor[leftTrack] = 60;
-		sleep(1000);
-		motor[rightTrack] = 0;
-		motor[leftTrack] = 0;
- */
+}
+
 	}
 }
  //end autonomous
