@@ -1,6 +1,7 @@
 #pragma config(I2C_Usage, I2C1, i2cSensors)
 #pragma config(Sensor, in1,    teamSwitchPot,  sensorPotentiometer)
 #pragma config(Sensor, in2,    gyro1,          sensorGyro)
+#pragma config(Sensor, in3,    routineSwitchPot, sensorNone)
 #pragma config(Sensor, I2C_1,  leftEncoder,    sensorQuadEncoderOnI2CPort,    , AutoAssign )
 #pragma config(Sensor, I2C_2,  rightEncoder,   sensorQuadEncoderOnI2CPort,    , AutoAssign )
 #pragma config(Motor,  port1,           frontLeft,     tmotorVex393_HBridge, openLoop)
@@ -32,7 +33,7 @@
 
 
 
-//DL 01/15/19
+//DL 01/30/19
 
 
 #include "Vex_Competition_Includes.c"   //Main competition background code...do not modify!
@@ -473,11 +474,7 @@ fireRockets();
 
 
 
-//goFo
-
-r
-
-swardInches(40);
+//goFowardInches(40);
 motor[capFlip]=128;
 
 //goBackInches(36);
@@ -491,8 +488,8 @@ task autonomous()
 {
 defaultMotorSpeed=126;
 
-//need to check for potentiomter then reverse commands if necessary
-	if (SensorValue[teamSwitchPot] < 2047)
+/**
+if (SensorValue[teamSwitchPot] < 2047)
 	{
 		startTask(autonomous_Red_A);
 		//autonomous_A has is to flip caps then go to central pad
@@ -502,16 +499,47 @@ defaultMotorSpeed=126;
 		startTask(autonomous_Red_B);
 		//auto red b or blue b  is assuming starting nearer flags, then firing at the upper flag, then running down the lower flag, then head for platform
 	}
+**/
+
+//DL 1/30/19
+//CHOOSE BETWEEN 4 ROUTINES BASED ON TWO POTS
+//teamSwitchPot chooses red (low) or blue (hi)
+//routineSwitchPot chooses A (low) or B (hi)
+
+if ((SensorValue[teamSwitchPot] < 2047) && (SensorValue[routineSwitchPot] < 2047))
+	{
+		startTask(autonomous_Red_A);
+		//autonomous_A has is to flip caps then go to central pad
+	}
+
+if ((SensorValue[teamSwitchPot] < 2047) && (SensorValue[routineSwitchPot] > 2047))
+	{
+		startTask(autonomous_Red_B);
+
+	}
+
+
+if ((SensorValue[teamSwitchPot] > 2047) && (SensorValue[routineSwitchPot] < 2047))
+	{
+		startTask(autonomous_Blue_A);
+		}
+
+if ((SensorValue[teamSwitchPot] > 2047) && (SensorValue[routineSwitchPot] > 2047))
+	{
+		startTask(autonomous_Blue_B);
+
+	}
+
 
 writeDebugStreamLine("enc left:%d",SensorValue[leftEncoder]);
 
 }
- //end autonomous
+ //end autonomous, lol
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //
-//																 User Control Task
+//																 User Can't roll Task
 //
 // This task is used to control your robot during the user control phase of a VEX Competition.
 // You must modify the code to add your own robot specific commands here.
@@ -520,6 +548,11 @@ writeDebugStreamLine("enc left:%d",SensorValue[leftEncoder]);
 
 task user_b_bot()
 {
+
+//button 7 up: conveyor
+//button 7 dn: conveyor
+//button 7 up: conveyor
+
 //set controls in forward driving mode by default
 
 int ControllerDirection;
@@ -584,29 +617,30 @@ if (ControllerDirection==-1)
 }
 
 //check for cap  flipping controls
-		if(vexRT[Btn5U] == 1)
+//Xmtr2
+		if((vexRT[Btn5U] == 1)||(vexRT[Btn5UXmtr2] == 1))
 		{
 			// start the cap flipping motor
 			motor[capFlip] = 126;
 		}
-		if(vexRT[Btn5D] == 1)
+		if((vexRT[Btn5D] == 1)||(vexRT[Btn5DXmtr2] == 1))
 		{
 			// stop the cap flipping motor
 			motor[capFlip] = 0;
 		}
-		if(vexRT[Btn6U] == 1)
+		if((vexRT[Btn6U] == 1)||(vexRT[Btn6UXmtr2] == 1))
 		{
 		// start the cap flipping motor in reverse
 			motor[capFlip] = -126;
 
 		}
-		if(vexRT[Btn6D] == 1)
+		if((vexRT[Btn6D] == 1)||(vexRT[Btn6DXmtr2] == 1))
 		{
 			// stop the cap flipping motor
 		//	motor[capFlip] = 0;
 		startFlyWheels()
 		}
-	if(vexRT[Btn6D] == 0)
+	  if((vexRT[Btn6D] == 0)||(vexRT[Btn6DXmtr2] == 0))
 		{
 			// stop the cap flipping motor
 		//	motor[capFlip] = 0;
@@ -614,7 +648,7 @@ if (ControllerDirection==-1)
 		}
 
 //check for cap flipping+converyor controls
-		if(vexRT[Btn7U] == 1)
+		if((vexRT[Btn7U] == 1)||(vexRT[Btn7UXmtr2] == 1))
 		{
 					// start the cap flipping motor and conveyor
 
@@ -624,13 +658,13 @@ if (ControllerDirection==-1)
 		}
 
 
-		if(vexRT[Btn7D] == 1)
+		if((vexRT[Btn7D] == 1)||(vexRT[Btn7DXmtr2] == 1))
 		{
 			// stop the cap and conveyor motor
 			motor[capFlip] = 0;
 			motor[conveyor] = 0;
 		}
-		if(vexRT[Btn7L] == 1)
+		if((vexRT[Btn7L] == 1)||(vexRT[Btn7LXmtr2] == 1))
 		{
 		// start the cap flipping motor in reverse
 			motor[capFlip] = 0;
@@ -644,13 +678,13 @@ if (ControllerDirection==-1)
 // run leftFLyWheels in one direction
 //  run rightFlyWheens in other direction
 //  want to spin up then run conveyor for 1 sec
-if(vexRT[Btn8R] == 1)
+if((vexRT[Btn8R] == 1)||(vexRT[Btn8RXmtr2] == 1))
 			{
 		startFlyWheels();
 
 		}
 
-if(vexRT[Btn8L] == 1)
+if((vexRT[Btn8L] == 1)||(vexRT[Btn8LXmtr2] == 1))
 			{
 		stopFlyWheels();
 
