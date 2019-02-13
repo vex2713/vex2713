@@ -166,11 +166,24 @@ void turnLeftInches(float inches)
 
 task autonomous()
 {
+
+	//foward
+ 		motor[rightTrack] = 60;
+		motor[leftTrack] = 60;
+		sleep(1000);
+		motor[rightTrack] = 0;
+		motor[leftTrack] = 0;
+
+
+
+
+
+
 	//lift1 range shd be 0 to 656
 // lift shd be lowered prior to autonomous routine starting
 //there will be a separate control for the fork lift
 //SensorValue[liftHeight] = 0;
-if(SensorValue[teamSwitchPot] > 2350)
+/*if(SensorValue[teamSwitchPot] > 2350)
 {
  	teamSwitch = true;
 }
@@ -402,7 +415,7 @@ if(SensorValue[teamSwitchPot] < 2349)
 		sleep(200);
 		motor[rightTrack] = 0;
 		motor[leftTrack] = 0;
-
+*/
 }
 
 	}
