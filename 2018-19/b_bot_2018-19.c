@@ -1,7 +1,7 @@
 #pragma config(I2C_Usage, I2C1, i2cSensors)
 #pragma config(Sensor, in1,    teamSwitchPot,  sensorPotentiometer)
 #pragma config(Sensor, in2,    gyro1,          sensorGyro)
-#pragma config(Sensor, in3,    routineSwitchPot, sensorNone)
+#pragma config(Sensor, in3,    routineSwitchPot, sensorPotentiometer)
 #pragma config(Sensor, I2C_1,  leftEncoder,    sensorQuadEncoderOnI2CPort,    , AutoAssign )
 #pragma config(Sensor, I2C_2,  rightEncoder,   sensorQuadEncoderOnI2CPort,    , AutoAssign )
 #pragma config(Motor,  port1,           frontLeft,     tmotorVex393_HBridge, openLoop)
@@ -50,7 +50,9 @@ void pre_auton()
 //between 708 and 4095
 
 
-void stopMotor()
+
+void stopTractionMotors()
+//the vex standard stopAllMotors command could be used instead
 {
 		motor[frontRight] = 0;
 		motor[midRight] = 0;
@@ -61,123 +63,8 @@ void stopMotor()
 	}
 
 
-/**
-
-void turnLeftByTime(int power, int duration)
-{
-
-		motor[frontRight] = power;
-		motor[midRight] = power;
-		motor[rearRight] = power;
-		motor[frontLeft] = -1*power;
-		motor[midLeft] = -1*power;
-		motor[rearLeft] = -1*power;
 
 
-
-		sleep(duration);
-}
-
-void turnRightByTime(int power, int duration)
-{
-		motor[frontRight] = -1*power;
-		motor[midRight] = -1*power;
-		motor[rearRight] = -1*power;
-		motor[frontLeft] = power;
-		motor[midLeft] = power;
-		motor[rearLeft] = power;
-				sleep(duration);
-}
-
-
-void goForwardByTime(int power, int duration)
-{
-
-		motor[frontRight] = power;
-		motor[midRight] = power;
-		motor[rearRight] = power;
-		motor[frontLeft] = power;
-		motor[midLeft] = power;
-		motor[rearLeft] = power;
-
-
-		//sleep is in msec
-		sleep(duration);
-
-}
-
-
-
-
-
-void goBackByTime(int power, int duration)
-{
-
-		motor[frontRight] = -1*power;
-		motor[midRight] = -1*power;
-		motor[rearRight] = -1*power;
-		motor[frontLeft] = -1*power;
-		motor[midLeft] = -1*power;
-		motor[rearLeft] = -1*power;
-
-
-
-		sleep(duration);
-}
-
-**/
-
-
-void goForwardDistance(int clicks)
-{
-	int power;
-	power=defaultMotorSpeed;
-			writeDebugStreamLine("starting goForwardDistance");
-//	writeDebugStreamLine("enc left:%d",SensorValue[leftEncoder]);
-//  writeDebugStreamLine("enc left:%d",clicks);
-
-
-			SensorValue[leftEncoder]=0;
-
-
-
-	while	(SensorValue[leftEncoder]<clicks)
-	{
-			//go forward for 1/10 second
-		motor[frontRight] = power;
-		motor[midRight] = power;
-		motor[rearRight] = power;
-		motor[frontLeft] = power;
-		motor[midLeft] = power;
-		motor[rearLeft] = power;
-		sleep(100);
-
-		}
-			writeDebugStreamLine("ending goForwardDistance");
-}
-
-
-void goBackDistance(int clicks)
-{
-	int power;
-	power=defaultMotorSpeed;
-	writeDebugStreamLine("starting goBackDistance");
-	SensorValue[leftEncoder]=0;
-	while	(SensorValue[leftEncoder]>=-1*clicks)
-	{
-			//go back for 1/10 second
-		motor[frontRight] = -1*power;
-		motor[midRight] = -1*power;
-		motor[rearRight] = -1*power;
-		motor[frontLeft] = -1*power;
-		motor[midLeft] = -1*power;
-		motor[rearLeft] = -1*power;
-		sleep(100);
-
-		}
-		writeDebugStreamLine("ending goBackDistance");
-
-}
 void goForwardInches(float inches)
 {
 	int power;
@@ -235,9 +122,6 @@ void goBackInches(float inches)
 }
 
 
-int inches2clicks()
-{
-}
 
 
 void startFlyWheels()
@@ -269,9 +153,8 @@ void fireRockets()
 			motor[rightFlyWheels] = 0;
 			motor[conveyor] = 0;
 }
-void launchBall(int power, int duration)
-{
-}
+
+/**
 
 void putControlsForwardMode()
 {
@@ -295,6 +178,7 @@ motor[midLeft] = -vexRT[Ch3];
 motor[rearLeft] = -vexRT[Ch3];
 }
 
+**/
 
 void turnLeftByDegrees(int targetDegrees)
 {
@@ -330,157 +214,85 @@ void turnRightByDegrees(int targetDegrees)
 	}
 }
 
-task autonomous_Blue_A()
-{
-}
-task autonomous_Blue_B()
-{
-
-//assuming blue team, further from flag, want to hit the flag
-//start facing toward the flag
-	// we are red tream
-	// will fire ball then go after caps
 
 
 
-fireRockets();
-//fireRockets();
-
-
-goForwardInches(28);
-goBackInches(36);
-turnLeftByDegrees(90);
-goForwardInches(36);
-//motor[capFlip]=128;
-
-//goBackInches(36);
-
-
-stopAllMotors();
-}
-
-/**
-
-task autonomous_Red_A()
-{
-//for competition - flipping caps
-
-
-//goal is to turn flip CAPS and land on platform
-//STEPS
-//start facing backwares
-//turn on flipper
-//drive backwars 4 ft
-//hopefully will knock ball from 1st cap
-//go forward 2 feet
-//turn 90 degrees left
-//go back 2 feet and hit the 2nd cap
-//turn 180 degrees
-//start heading for platform
-
-
-//place on the spots near the flags
-writeDebugStreamLine("starting autonomous_A");
-//turnLeftByDegrees(270);
-
-
-
-
-motor[capFlip] = -126;
-//goBackDistance(2050);
-goBackInches(41);
-//this should have grabbed ball from 1st cap
-stopMotor();
-motor[capFlip] = 0;
-turnLeftByDegrees(70);
-stopMotor();
-SensorValue[leftEncoder]=0;
-//turnRight(60,880);
-// ---  turnLeft(60,700);
-motor[capFlip] = 126;
-//goBackDistance(1150);
-goBackInches(23);
-stopMotor();
-motor[capFlip] = 0;
-//this shd have flipped 2nd cap
-
-
-//now start heading for the platform
-//goForwardDistance(1150);
-goForwardInches(23);
-turnRightByDegrees(90);
-goForwardDistance(2050);
-turnLeftByDegrees(90);
-//then go fwd short distance
-motor[capFlip] = 126;
-goForwardDistance(1300);
-motor[capFlip] = 0;
-//then turn left
-turnRightByDegrees(90);
-//then go fwd longer distance
-//goBackDistance(2050);
-goForwardDistance(41);
-sleep(1000);
-//shd now be on the platform
-
-
-
-
-stopMotor();
-}
-
-
-**/
 
 
 task  autonomous_Red_A()
 // firing ball assuming staring as red team with the point further from flag
+//will then aim for platform
+//
 {
-	goForwardInches(24);
-turnLeftByDegrees(90);
+turnRightByDegrees(5);
+fireRockets();
+turnLeftByDegrees(5);
+	goForwardInches(20);
+turnRightByDegrees(90);
 motor[capFlip]=128;
 //goBackDistance(1800);
-goBackInches(36);
+goForwardInches(36);
 motor[capFlip]=0;
-stopAllMotors();
+stopAllMotors(); //where is this defined?
 }
 
 task  autonomous_Red_B()
 
-
-
 {
 
 
-//assuming red team, further from flag, want to hit the flag
-//start facing toward the flag
-	// we are red tream
-	// will fire ball then go after caps
+//assuming red team, nearer from flag, want to hit the flag
+//then head to platform
 
 	writeDebugStreamLine("starting autonomous_Red_B");
 
 
+turnRightByDegrees(5);
 fireRockets();
-//fireRockets();
+turnLeftByDegrees(5);
+goForwardInches(44);
+goBackInches(72);
+turnRightByDegrees(90);
+goForwardInches(60);
 
-
-//goForwardInches(46);
-//goBackInches(60);
-//turnLeftByDegrees(90);
-
-
-
-
+stopAllMotors(); //where is this defined
+}
 
 
 
-//goFowardInches(40);
+task autonomous_Blue_A()
+{
+//assuming blue team, starting further from flag
+//shd be mirror of red A
+
+turnLeftByDegrees(5);
+fireRockets();
+turnRightByDegrees(5);
+	goForwardInches(20);
+turnLeftByDegrees(90);
 motor[capFlip]=128;
+//goBackDistance(1800);
+goForwardInches(36);
+motor[capFlip]=0;
+stopAllMotors(); //where is this defined?
+}
+task autonomous_Blue_B()
+{
 
-//goBackInches(36);
+//assuming blue team, near to flag flag, want to hit the flag
+//shd be mirror of red B
+writeDebugStreamLine("starting autonomous_Blue_B");
 
 
-stopAllMotors();
+turnLeftByDegrees(5);
+fireRockets();
+turnRightByDegrees(5);
+goForwardInches(44);
+goBackInches(72);
+turnLeftByDegrees(90);
+goForwardInches(60);
+
+stopAllMotors(); //this is a std vex function
 }
 
 
@@ -488,43 +300,40 @@ task autonomous()
 {
 defaultMotorSpeed=126;
 
-/**
-if (SensorValue[teamSwitchPot] < 2047)
-	{
-		startTask(autonomous_Red_A);
-		//autonomous_A has is to flip caps then go to central pad
-	}
-	else
-	{
-		startTask(autonomous_Red_B);
-		//auto red b or blue b  is assuming starting nearer flags, then firing at the upper flag, then running down the lower flag, then head for platform
-	}
-**/
+
+
 
 //DL 1/30/19
 //CHOOSE BETWEEN 4 ROUTINES BASED ON TWO POTS
 //teamSwitchPot chooses red (low) or blue (hi)
 //routineSwitchPot chooses A (low) or B (hi)
+// The general autonomous routine is to fire ball at a high flag, drive into the flow flag, return to plaform.
+// There will be 4 variants of this
+//  * Red team, on the staring point nearer the flags.
+//  * Red team, on the staring point further from the flags.
+//  * Blue team, on the staring point nearer the flags.
+//  * Blue team, on the staring point further from the flags.
+// * the routine switch POT is in wired backward from the team swithc POT
 
-if ((SensorValue[teamSwitchPot] < 2047) && (SensorValue[routineSwitchPot] < 2047))
-	{
-		startTask(autonomous_Red_A);
-		//autonomous_A has is to flip caps then go to central pad
-	}
 
 if ((SensorValue[teamSwitchPot] < 2047) && (SensorValue[routineSwitchPot] > 2047))
+	{
+		startTask(autonomous_Red_A);
+	}
+
+if ((SensorValue[teamSwitchPot] < 2047) && (SensorValue[routineSwitchPot] < 2047))
 	{
 		startTask(autonomous_Red_B);
 
 	}
 
 
-if ((SensorValue[teamSwitchPot] > 2047) && (SensorValue[routineSwitchPot] < 2047))
+if ((SensorValue[teamSwitchPot] > 2047) && (SensorValue[routineSwitchPot] > 2047))
 	{
 		startTask(autonomous_Blue_A);
 		}
 
-if ((SensorValue[teamSwitchPot] > 2047) && (SensorValue[routineSwitchPot] > 2047))
+if ((SensorValue[teamSwitchPot] > 2047) && (SensorValue[routineSwitchPot] < 2047))
 	{
 		startTask(autonomous_Blue_B);
 
@@ -539,7 +348,7 @@ writeDebugStreamLine("enc left:%d",SensorValue[leftEncoder]);
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //
-//																 User Can't roll Task
+//																 User Control Task
 //
 // This task is used to control your robot during the user control phase of a VEX Competition.
 // You must modify the code to add your own robot specific commands here.
@@ -638,13 +447,13 @@ if (ControllerDirection==-1)
 		{
 			// stop the cap flipping motor
 		//	motor[capFlip] = 0;
-		startFlyWheels()
+		startFlyWheels();
 		}
 	  if((vexRT[Btn6D] == 0)||(vexRT[Btn6DXmtr2] == 0))
 		{
 			// stop the cap flipping motor
 		//	motor[capFlip] = 0;
-		stopFlyWheels()
+		stopFlyWheels();
 		}
 
 //check for cap flipping+converyor controls
