@@ -1,3 +1,5 @@
+#pragma config(Sensor, in1,    teamSelect,     sensorPotentiometer)
+#pragma config(Sensor, dgtl10, yellowLED,      sensorLEDtoVCC)
 #pragma config(Motor,  port1,           frontRight,    tmotorVex393_HBridge, openLoop, reversed)
 #pragma config(Motor,  port6,           capFlip,       tmotorVex269_MC29, openLoop)
 #pragma config(Motor,  port7,           frontLeft,     tmotorVex393_MC29, openLoop)
@@ -27,21 +29,16 @@ void pre_auton()
 
 task autonomous()
 {
-		//foward
-			motor[frontRight] = 60;
-			motor[midRight]   = 60;
-			motor[rearRight]  = 60;
-			motor[frontLeft] = 60;
-			motor[midRearLeft] = 60;
-
-			sleep(2000);
+	if(SensorValue[teamSelect] < 2350)
+  {
+ 	//turns left
 			motor[frontRight] = -60;
 			motor[midRight]   = -60;
 			motor[rearRight]  = -60;
 			motor[frontLeft] = -60;
 			motor[midRearLeft] = -60;
 
-			sleep(400);
+			sleep(1000);
 
 			motor[frontRight] = 60;
 			motor[midRight]   = 60;
@@ -49,7 +46,7 @@ task autonomous()
 			motor[frontLeft] = -60;
 			motor[midRearLeft] = -60;
 
-			sleep(1500);
+			sleep(1200);
 
 			motor[frontRight] = -60;
 			motor[midRight]   = -60;
@@ -65,7 +62,41 @@ task autonomous()
 			motor[rearRight]  = 0;
 			motor[frontLeft] = 0;
 			motor[midRearLeft] = 0;
+    }
+    else if (SensorValue[teamSelect] > 2350)
+  {
+  	//turns right
+			motor[frontRight] = -60;
+			motor[midRight]   = -60;
+			motor[rearRight]  = -60;
+			motor[frontLeft] = -60;
+			motor[midRearLeft] = -60;
 
+			sleep(1000);
+
+			motor[frontRight] = -60;
+			motor[midRight]   = -60;
+			motor[rearRight]  = -60;
+			motor[frontLeft] = 60;
+			motor[midRearLeft] = 60;
+
+			sleep(1000);
+
+			motor[frontRight] = -60;
+			motor[midRight]   = -60;
+			motor[rearRight]  = -60;
+			motor[frontLeft] = -60;
+			motor[midRearLeft] = -60;
+			motor[capFlip] = -60;
+
+			sleep(2700);
+
+			motor[frontRight] = 0;
+			motor[midRight]   = 0;
+			motor[rearRight]  = 0;
+			motor[frontLeft] = 0;
+			motor[midRearLeft] = 0;
+  }
 }
 
 
