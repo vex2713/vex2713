@@ -51,7 +51,7 @@ void pre_auton()
 
 
 
-void stopTractionMotors()
+void stopAllMotors()
 //the vex standard stopAllMotors command could be used instead
 {
 		motor[frontRight] = 0;
@@ -193,6 +193,7 @@ void turnLeftByDegrees(int targetDegrees)
 		motor[frontLeft] = -1*power;
 		motor[midLeft] =  -1*power;
 		motor[rearLeft] =  -1*power;
+//DL 2/23/19 		sleep(100);
 		sleep(100);
 	}
 }
@@ -210,6 +211,7 @@ void turnRightByDegrees(int targetDegrees)
 		motor[frontLeft] = power;
 		motor[midLeft] =  power;
 		motor[rearLeft] =  power;
+		//DL sleep(100);
 		sleep(100);
 	}
 }
@@ -224,10 +226,10 @@ task  autonomous_Red_A()
 //will then aim for platform
 //
 {
-turnRightByDegrees(5);
+//turnRightByDegrees(5);
 fireRockets();
-turnLeftByDegrees(5);
-	goForwardInches(20);
+//turnLeftByDegrees(5);
+goForwardInches(20);
 turnRightByDegrees(90);
 motor[capFlip]=128;
 //goBackDistance(1800);
@@ -247,13 +249,16 @@ task  autonomous_Red_B()
 	writeDebugStreamLine("starting autonomous_Red_B");
 
 
-turnRightByDegrees(5);
+//turnRightByDegrees(5);
 fireRockets();
-turnLeftByDegrees(5);
-goForwardInches(44);
-goBackInches(72);
+//turnLeftByDegrees(5);
+goForwardInches(20);
+
+
+/*goBackInches(72);
 turnRightByDegrees(90);
 goForwardInches(60);
+*/
 
 stopAllMotors(); //where is this defined
 }
@@ -265,10 +270,10 @@ task autonomous_Blue_A()
 //assuming blue team, starting further from flag
 //shd be mirror of red A
 
-turnLeftByDegrees(5);
+//turnLeftByDegrees(5);
 fireRockets();
-turnRightByDegrees(5);
-	goForwardInches(20);
+//turnRightByDegrees(5);
+goForwardInches(20);
 turnLeftByDegrees(90);
 motor[capFlip]=128;
 //goBackDistance(1800);
@@ -284,9 +289,9 @@ task autonomous_Blue_B()
 writeDebugStreamLine("starting autonomous_Blue_B");
 
 
-turnLeftByDegrees(5);
+//turnLeftByDegrees(5);
 fireRockets();
-turnRightByDegrees(5);
+//turnRightByDegrees(5);
 goForwardInches(44);
 goBackInches(72);
 turnLeftByDegrees(90);
