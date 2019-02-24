@@ -46,7 +46,7 @@ task autonomous()
 			motor[frontLeft] = -60;
 			motor[midRearLeft] = -60;
 
-			sleep(1200);
+			sleep(1000);
 
 			motor[frontRight] = -60;
 			motor[midRight]   = -60;
